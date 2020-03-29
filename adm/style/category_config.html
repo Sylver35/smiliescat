@@ -1,0 +1,140 @@
+{% INCLUDE 'overall_header.html' %}
+
+<a name="maincontent"></a>
+
+{% if U_BACK %}
+	<a href="{{ U_BACK }}" style="float: right;">&laquo; {{ lang('BACK') }}</a>
+{% endif %}
+
+<h1>{{ TITLE }}</h1>
+
+<p>{{ TITLE_EXPLAIN }}</p>
+
+{% if IN_ADD_ACTION %}
+	<h2>{{ lang('SC_CATEGORY_ADD') }}</h2>
+	<form  method="post" action="{{ U_ADD_CAT }}">
+	<fieldset class="tabulated">
+	<table class="table1 zebra-table responsive">
+		<thead>
+			<tr>
+				<th style="text-align: center;">{{ lang('SC_CATEGORY_ORDER') }}</th>
+				<th style="text-align: center;">{{ lang('SC_CATEGORY_NAME') }}</th>
+				<th style="text-align: center;">{{ lang('LANGUAGE_PACK_LOCALNAME') }}</th>
+				<th style="text-align: center;">{{ lang('LANGUAGE_PACK_ISO') }}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for category in categories %}
+			<tr>
+				<td style="text-align: center;">{{ category.CAT_ORDER }}</td>
+				<td style="text-align: center;"><input class="text post" type="text" name="name_{{ category.CAT_ISO }}" value="" size="20" maxlength="50" /></td>
+				<td style="text-align: center;">{{ category.CAT_LANG }}</td>
+				<td style="text-align: center;"><strong>{{ category.CAT_ISO }}</strong><input type="hidden" name="lang_{{ category.CAT_ISO }}" value="{{ category.CAT_ISO }}"></td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<p class="submit-buttons">
+		<input type="hidden" name="order" value="{{ CAT_ORDER }}">
+		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />
+	</p>
+	{{ S_FORM_TOKEN }}
+	</fieldset>
+	</form>
+{% elseif IN_ACTION %}
+	<h2>{{ lang('SC_CATEGORY_EDIT') }} : {{ CAT_TITLE }}</h2>
+	<form  method="post" action="{{ U_EDIT_CAT }}">
+	<fieldset class="tabulated">
+	<table class="table1 zebra-table responsive">
+		<thead>
+			<tr>
+				<th style="text-align: center;">{{ lang('SC_CATEGORY_ID') }}</th>
+				<th style="text-align: center;">{{ lang('SC_CATEGORY_ORDER') }}</th>
+				<th style="text-align: center;">{{ lang('SC_CATEGORY_NAME') }}</th>
+				<th style="text-align: center;">{{ lang('LANGUAGE_PACK_LOCALNAME') }}</th>
+				<th style="text-align: center;">{{ lang('LANGUAGE_PACK_ISO') }}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for category in category_lang %}
+			<tr>
+				<td style="text-align: center;">{{ category.CAT_ID }}<input type="hidden" name="sort_{{ category.CAT_ISO }}" value="{{ category.CAT_SORT }}"></td>
+				<td style="text-align: center;">{{ category.CAT_ORDER }}</td>
+				<td style="text-align: center;"><input class="text post" type="text" name="name_{{ category.CAT_ISO }}" value="{{ category.CAT_TRADUCT }}" size="20" maxlength="50" /></td>
+				<td style="text-align: center;">{{ category.CAT_LANG }}</td>
+				<td style="text-align: center;"><strong>{{ category.CAT_ISO }}</strong><input type="hidden" name="lang_{{ category.CAT_ISO }}" value="{{ category.CAT_ISO }}"></td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<p class="submit-buttons">
+		<input type="hidden" name="order" value="{{ CAT_ORDER }}">
+		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />
+	</p>
+	{{ S_FORM_TOKEN }}
+	</fieldset>
+	</form>
+{% else %}
+	<form  method="post" action="{{ U_ADD }}">
+	<fieldset class="tabulated">
+	<table class="table1 zebra-table responsive">
+		<thead>
+			<tr>
+				<th style="text-align: center;">{{ lang('SC_CATEGORY_ID') }}</th>
+				<th style="text-align: center;">{{ lang('SC_CAT_ORDER') }}</th>
+				<th style="text-align: center;">{{ lang('SC_CATEGORY_NAME') }}</th>
+				<th style="text-align: center;">{{ lang('LANGUAGE_PACK_LOCALNAME') }}</th>
+				<th style="text-align: center;">{{ lang('LANGUAGE_PACK_ISO') }}</th>
+				<th style="text-align: center;">{{ lang('ACP_SMILIES') }}</th>
+				<th style="text-align: center;">{{ lang('OPTIONS') }}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% if EMPTY_ROW %}
+			<tr>
+				<td class="row3" colspan="7" style="text-align: center;color: red;"><strong>{{ lang('SC_CATEGORY_ANY_CREATE') }}</strong></td>
+			</tr>
+			{% else %}
+			{% for categorie in categories %}
+			{% if categorie.ROW %}
+			<tr>
+				<td class="row3" style="text-align: center;"><strong>{{ categorie.CAT_ID }}</strong></td>
+				<td class="row3" style="text-align: center;"><strong>{{ categorie.CAT_ORDER }}</strong></td>
+				<td class="row3" colspan="3" style="text-align: center;"><strong>{{ categorie.SPACER_CAT }}</strong></td>
+				<td class="row3" style="text-align: center;"><strong>{{ categorie.CAT_NB }}</strong></td>
+				<td class="row3 actions" style="text-align: center;">
+					<span class="up-disabled" style="display:none;">{{ ICON_MOVE_UP_DISABLED }}</span>
+					<span class="up"><a href="{{ categorie.U_MOVE_UP }}" data-ajax="row_up">{{ ICON_MOVE_UP }}</a></span>
+					{% if categorie.ROW_MAX %}
+					<span class="down-disabled">{{ ICON_MOVE_DOWN_DISABLED }}</span>
+					{% else %}
+					<span class="down"><a href="{{ categorie.U_MOVE_DOWN }}" data-ajax="row_down">{{ ICON_MOVE_DOWN }}</a></span>
+					{% endif %}
+					<a href="{{ categorie.U_EDIT }}">{{ ICON_EDIT }}</a>
+					<a href="{{ categorie.U_DELETE }}" data-ajax="row_delete">{{ ICON_DELETE }}</a>
+				</td>
+			</tr>
+			{% endif %}
+			<tr>
+				<td style="text-align: center;background-color: #F9F9F9;"></td>
+				<td style="text-align: center;background-color: #F9F9F9;"></td>
+				<td style="text-align: center;"><strong>{{ categorie.CAT_TRADUCT }}</strong></td>
+				<td style="text-align: center;">{{ categorie.CAT_LANG }}</td>
+				<td style="text-align: center;">{{ categorie.CAT_ISO }}</td>
+				<td style="text-align: center;background-color: #F9F9F9;"></td>
+			</tr>
+			{% endfor %}
+			{% endif %}
+		</tbody>
+	</table>
+	<p class="quick">
+		<input class="button2" name="add" type="submit" value="{{ lang('SC_CATEGORY_ADD') }}" />
+	</p>
+	{{ S_FORM_TOKEN }}
+	</fieldset>
+	</form>
+{% endif %}
+
+<p style="text-align: center;"><em>{{ CATEGORY_VERSION }}</em></p>
+
+{% INCLUDE 'overall_footer.html' %}

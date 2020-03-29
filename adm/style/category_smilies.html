@@ -1,0 +1,103 @@
+{% INCLUDE 'overall_header.html' %}
+
+<a name="maincontent"></a>
+
+{% if U_BACK %}
+	<a href="{{ U_BACK }}" style="float: right;">&laquo; {{ lang('BACK') }}</a>
+{% endif %}
+
+<h1>{{ TITLE }}</h1>
+
+<p>{{ TITLE_EXPLAIN }}</p>
+
+{% if IN_ACTION %}
+	<form id="acp_smilies_category" method="post" action="{{ U_MODIFY }}">
+	<fieldset class="tabulated">
+	<table class="table1 zebra-table" id="smilies">
+	<thead>
+	<tr>
+		<th style="text-align: center;" colspan="6">{{ lang('SMILIES_CONFIG') }}</th>
+	</tr>
+	<tr class="row3">
+		<td style="text-align: center;">{{ lang('SMILIES_IMAGE') }}</td>
+		<td style="text-align: center;">{{ lang('SMILIES_CODE') }}</td>
+		<td style="text-align: center;">{{ lang('EMOTION') }}</td>
+		<td style="text-align: center;">{{ lang('SC_CATEGORY_SELECT') }}</td>
+	</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td style="text-align: center;"><img src="{{ IMG_SRC }}" alt="{{ CODE }}" title="{{ EMOTION }}" /></td>
+			<td style="text-align: center;">{{ CODE }}</td>
+			<td style="text-align: center;">{{ EMOTION }}</td>
+			<td style="text-align: center;"><select id="cat_id" name="cat_id">{{ SELECT_CATEGORY }}</select></td>
+		</tr>
+	</tbody>
+	</table>
+	<p class="submit-buttons">
+		<input type="hidden" name="ex_cat" value="{{ EX_CAT }}">
+		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />
+	</p>
+	{{ S_FORM_TOKEN }}
+	</fieldset>
+	</form>
+{% else %}
+	<form id="acp_smilies_category" method="post" action="{{ U_SELECT_CAT }}">
+	<fieldset class="tabulated">
+	<div class="pagination" style="float: left;">
+		<strong>{% if S_CAT_SELECT %}{{ CAT_SELECT_TITLE }}{% else %}{{ lang('SC_CATEGORY_SELECT') }} :{% endif %} </strong>
+		<select id="select" name="select" onchange="if(this.options[this.selectedIndex].value != '')this.form.submit();">{{ LIST_CATEGORY }}</select>&nbsp;
+		<input class="button2" type="submit" value="{{ lang('GO') }}">
+	</div>
+	<div class="pagination" style="float: right;">
+	{% if pagination|length %}
+		{% INCLUDE 'pagination.html' %}
+	{% else %}
+	<strong>{{ NB_SMILIES }} {{ lang('ACP_SMILIES') }} &bull;</strong>
+	{% endif %}
+	</div>
+	<table class="table1 zebra-table">
+	<thead>
+	<tr>
+		<th style="text-align: center;">{{ lang('ACP_SMILIES') }}</th>
+		<th style="text-align: center;">{{ lang('CODE') }}</th>
+		<th style="text-align: center;">{{ lang('EMOTION') }}</th>
+		<th style="text-align: center;">{{ lang('SC_CATEGORY') }}</th>
+		<th style="text-align: center;">{{ lang('OPTIONS') }}</th>
+	</tr>
+	</thead>
+	<tbody>
+		{% if EMPTY_ROW %}
+		<tr>
+			<td class="row3" colspan="5" style="text-align: center;"><b>{{ lang('SC_SMILIES_EMPTY_CATEGORY') }}</b></td>
+		</tr>
+		{% endif %}
+		{% for item in items %}
+		{% if item.S_SPACER_CAT %}
+		<tr>
+			<td class="row3" colspan="5" style="text-align: center;"><b>{{ item.SPACER_CAT }}</b></td>
+		</tr>
+		{% endif %}
+		<tr>
+			<td style="width: 60%; text-align: center;"><img src="{{ item.IMG_SRC }}" width="{{ item.WIDTH }}" height="{{ item.HEIGHT }}" alt="{{ item.CODE }}" title="{{ item.EMOTION }}" /></td>
+			<td style="text-align: center;">{{ item.CODE }}</td>
+			<td style="text-align: center;">{{ item.EMOTION }}</td>
+			<td style="text-align: center;">{{ item.CATEGORY }}</td>
+			<td class="actions" style="text-align: center;"><a href="{{ item.U_EDIT }}">{{ ICON_EDIT }}</a></td>
+		</tr>
+		{% endfor %}
+	</tbody>
+	</table>
+	<div class="pagination">
+	{% if pagination|length %}
+		{% INCLUDE 'pagination.html' %}
+	{% endif %}
+	</div>
+	{{ S_FORM_TOKEN }}
+	</fieldset>
+	</form>
+{% endif %}
+
+<p style="text-align: center;"><em>{{ CATEGORY_VERSION }}</em></p>
+
+{% INCLUDE 'overall_footer.html' %}

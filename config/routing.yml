@@ -1,0 +1,3 @@
+sylver35_smiliescat_controller_smilies_pop:
+    path: /smilies_category
+    defaults: { _controller: sylver35.smiliescat.controller:popup_smilies_category }

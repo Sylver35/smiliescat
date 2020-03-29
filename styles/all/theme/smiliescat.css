@@ -1,0 +1,40 @@
+a.category_red {
+	color: red;
+	font-size: 1.1em;
+	cursor: help;
+	font-weight: bold;
+}
+
+h2.category-title {
+	margin: 0.1em;
+}
+
+a.pointer {
+	cursor: pointer;
+}
+
+a.cat-active {
+	color: red;
+	font-size: 1.1em;
+	cursor: help;
+	font-weight: bold;
+}
+
+a.cat-inactive {
+	font-size: 1em;
+	cursor: pointer;
+	font-weight: normal;
+}
+
+div.div-version {
+	padding-top: 6px;
+	text-align: center;
+}
+
+span.span-version {
+	font-size: 1.05em;
+}
+
+span.close {
+	margin-left: 20px;
+}

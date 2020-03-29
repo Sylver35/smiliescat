@@ -1,0 +1,2 @@
+parameters:
+    sylver35.smiliescat.tables.smilies_category: '%core.table_prefix%smilies_category'

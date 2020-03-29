@@ -1,0 +1,51 @@
+imports:
+    - { resource: tables.yml }
+
+services:
+    sylver35.smiliescat.listener:
+        class: sylver35\smiliescat\event\listener
+        arguments:
+            - '@sylver35.smiliescat.category'
+            - '@controller.helper'
+            - '@template'
+        tags:
+            - { name: event.listener }
+    sylver35.smiliescat.admin.controller:
+        class: sylver35\smiliescat\controller\admin_controller
+        arguments:
+            - '@sylver35.smiliescat.category'
+            - '@config'
+            - '@dbal.conn'
+            - '@pagination'
+            - '@request'
+            - '@template'
+            - '@user'
+            - '@language'
+            - '@log'
+            - '%core.root_path%'
+            - '%sylver35.smiliescat.tables.smilies_category%'
+
+    sylver35.smiliescat.category:
+        class: sylver35\smiliescat\core\category
+        arguments:
+            - '@cache.driver'
+            - '@dbal.conn'
+            - '@user'
+            - '@language'
+            - '@ext.manager'
+            - '%sylver35.smiliescat.tables.smilies_category%'
+
+    sylver35.smiliescat.controller:
+        class: sylver35\smiliescat\controller\main
+        arguments:
+            - '@sylver35.smiliescat.category'
+            - '@request'
+            - '@config'
+            - '@controller.helper'
+            - '@dbal.conn'
+            - '@template'
+            - '@user'
+            - '@language'
+            - '@pagination'
+            - '%core.root_path%'
+            - '%sylver35.smiliescat.tables.smilies_category%'
