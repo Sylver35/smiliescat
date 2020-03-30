@@ -97,7 +97,7 @@ class main
 		if ($cat !== '')
 		{
 			$sql = $this->db->sql_build_query('SELECT', array(
-				'SELECT'	=> 's.*, c.*',
+				'SELECT'	=> 's.smiley_id, s.smiley_url, s.code, s.smiley_order, s.emotion, s.smiley_width, s.smiley_height, s.category, c.cat_lang_id, c.cat_id , c.cat_order, c.cat_lang , c.cat_name , c.cat_title, c.cat_nb',
 				'FROM'		=> array(SMILIES_TABLE => 's'),
 				'LEFT_JOIN'	=> array(
 					array(
@@ -105,9 +105,9 @@ class main
 						'ON'	=> "c.cat_id = s.category AND c.cat_lang = '$lang'"
 					),
 				),
-				'WHERE'		=> "category = $cat",
-				'GROUP_BY'	=> 'emotion',
-				'ORDER_BY'	=> 'smiley_order ASC',
+				'WHERE'		=> "s.category = $cat",
+				'GROUP_BY'	=> 's.emotion, s.smiley_id',
+				'ORDER_BY'	=> 's.smiley_order ASC',
 			));
 			$result = $this->db->sql_query_limit($sql, $this->config['smilies_per_page'], $start);
 			if ($row = $this->db->sql_fetchrow($result))
