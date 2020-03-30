@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="User Defaults" description="Builds an extension.zip from a git repository" default="all">
+<project name="PayPal Donation" description="This extension add categories for the smilies to your phpBB board" default="all">
 	<property name="vendor-name" value="sylver35" />
 	<property name="extension-name" value="smiliescat" />
 	<!--
@@ -13,22 +13,22 @@
 		Remove some unnecessary files/directories
 		${dir}/ is the folder of your extension, e.g. ext/nickvergessen/newspage/
 		-->
+		<delete dir="${dir}/.tx" />
 		<delete dir="${dir}/tests" />
 		<delete dir="${dir}/travis" />
-		<delete dir="${dir}/vendor" />
 
-		<delete file="${dir}/.gitignore" />
 		<delete file="${dir}/.gitattributes" />
+		<delete file="${dir}/.gitignore" />
 		<delete file="${dir}/.travis.yml" />
 		<delete file="${dir}/build.xml" />
 		<delete file="${dir}/composer.lock" />
-		<delete file="${dir}/composer.phar" />
+		<delete file="${dir}/CHANGELOG.md" />
 		<delete file="${dir}/phpunit.xml.dist" />
 		<delete file="${dir}/README.md" />
 	</target>
 
 	<!--
-	DO NOT EDIT BELOW THIS LINE!!!!
+	TODO: DO NOT EDIT BELOW THIS LINE!!!!
 	-->
 
 	<property name="version" value="HEAD" override="true" />
@@ -79,14 +79,8 @@
 			<property name="dir" value="${package-directory}" />
 		</phingcall>
 
-		<!-- Try setting the package version property from composer.json -->
-		<exec dir="${package-directory}"
-			  command='php -r "\$j = json_decode(file_get_contents(\"composer.json\")); echo (isset(\$j->version) ? \$j->version : \"${version}\");"'
-			  checkreturn="true"
-			  outputProperty='package-version' />
-
 		<phingcall target="wrap-package">
-			<property name="destination-filename" value="${build-directory}/upload/${vendor-name}_${extension-name}_${package-version}" />
+			<property name="destination-filename" value="${build-directory}/upload/${vendor-name}_${extension-name}-${version}" />
 		</phingcall>
 	</target>
 
