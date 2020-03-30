@@ -19,6 +19,11 @@
             "name": "sylver35",
             "homepage": "https://breizhcode.com",
             "role": "Developer"
+        },
+		{
+            "name": "Skouat",
+            "homepage": "http://forums.phpbb-fr.com/skouat-u83173/",
+            "role": "Developer"
         }
     ],
     "require": {
