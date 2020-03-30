@@ -547,7 +547,7 @@ class admin_controller
 			$where			= ($select !== -1) ? "c.cat_id = $select" : 's.smiley_id > 0';
 
 			$sql = $this->db->sql_build_query('SELECT', array(
-				'SELECT'	=> 's.smiley_id, s.smiley_url, s.code, s.smiley_order, s.emotion, s.smiley_width, s.smiley_height, s.category, c.*',
+				'SELECT'	=> 's.smiley_id, s.smiley_url, s.code, s.smiley_order, s.emotion, s.smiley_width, s.smiley_height, s.category, c.cat_lang_id, c.cat_id , c.cat_order, c.cat_lang , c.cat_name , c.cat_title, c.cat_nb',
 				'FROM'		=> array(SMILIES_TABLE => 's'),
 				'LEFT_JOIN'	=> array(
 					array(
