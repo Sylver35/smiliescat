@@ -106,7 +106,7 @@ class main
 					),
 				),
 				'WHERE'		=> "s.category = $cat",
-				'GROUP_BY'	=> 's.emotion, s.smiley_id',
+				'GROUP_BY'	=> 's.emotion',
 				'ORDER_BY'	=> 's.smiley_order ASC',
 			));
 			$result = $this->db->sql_query_limit($sql, $this->config['smilies_per_page'], $start);
