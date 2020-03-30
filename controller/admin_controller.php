@@ -338,9 +338,7 @@ class admin_controller
 						$json_response->send(array(
 							'MESSAGE_TITLE'	=> $this->language->lang('INFORMATION'),
 							'MESSAGE_TEXT'	=> $this->language->lang('SC_MOVE_SUCCESS'),
-							'REFRESH_DATA'	=> array(
-								'time'		=> 2
-							),
+							'REFRESH_DATA'	=> array('time'		=> 2),
 						));
 					}
 					else
@@ -378,9 +376,7 @@ class admin_controller
 							$json_response->send(array(
 								'MESSAGE_TITLE'	=> $this->language->lang('INFORMATION'),
 								'MESSAGE_TEXT'	=> $this->language->lang('SC_DELETE_SUCCESS'),
-								'REFRESH_DATA'	=> array(
-									'time'		=> 2
-								),
+								'REFRESH_DATA'	=> array('time'		=> 2),
 							));
 						}
 						else
@@ -446,8 +442,7 @@ class admin_controller
 					$i++;
 					$cat = $row['cat_id'];
 					$empty_row = (!$cat) ? true : false;
-				}
-				while ($row = $this->db->sql_fetchrow($result));
+				} while ($row = $this->db->sql_fetchrow($result));
 			}
 			$this->db->sql_freeresult($result);
 		}
