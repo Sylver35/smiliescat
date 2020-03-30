@@ -74,7 +74,7 @@ class category
 		$sql = $this->db->sql_build_query('SELECT', array(
 			'SELECT'	=> 'COUNT(DISTINCT smiley_url) AS smilies_count',
 			'FROM'		=> array(SMILIES_TABLE => ''),
-			'WHERE'		=> $where . " AND code <> ''",
+			'WHERE'		=> "$where AND code <> ''",
 		));
 		$result = $this->db->sql_query($sql);
 		$smilies_count = (int) $this->db->sql_fetchfield('smilies_count');
@@ -244,7 +244,7 @@ class category
 				'SELECT'	=> 'smiley_id, smiley_url, code, smiley_order, emotion, smiley_width, smiley_height, category',
 				'FROM'		=> array(SMILIES_TABLE => ''),
 				'WHERE'		=> "category = $cat",
-				'GROUP_BY'	=> 'smiley_url, smiley_id',
+				'GROUP_BY'	=> 'smiley_url',
 				'ORDER_BY'	=> 'smiley_order ASC',
 			));
 			$result = $this->db->sql_query($sql);
