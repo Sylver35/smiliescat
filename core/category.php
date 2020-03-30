@@ -241,10 +241,10 @@ class category
 			}
 
 			$sql = $this->db->sql_build_query('SELECT', array(
-				'SELECT'	=> '*',
+				'SELECT'	=> 'smiley_id, smiley_url, code, smiley_order, emotion, smiley_width, smiley_height, category',
 				'FROM'		=> array(SMILIES_TABLE => ''),
 				'WHERE'		=> "category = $cat",
-				'GROUP_BY'	=> 'smiley_url',
+				'GROUP_BY'	=> 'smiley_url, smiley_id',
 				'ORDER_BY'	=> 'smiley_order ASC',
 			));
 			$result = $this->db->sql_query($sql);
