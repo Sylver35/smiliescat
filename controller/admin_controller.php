@@ -515,14 +515,17 @@ class admin_controller
 					$this->db->sql_query($sql);
 
 					// Decrement nb value if wanted
-					if ($ex_cat)
+					if ($ex_cat != 0)
 					{
 						$sql = 'UPDATE ' . $this->category_table . " SET cat_nb = cat_nb - 1 WHERE cat_id = $ex_cat";
 						$this->db->sql_query($sql);
 					}
-					// Increment nb value
-					$sql = 'UPDATE ' . $this->category_table . " SET cat_nb = cat_nb + 1 WHERE cat_id = $cat_id";
-					$this->db->sql_query($sql);
+					// Increment nb value if wanted
+					if ($cat_id != 0)
+					{
+						$sql = 'UPDATE ' . $this->category_table . " SET cat_nb = cat_nb + 1 WHERE cat_id = $cat_id";
+						$this->db->sql_query($sql);
+					}
 
 					trigger_error($this->language->lang('SMILIES_EDITED', 1) . adm_back_link($this->u_action . '&amp;start=' . $start));
 
