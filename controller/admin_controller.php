@@ -555,7 +555,7 @@ class admin_controller
 						'ON'	=> "c.cat_id = s.category AND c.cat_lang = '$lang'",
 					),
 				),
-				'WHERE'		=> $where . " AND s.code <> ''",
+				'WHERE'		=> "$where AND s.code <> ''",
 				'GROUP_BY'	=> 's.smiley_url, s.smiley_id',
 				'ORDER_BY'	=> 'c.cat_order ASC, c.cat_id ASC, s.smiley_order ASC',
 			));
