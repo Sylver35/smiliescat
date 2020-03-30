@@ -554,7 +554,7 @@ class admin_controller
 					),
 				),
 				'WHERE'		=> "$where AND s.code <> ''",
-				'GROUP_BY'	=> 's.smiley_url, s.smiley_id',
+				'GROUP_BY'	=> 's.smiley_url',
 				'ORDER_BY'	=> 'c.cat_order ASC, c.cat_id ASC, s.smiley_order ASC',
 			));
 			$result = $this->db->sql_query_limit($sql, $this->config['smilies_per_page'], $start);
