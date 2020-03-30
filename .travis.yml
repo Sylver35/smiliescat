@@ -1,4 +1,3 @@
 language: php
-rvm:
- - 2.2
- - jru
+php:
+  - 7.1.3
