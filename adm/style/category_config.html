@@ -12,7 +12,7 @@
 
 {% if IN_ADD_ACTION %}
 	<h2>{{ lang('SC_CATEGORY_ADD') }}</h2>
-	<form  method="post" action="{{ U_ADD_CAT }}">
+	<form id="cat-action"  method="post" action="{{ U_ADD_CAT }}">
 	<fieldset class="tabulated">
 	<table class="table1 zebra-table responsive">
 		<thead>
@@ -36,14 +36,14 @@
 	</table>
 	<p class="submit-buttons">
 		<input type="hidden" name="order" value="{{ CAT_ORDER }}">
-		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />
+		<input class="button1" type="submit" id="submit" name="submit" onsubmit='validInputs();' value="{{ lang('SUBMIT') }}" />
 	</p>
 	{{ S_FORM_TOKEN }}
 	</fieldset>
 	</form>
 {% elseif IN_ACTION %}
 	<h2>{{ lang('SC_CATEGORY_EDIT') }} : {{ CAT_TITLE }}</h2>
-	<form  method="post" action="{{ U_EDIT_CAT }}">
+	<form id="cat-action" method="post" action="{{ U_EDIT_CAT }}">
 	<fieldset class="tabulated">
 	<table class="table1 zebra-table responsive">
 		<thead>
@@ -69,7 +69,7 @@
 	</table>
 	<p class="submit-buttons">
 		<input type="hidden" name="order" value="{{ CAT_ORDER }}">
-		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />
+		<input class="button1" type="submit" id="submit" name="submit" onsubmit='validInputs();' value="{{ lang('SUBMIT') }}" />
 	</p>
 	{{ S_FORM_TOKEN }}
 	</fieldset>
