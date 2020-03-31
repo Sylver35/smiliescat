@@ -141,7 +141,11 @@ class admin_controller
 						$iso	= $row['lang_iso'];
 						$lang	= $this->request->variable("lang_$iso", '', true);
 						$name	= $this->request->variable("name_$iso", '', true);
-						if (isset($name) && $name !== '')
+						if ($name === '')
+						{
+							trigger_error($this->language->lang('SC_CATEGORY_ERROR', $this->language->lang('SC_CATEGORY_NAME')) . adm_back_link($this->u_action . '&amp;action=add'), E_USER_WARNING);
+						}
+						else
 						{
 							$sql_in = array_merge($sql_in, array(
 								'cat_lang'		=> $lang,
@@ -250,7 +254,11 @@ class admin_controller
 						$name	= $this->request->variable("name_$iso", '', true);
 						$sort	= $this->request->variable("sort_$iso", '');
 						$order	= $this->request->variable('order', 0);
-						if (isset($name) && $name !== '')
+						if ($name === '')
+						{
+							trigger_error($this->language->lang('SC_CATEGORY_ERROR', $this->language->lang('SC_CATEGORY_NAME')) . adm_back_link($this->u_action . '&amp;action=edit&amp;id=' . $id), E_USER_WARNING);
+						}
+						else
 						{
 							if ($sort == 'edit')
 							{
