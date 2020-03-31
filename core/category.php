@@ -130,7 +130,7 @@ class category
 
 	public function capitalize($var)
 	{
-		return $this->db->sql_escape(ucfirst(strtolower($var)));
+		return $this->db->sql_escape(ucfirst(strtolower(trim($var))));
 	}
 
 	public function get_max_order()
