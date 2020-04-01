@@ -241,11 +241,11 @@ class category
 			}
 
 			$sql = $this->db->sql_build_query('SELECT', array(
-				'SELECT'	=> 'smiley_id, smiley_url, code, smiley_order, emotion, smiley_width, smiley_height, category',
+				'SELECT'	=> 'MIN(smiley_id) AS smiley_id, smiley_url, MIN(code) AS code, MIN(smiley_order) AS min_smiley_order, MIN(emotion) AS emotion, MIN(smiley_width) AS smiley_width, MIN(smiley_height) AS smiley_height, MIN(category) AS category',
 				'FROM'		=> array(SMILIES_TABLE => ''),
 				'WHERE'		=> "category = $cat",
 				'GROUP_BY'	=> 'smiley_url',
-				'ORDER_BY'	=> 'smiley_order ASC',
+				'ORDER_BY'	=> 'min_smiley_order ASC',
 			));
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
