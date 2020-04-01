@@ -43,6 +43,7 @@ $lang = array_merge($lang, array(
 	'ACP_SC_CONFIG'				=> 'Configuration des catégories',
 	'ACP_SC_CONFIG_EXPLAIN'		=> 'Sur cette page, vous pouvez gérer les catégories des smileys.<br />Ajouter, éditer, supprimer des catégories. Modifier l’ordre d’affichage et définir les traductions dans les langues activées.',
 	'SC_CATEGORY'				=> 'Catégorie',
+	'SC_CATEGORY_LANG'			=> 'Langue',
 	'SC_CATEGORY_DEFAUT'		=> 'Non classés',
 	'SC_CATEGORY_ID'			=> 'ID',
 	'SC_CATEGORY_IN'			=> 'Catégorie : %1$s',
