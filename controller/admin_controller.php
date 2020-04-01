@@ -535,7 +535,7 @@ class admin_controller
 						$this->db->sql_query($sql);
 					}
 
-					trigger_error($this->language->lang('SMILIES_EDITED', 1) . adm_back_link($this->u_action . '&amp;start=' . $start));
+					trigger_error($this->language->lang('SMILIES_EDITED', 1) . adm_back_link($this->u_action . '&amp;start=' . $start . '#acp_smilies_category'));
 
 				break;
 			}
