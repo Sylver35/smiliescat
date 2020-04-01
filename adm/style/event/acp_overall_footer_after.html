@@ -1,6 +1,11 @@
 {% if CATEGORIE_CONFIG %}
 <script>
 $(document).ready(function(){
+	$('#cat-action input[type="text"]').each(function(){
+		if($(this).val().trim() == ''){
+			$(this).css('outline', '1px solid red');
+		}
+	});
 	$('#cat-action input[type="text"]').blur(function(){
 		if($(this).val().trim() == ''){
 			$(this).css('outline', '1px solid red');
