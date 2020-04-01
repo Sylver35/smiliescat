@@ -97,7 +97,7 @@ class main
 		if ($cat !== '')
 		{
 			$sql = $this->db->sql_build_query('SELECT', array(
-				'SELECT'	=> 's.smiley_url, MIN(s.smiley_id) AS smiley_id, MIN(s.emotion) AS emotion, MIN(s.code) AS code, s.smiley_width, s.smiley_height, MIN(s.smiley_order) AS min_smiley_order, MIN(s.category) AS category, MIN(c.cat_lang_id) AS cat_lang_id, MIN(c.cat_id) AS cat_id, MIN(c.cat_order) AS cat_order, MIN(c.cat_lang) AS cat_lang, MIN(c.cat_name) AS cat_name, MIN(c.cat_title) AS cat_title, MIN(c.cat_nb) AS cat_nb',
+				'SELECT'	=> 's.smiley_url, MIN(s.smiley_id) AS smiley_id, MIN(s.emotion) AS emotion, MIN(s.code) AS code, MIN(s.smiley_width) AS smiley_width, MIN(s.smiley_height) AS smiley_height, MIN(s.smiley_order) AS min_smiley_order, MIN(s.category) AS category, MIN(c.cat_lang_id) AS cat_lang_id, MIN(c.cat_id) AS cat_id, MIN(c.cat_order) AS cat_order, MIN(c.cat_lang) AS cat_lang, MIN(c.cat_name) AS cat_name, MIN(c.cat_title) AS cat_title, MIN(c.cat_nb) AS cat_nb',
 				'FROM'		=> array(SMILIES_TABLE => 's'),
 				'LEFT_JOIN'	=> array(
 					array(
@@ -106,7 +106,7 @@ class main
 					),
 				),
 				'WHERE'		=> "category = $cat",
-				'GROUP_BY'	=> 'smiley_url, smiley_width, smiley_height',
+				'GROUP_BY'	=> 'smiley_url',
 				'ORDER_BY'	=> 'min_smiley_order ASC',
 			));
 			$result = $this->db->sql_query_limit($sql, $this->config['smilies_per_page'], $start);
