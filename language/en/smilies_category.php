@@ -43,6 +43,7 @@ $lang = array_merge($lang, array(
 	'ACP_SC_CONFIG'				=> 'Configuration of categories',
 	'ACP_SC_CONFIG_EXPLAIN'		=> 'On this page, you can manage the categories of smilies.<br />Add, edit, delete categories. Change the display order and define the translations in the activated languages.',
 	'SC_CATEGORY'				=> 'Category',
+	'SC_CATEGORY_LANG'			=> 'Language',
 	'SC_CATEGORY_DEFAUT'		=> 'Unclassified',
 	'SC_CATEGORY_ID'			=> 'ID',
 	'SC_CATEGORY_IN'			=> 'Category : %1$s',
@@ -70,5 +71,5 @@ $lang = array_merge($lang, array(
 	'LOG_SC_MOVE_UP_CAT'		=> '<strong>Ascent of a smilies category </strong><br>» %s',
 	'LOG_SC_MOVE_DOWN_CAT'		=> '<strong>Descending a smilies category </strong><br>» %s',
 	'LOG_SC_DELETE_CAT'			=> '<strong>Deleting a smilies category </strong><br>» %s',
-	'SC_VERSION_COPY'			=> '<a href="%1$s" onclick="window.open(this.href);return false;">Breizh Smilies Categories v%2$s</a> © 2020 - Breizhcode - The Breizh Touch',// Don't translate this please ^-^
+	'SC_VERSION_COPY'			=> '<a href="%1$s" onclick="window.open(this.href);return false;">Breizh Smilies Categories v%2$s</a> © 2020 - Breizhcode - The Breizh Touch',
 ));
