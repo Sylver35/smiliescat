@@ -68,33 +68,19 @@ class category
 		return $data;
 	}
 
-	public function smilies_count($select)
+	public function smilies_count($cat)
 	{
-		$where = ($select > -1) ? "category = $select" : 'smiley_id > 0';
+		$sql_where = ($cat == -1) ? "code <> ''" : "category = $cat";
 		$sql = $this->db->sql_build_query('SELECT', array(
-			'SELECT'	=> 'COUNT(DISTINCT smiley_url) AS smilies_count',
+			'SELECT'	=> 'COUNT(smiley_id) AS smilies_count',
 			'FROM'		=> array(SMILIES_TABLE => ''),
-			'WHERE'		=> "$where AND code <> ''",
+			'WHERE'		=> $sql_where,
 		));
 		$result = $this->db->sql_query($sql);
 		$smilies_count = (int) $this->db->sql_fetchfield('smilies_count');
 		$this->db->sql_freeresult($result);
 
 		return $smilies_count;
-	}
-
-	public function smilies_count_defaut()
-	{
-		$sql = $this->db->sql_build_query('SELECT', array(
-			'SELECT'	=> 'COUNT(DISTINCT smiley_url) AS smilies_count',
-			'FROM'		=> array(SMILIES_TABLE => ''),
-			'WHERE'		=> 'category = 0',
-		));
-		$result = $this->db->sql_query($sql);
-		$defaut_count = (int) $this->db->sql_fetchfield('smilies_count');
-		$this->db->sql_freeresult($result);
-
-		return $defaut_count;
 	}
 
 	public function select_categories($cat, $modify = false)
@@ -200,11 +186,12 @@ class category
 		if ($i > 0)
 		{
 			// Add the Unclassified category
+			$cat_id = 0;
 			$list_cat[$i] = array(
-				'cat_id'		=> 0,
+				'cat_id'		=> $cat_id,
 				'cat_order'		=> $cat_order + 1,
 				'cat_name'		=> $this->language->lang('SC_CATEGORY_DEFAUT'),
-				'cat_nb'		=> $this->smilies_count_defaut(),
+				'cat_nb'		=> $this->smilies_count($cat_id),
 			);
 
 			$event['content'] = array_merge($event['content'], array(
@@ -241,11 +228,10 @@ class category
 			}
 
 			$sql = $this->db->sql_build_query('SELECT', array(
-				'SELECT'	=> 'smiley_url, MIN(smiley_id) AS smiley_id, MIN(code) AS code, MIN(smiley_order) AS min_smiley_order, MIN(emotion) AS emotion, MIN(smiley_width) AS smiley_width, MIN(smiley_height) AS smiley_height, MIN(category) AS category',
+				'SELECT'	=> '*',
 				'FROM'		=> array(SMILIES_TABLE => ''),
 				'WHERE'		=> "category = $cat",
-				'GROUP_BY'	=> 'smiley_url',
-				'ORDER_BY'	=> 'min_smiley_order ASC',
+				'ORDER_BY'	=> 'smiley_order ASC',
 			));
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))

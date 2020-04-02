@@ -92,6 +92,20 @@ class admin_controller
 		{
 			switch ($action)
 			{
+				case 'config_cat':
+
+					if (!check_form_key($form_key))
+					{
+						trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
+					}
+
+					$this->config->set('smilies_per_page_cat', $this->request->variable('smilies_per_page_cat', 15));
+
+					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_CONFIG', time());
+					trigger_error($this->language->lang('CONFIG_UPDATED') . adm_back_link($this->u_action));
+
+				break;
+
 				case 'add':
 
 					$max = $this->category->get_max_order();
@@ -153,6 +167,11 @@ class admin_controller
 								'cat_title'		=> $this->category->capitalize($title),
 							));
 							$this->db->sql_query('INSERT INTO ' . $this->category_table . $this->db->sql_build_array('INSERT', $sql_in));
+
+							if ($cat_order == 1)
+							{
+								$this->config->set('smilies_category_nb', $sql_in['cat_id']);
+							}
 						}
 					}
 
@@ -319,7 +338,6 @@ class admin_controller
 					// on move_up, switch position with previous order_id...
 					$switch_order_id = ($action == 'move_down') ? $current_order + 1 : $current_order - 1;
 
-					//
 					$sql = 'UPDATE ' . $this->category_table . "
 						SET cat_order = $current_order
 						WHERE cat_order = $switch_order_id
@@ -335,6 +353,11 @@ class admin_controller
 							WHERE cat_order = $current_order
 								AND cat_id = $id";
 						$this->db->sql_query($sql);
+
+						if ($switch_order_id == 1)
+						{
+							$this->config->set('smilies_category_nb', $id);
+						}
 					}
 
 					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_' . strtoupper($action) . '_CAT', time(), array($title));
@@ -371,7 +394,7 @@ class admin_controller
 						$sql_delete = 'DELETE FROM ' . $this->category_table . " WHERE cat_id = $id";
 						$this->db->sql_query($sql_delete);
 
-						// Reset appropriate category
+						// Reset appropriate smilies category id
 						$sql_update = 'UPDATE ' . SMILIES_TABLE . " SET category = 0 WHERE category = $id";
 						$this->db->sql_query($sql_update);
 
@@ -453,11 +476,16 @@ class admin_controller
 				} while ($row = $this->db->sql_fetchrow($result));
 			}
 			$this->db->sql_freeresult($result);
+
+			$this->template->assign_vars(array(
+				'U_ACTION_CONFIG'		=> $this->u_action . '&amp;action=config_cat',
+			));
 		}
 
 		$this->template->assign_vars(array(
 			'CATEGORIE_CONFIG'		=> true,
 			'EMPTY_ROW'				=> $empty_row,
+			'SMILIES_PER_PAGE_CAT'	=> $this->config['smilies_per_page_cat'],
 			'U_ADD'					=> $this->u_action . '&amp;action=add',
 		));
 	}
@@ -552,20 +580,31 @@ class admin_controller
 			$list_select	= $this->category->select_categories($select);
 			$where			= ($select !== -1) ? "cat_id = $select" : 'smiley_id > 0';
 
-			$sql = $this->db->sql_build_query('SELECT', array(
-				'SELECT'	=> 's.smiley_url, MIN(s.smiley_id) AS smiley_id, MIN(s.emotion) AS emotion, MIN(s.code) AS code, MIN(s.smiley_width) AS smiley_width, MIN(s.smiley_height) AS smiley_height, MIN(s.smiley_order) AS min_smiley_order, MIN(s.category) AS category, MIN(c.cat_lang_id) AS cat_lang_id, MIN(c.cat_id) AS cat_id, MIN(c.cat_order) AS cat_order, MIN(c.cat_lang) AS cat_lang, MIN(c.cat_name) AS cat_name, MIN(c.cat_title) AS cat_title, MIN(c.cat_nb) AS cat_nb',
-				'FROM'		=> array(SMILIES_TABLE => 's'),
-				'LEFT_JOIN'	=> array(
-					array(
-						'FROM'	=> array($this->category_table => 'c'),
-						'ON'	=> "cat_id = category AND cat_lang = '$lang'",
+			if ($select !== 0)
+			{
+				$sql = $this->db->sql_build_query('SELECT', array(
+					'SELECT'	=> 's.*, c.*',
+					'FROM'		=> array(SMILIES_TABLE => 's'),
+					'LEFT_JOIN'	=> array(
+						array(
+							'FROM'	=> array($this->category_table => 'c'),
+							'ON'	=> "cat_id = category AND cat_lang = '$lang'",
+						),
 					),
-				),
-				'WHERE'		=> "$where AND s.code <> ''",
-				'GROUP_BY'	=> 'smiley_url',
-				'ORDER_BY'	=> 'cat_order ASC, min_smiley_order ASC',
-			));
-			$result = $this->db->sql_query_limit($sql, $this->config['smilies_per_page'], $start);
+					'WHERE'		=> "$where AND s.code <> ''",
+					'ORDER_BY'	=> 'cat_order ASC, smiley_order ASC',
+				));
+			}
+			else
+			{
+				$sql = $this->db->sql_build_query('SELECT', array(
+					'SELECT'	=> '*',
+					'FROM'		=> array(SMILIES_TABLE => ''),
+					'WHERE'		=> "category = 0",
+					'ORDER_BY'	=> 'smiley_order ASC',
+				));
+			}
+			$result = $this->db->sql_query_limit($sql, $this->config['smilies_per_page_cat'], $start);
 			if ($row = $this->db->sql_fetchrow($result))
 			{
 				do
@@ -579,12 +618,12 @@ class admin_controller
 						'HEIGHT'		=> $row['smiley_height'],
 						'CODE'			=> $row['code'],
 						'EMOTION'		=> $row['emotion'],
-						'CATEGORY'		=> $row['cat_name'],
+						'CATEGORY'		=> ($select > 0) ? $row['cat_name'] : $this->language->lang('SC_CATEGORY_DEFAUT'),
 						'U_EDIT'		=> $this->u_action . '&amp;action=edit&amp;id=' . $row['smiley_id'] . '&amp;start=' . $start,
 					));
 
 					$category = $row['category'];
-					$cat_title = ($select) ? $row['cat_name'] : '';
+					$cat_title = ($select > 0) ? $row['cat_name'] : $this->language->lang('SC_CATEGORY_DEFAUT');
 					if (!$spacer_cat && ($category !== $row['category']))
 					{
 						$spacer_cat = true;
@@ -606,10 +645,10 @@ class admin_controller
 				'S_CAT_SELECT'		=> ($select) ? true : false,
 				'CAT_SELECT_TITLE'	=> ($select) ? $this->language->lang('SC_CATEGORY_IN', $list_select['title']) : '',
 				'U_BACK'			=> ($select) ? $this->u_action : false,
-				'U_SELECT_CAT'		=> $this->u_action,
+				'U_SELECT_CAT'		=> $this->u_action . '&amp;select=' . $select,
 			));
 
-			$this->pagination->generate_template_pagination($this->u_action, 'pagination', 'start', $smilies_count, $this->config['smilies_per_page'], $start);
+			$this->pagination->generate_template_pagination($this->u_action . '&amp;select=' . $select, 'pagination', 'start', $smilies_count, $this->config['smilies_per_page_cat'], $start);
 		}
 
 		$this->template->assign_vars(array(

@@ -84,88 +84,86 @@ class main
 		$this->user->setup('posting');
 		$start	= $this->request->variable('start', 0);
 		$cat	= $this->request->variable('select', -1);
+		$cat	= ($cat == -1) ? $this->config['smilies_category_nb'] : $cat;
 		$max_id	= $this->category->get_max_id();
-		$cat	= ($cat == -1) ? $this->category->get_first_order() : $cat;
 		$count	= $this->category->smilies_count($cat);
-		$select	= $this->category->select_categories($cat);
-		$data	= $this->category->get_version();
 		$url	= $this->helper->route('sylver35_smiliescat_controller_smilies_pop');
 		$lang	= $this->user->lang_name;
 		$title	= '';
 		$cat_order = 0;
 
-		if ($cat !== '')
-		{
-			$sql = $this->db->sql_build_query('SELECT', array(
-				'SELECT'	=> 's.smiley_url, MIN(s.smiley_id) AS smiley_id, MIN(s.emotion) AS emotion, MIN(s.code) AS code, MIN(s.smiley_width) AS smiley_width, MIN(s.smiley_height) AS smiley_height, MIN(s.smiley_order) AS min_smiley_order, MIN(s.category) AS category, MIN(c.cat_lang_id) AS cat_lang_id, MIN(c.cat_id) AS cat_id, MIN(c.cat_order) AS cat_order, MIN(c.cat_lang) AS cat_lang, MIN(c.cat_name) AS cat_name, MIN(c.cat_title) AS cat_title, MIN(c.cat_nb) AS cat_nb',
-				'FROM'		=> array(SMILIES_TABLE => 's'),
-				'LEFT_JOIN'	=> array(
-					array(
-						'FROM'	=> array($this->category_table => 'c'),
-						'ON'	=> "cat_id = category AND cat_lang = '$lang'"
-					),
+		$sql_and = ($cat > 0) ? " AND cat_lang = '$lang'" : '';
+		$sql = $this->db->sql_build_query('SELECT', array(
+			'SELECT'	=> 's.*, c.*',
+			'FROM'		=> array(SMILIES_TABLE => 's'),
+			'LEFT_JOIN'	=> array(
+				array(
+					'FROM'	=> array($this->category_table => 'c'),
+					'ON'	=> 'c.cat_id = s.category' . $sql_and,
 				),
-				'WHERE'		=> "category = $cat",
-				'GROUP_BY'	=> 's.smiley_url',
-				'ORDER_BY'	=> 'min_smiley_order ASC',
-			));
-			$result = $this->db->sql_query_limit($sql, $this->config['smilies_per_page'], $start, 3600);
-			if ($row = $this->db->sql_fetchrow($result))
+			),
+			'WHERE'		=> "category = $cat",
+			'ORDER_BY'	=> 'smiley_order ASC',
+		));
+		$result = $this->db->sql_query_limit($sql, $this->config['smilies_per_page_cat'], $start);
+		if ($row = $this->db->sql_fetchrow($result))
+		{
+			do
 			{
-				do
-				{
-					$this->template->assign_block_vars('smilies', array(
-						'SMILEY_CODE'		=> $row['code'],
-						'SMILEY_EMOTION'	=> $row['emotion'],
-						'SMILEY_WIDTH'		=> $row['smiley_width'],
-						'SMILEY_HEIGHT'		=> $row['smiley_height'],
-						'CATEGORY'			=> $row['cat_name'],
-						'SMILEY_SRC'		=> $this->root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
-					));
-					$title = $row['cat_name'];
-				} while ($row = $this->db->sql_fetchrow($result));
-			}
-			$this->db->sql_freeresult($result);
-
-			$start = $this->pagination->validate_start($start, $this->config['smilies_per_page'], $count);
-			$this->pagination->generate_template_pagination($url, 'pagination', 'start', $count, $this->config['smilies_per_page'], $start);
-
-			$i = 0;
-			$sql = $this->db->sql_build_query('SELECT', array(
-				'SELECT'	=> '*',
-				'FROM'		=> array($this->category_table => ''),
-				'WHERE'		=> "cat_lang = '$lang'",
-				'ORDER_BY'	=> 'cat_order ASC',
-			));
-			$result = $this->db->sql_query($sql);
-			while ($row = $this->db->sql_fetchrow($result))
-			{
-				$this->template->assign_block_vars('categories', array(
-					'CLASS'			=> ($row['cat_id'] == $cat) ? 'cat-active' : 'cat-inactive',
-					'SEPARATE'		=> ($i > 0) ? ' - ' : '',
-					'CAT_ID'		=> $row['cat_id'],
-					'CAT_ORDER'		=> $row['cat_order'],
-					'CAT_NAME'		=> $row['cat_name'],
-					'CAT_NB'		=> $row['cat_nb'],
+				$this->template->assign_block_vars('smilies', array(
+					'SMILEY_CODE'		=> $row['code'],
+					'SMILEY_EMOTION'	=> $row['emotion'],
+					'SMILEY_WIDTH'		=> $row['smiley_width'],
+					'SMILEY_HEIGHT'		=> $row['smiley_height'],
+					'CATEGORY'			=> $row['cat_name'],
+					'SMILEY_SRC'		=> $this->root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
 				));
-				$i++;
-				$title = ($row['cat_id'] == $cat) ? $row['cat_name'] : $title;
-				$cat_order = $row['cat_order'];
-			}
-			$this->db->sql_freeresult($result);
+				$title = $row['cat_name'];
+			} while ($row = $this->db->sql_fetchrow($result));
 		}
+		$this->db->sql_freeresult($result);
+
+		$start = $this->pagination->validate_start($start, $this->config['smilies_per_page_cat'], $count);
+		$this->pagination->generate_template_pagination($url . '?select=' . $cat, 'pagination', 'start', $count, $this->config['smilies_per_page_cat'], $start);
+
+		$i = 0;
+		$sql = $this->db->sql_build_query('SELECT', array(
+			'SELECT'	=> '*',
+			'FROM'		=> array($this->category_table => ''),
+			'WHERE'		=> "cat_lang = '$lang'",
+			'ORDER_BY'	=> 'cat_order ASC',
+		));
+		$result = $this->db->sql_query($sql);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$this->template->assign_block_vars('categories', array(
+				'CLASS'			=> ($cat == $row['cat_id']) ? 'cat-active' : 'cat-inactive',
+				'SEPARATE'		=> ($i > 0) ? ' - ' : '',
+				'CAT_ID'		=> $row['cat_id'],
+				'CAT_ORDER'		=> $row['cat_order'],
+				'CAT_NAME'		=> $row['cat_name'],
+				'CAT_NB'		=> $row['cat_nb'],
+			));
+			$i++;
+			$title = ($row['cat_id'] == $cat) ? $row['cat_name'] : $title;
+			$cat_order = $row['cat_order'];
+		}
+		$this->db->sql_freeresult($result);
 
 		// Add the Unclassified category
+		$cat_id = 0;
 		$this->template->assign_block_vars('categories', array(
-			'CLASS'			=> ($cat == 0) ? 'cat-active' : 'cat-inactive',
+			'CLASS'			=> ($cat == $cat_id) ? 'cat-active' : 'cat-inactive',
 			'SEPARATE'		=> ($i > 0) ? ' - ' : '',
-			'CAT_ID'		=> 0,
+			'CAT_ID'		=> $cat_id,
 			'CAT_ORDER'		=> $cat_order + 1,
 			'CAT_NAME'		=> $this->language->lang('SC_CATEGORY_DEFAUT'),
-			'CAT_NB'		=> $this->category->smilies_count_defaut(),
+			'CAT_NB'		=> $this->category->smilies_count($cat_id),
 		));
-		$title = ($cat == 0) ? $this->language->lang('SC_CATEGORY_DEFAUT') : $title;
+		$title = ($cat == $cat_id) ? $this->language->lang('SC_CATEGORY_DEFAUT') : $title;
 
+		$select	= $this->category->select_categories($cat);
+		$data	= $this->category->get_version();
 		$this->template->assign_vars(array(
 			'U_SELECT_CAT'		=> $url,
 			'LIST_CATEGORY'		=> $select['select'],
