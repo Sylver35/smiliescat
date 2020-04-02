@@ -89,51 +89,38 @@ class main
 		$count	= $this->category->smilies_count($cat);
 		$url	= $this->helper->route('sylver35_smiliescat_controller_smilies_pop');
 		$lang	= $this->user->lang_name;
+		$cat_order = $i = $cat_id = 0;
 		$title	= '';
-		$cat_order = 0;
 
-		$sql_and = ($cat > 0) ? " AND cat_lang = '$lang'" : '';
 		$sql = $this->db->sql_build_query('SELECT', array(
-			'SELECT'	=> 's.*, c.*',
-			'FROM'		=> array(SMILIES_TABLE => 's'),
-			'LEFT_JOIN'	=> array(
-				array(
-					'FROM'	=> array($this->category_table => 'c'),
-					'ON'	=> 'c.cat_id = s.category' . $sql_and,
-				),
-			),
+			'SELECT'	=> '*',
+			'FROM'		=> array(SMILIES_TABLE => ''),
 			'WHERE'		=> "category = $cat",
 			'ORDER_BY'	=> 'smiley_order ASC',
 		));
 		$result = $this->db->sql_query_limit($sql, $this->config['smilies_per_page_cat'], $start);
-		if ($row = $this->db->sql_fetchrow($result))
+		while ($row = $this->db->sql_fetchrow($result))
 		{
-			do
-			{
-				$this->template->assign_block_vars('smilies', array(
-					'SMILEY_CODE'		=> $row['code'],
-					'SMILEY_EMOTION'	=> $row['emotion'],
-					'SMILEY_WIDTH'		=> $row['smiley_width'],
-					'SMILEY_HEIGHT'		=> $row['smiley_height'],
-					'CATEGORY'			=> $row['cat_name'],
-					'SMILEY_SRC'		=> $this->root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
-				));
-				$title = $row['cat_name'];
-			} while ($row = $this->db->sql_fetchrow($result));
+			$this->template->assign_block_vars('smilies', array(
+				'SMILEY_CODE'		=> $row['code'],
+				'SMILEY_EMOTION'	=> $row['emotion'],
+				'SMILEY_WIDTH'		=> $row['smiley_width'],
+				'SMILEY_HEIGHT'		=> $row['smiley_height'],
+				'SMILEY_SRC'		=> $this->root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
+			));
 		}
 		$this->db->sql_freeresult($result);
 
 		$start = $this->pagination->validate_start($start, $this->config['smilies_per_page_cat'], $count);
-		$this->pagination->generate_template_pagination($url . '?select=' . $cat, 'pagination', 'start', $count, $this->config['smilies_per_page_cat'], $start);
+		$this->pagination->generate_template_pagination("{$url}?select={$cat}", 'pagination', 'start', $count, $this->config['smilies_per_page_cat'], $start);
 
-		$i = 0;
 		$sql = $this->db->sql_build_query('SELECT', array(
 			'SELECT'	=> '*',
 			'FROM'		=> array($this->category_table => ''),
 			'WHERE'		=> "cat_lang = '$lang'",
 			'ORDER_BY'	=> 'cat_order ASC',
 		));
-		$result = $this->db->sql_query($sql);
+		$result = $this->db->sql_query($sql, 3600);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$this->template->assign_block_vars('categories', array(
@@ -151,16 +138,16 @@ class main
 		$this->db->sql_freeresult($result);
 
 		// Add the Unclassified category
-		$cat_id = 0;
+		$unclassified = $this->language->lang('SC_CATEGORY_DEFAUT');
 		$this->template->assign_block_vars('categories', array(
 			'CLASS'			=> ($cat == $cat_id) ? 'cat-active' : 'cat-inactive',
 			'SEPARATE'		=> ($i > 0) ? ' - ' : '',
 			'CAT_ID'		=> $cat_id,
 			'CAT_ORDER'		=> $cat_order + 1,
-			'CAT_NAME'		=> $this->language->lang('SC_CATEGORY_DEFAUT'),
+			'CAT_NAME'		=> $unclassified,
 			'CAT_NB'		=> $this->category->smilies_count($cat_id),
 		));
-		$title = ($cat == $cat_id) ? $this->language->lang('SC_CATEGORY_DEFAUT') : $title;
+		$title = ($cat == $cat_id) ? $unclassified : $title;
 
 		$select	= $this->category->select_categories($cat);
 		$data	= $this->category->get_version();

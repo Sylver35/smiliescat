@@ -76,7 +76,7 @@ class category
 			'FROM'		=> array(SMILIES_TABLE => ''),
 			'WHERE'		=> $sql_where,
 		));
-		$result = $this->db->sql_query($sql);
+		$result = $this->db->sql_query($sql, 3600);
 		$smilies_count = (int) $this->db->sql_fetchfield('smilies_count');
 		$this->db->sql_freeresult($result);
 
@@ -97,7 +97,7 @@ class category
 			FROM ' . $this->category_table . "
 				WHERE cat_lang = '$lang'
 				ORDER BY cat_order ASC";
-		$result = $this->db->sql_query($sql);
+		$result = $this->db->sql_query($sql, 3600);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$selected = ($cat == $row['cat_id']) ? ' selected="selected"' : '';
@@ -124,7 +124,7 @@ class category
 		// Get max order id...
 		$sql = 'SELECT MAX(cat_order) AS maxi
 			FROM ' . $this->category_table;
-		$result = $this->db->sql_query($sql);
+		$result = $this->db->sql_query($sql, 3600);
 		$max = (int) $this->db->sql_fetchfield('maxi', $result);
 		$this->db->sql_freeresult($result);
 
@@ -136,7 +136,7 @@ class category
 		// Get max id...
 		$sql = 'SELECT MAX(cat_id) AS id_max
 			FROM ' . $this->category_table;
-		$result = $this->db->sql_query($sql);
+		$result = $this->db->sql_query($sql, 3600);
 		$id_max = (int) $this->db->sql_fetchfield('id_max', $result);
 		$this->db->sql_freeresult($result);
 
