@@ -106,10 +106,10 @@ class main
 					),
 				),
 				'WHERE'		=> "category = $cat",
-				'GROUP_BY'	=> 'smiley_url',
+				'GROUP_BY'	=> 's.smiley_url',
 				'ORDER_BY'	=> 'min_smiley_order ASC',
 			));
-			$result = $this->db->sql_query_limit($sql, $this->config['smilies_per_page'], $start);
+			$result = $this->db->sql_query_limit($sql, $this->config['smilies_per_page'], $start, 3600);
 			if ($row = $this->db->sql_fetchrow($result))
 			{
 				do
