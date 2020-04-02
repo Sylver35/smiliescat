@@ -17,12 +17,12 @@ class main_info
 			'filename'	=> '\sylver35\smiliescat\acp\main_module',
 			'title'		=> 'ACP_SC_CATEGORY',
 			'modes'		=> array(
-				'config'		=> array(
+				'config'	=> array(
 					'title'	=> 'ACP_SC_CATEGORY',
 					'auth'	=> 'ext_sylver35/smiliescat && acl_a_icons',
 					'cat'	=> array('ACP_MESSAGES'),
 				),
-				'smilies'			=> array(
+				'smilies'	=> array(
 					'title'	=> 'ACP_SC_SMILIES',
 					'auth'	=> 'ext_sylver35/smiliescat && acl_a_icons',
 					'cat'	=> array('ACP_MESSAGES'),
