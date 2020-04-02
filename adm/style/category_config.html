@@ -133,6 +133,26 @@
 	{{ S_FORM_TOKEN }}
 	</fieldset>
 	</form>
+	
+	<form id="smiliescat_config" method="post" action="{{ U_ACTION_CONFIG }}">
+	<fieldset>
+		<legend>{{ lang('SC_CONFIG_TITLE') }}</legend>
+			
+			<dl>
+				<dt><label for="smilies_per_page_cat">{{ lang('SC_CONFIG_PAGE') }}{{ lang('COLON') }}</label><br /><span>{{ lang('SC_CONFIG_EXPLAIN') }}</span></dt>
+				<dd>
+					<input id="smilies_per_page_cat" type="number" max="99" name="smilies_per_page_cat" value="{{ SMILIES_PER_PAGE_CAT }}">
+				</dd>
+			</dl>
+			
+			<p class="submit-buttons">
+				<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
+				<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+			</p>
+		
+	</fieldset>
+	{{ S_FORM_TOKEN }}
+	</form>
 {% endif %}
 
 <p style="text-align: center;"><em>{{ CATEGORY_VERSION }}</em></p>
