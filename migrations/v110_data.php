@@ -15,7 +15,7 @@ class v110_data extends migration
 {
 	public function effectively_installed()
 	{
-		return isset($this->config['smilies_category_nb']);
+		return isset($this->config['smilies_per_page_cat']);
 	}
 
 	static public function depends_on()
@@ -30,6 +30,7 @@ class v110_data extends migration
 		return array(
 			// Config
 			array('config.add', array('smilies_category_nb', 0)),
+			array('config.add', array('smilies_per_page_cat', 20)),
 
 			// Add ACP modules
 			array('module.add', array('acp', 'ACP_MESSAGES', array(
