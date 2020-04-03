@@ -63,7 +63,7 @@ class listener implements EventSubscriberInterface
 	public function add_page_header()
 	{
 		$this->template->assign_vars(array(
-			'U_CATEGORY_POPUP'		=> $this->helper->route('sylver35_smiliescat_controller_smilies_pop'),
+			'U_CATEGORY_POPUP'		=> $this->helper->route('sylver35_smiliescat_smilies_pop'),
 		));
 	}
 

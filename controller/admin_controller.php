@@ -520,7 +520,6 @@ class admin_controller
 					$result = $this->db->sql_query($sql);
 					$row = $this->db->sql_fetchrow($result);
 
-					$list_select = $this->category->select_categories($row['cat_id'], true);
 					$this->template->assign_vars(array(
 						'WIDTH'				=> $row['smiley_width'],
 						'HEIGHT'			=> $row['smiley_height'],
@@ -528,7 +527,7 @@ class admin_controller
 						'EMOTION'			=> $row['emotion'],
 						'CATEGORY'			=> $row['cat_name'],
 						'EX_CAT'			=> ($row['cat_id']) ? $row['cat_id'] : 0,
-						'SELECT_CATEGORY'	=> $list_select['select'],
+						'SELECT_CATEGORY'	=> $this->category->select_categories($row['cat_id'], true),
 						'IMG_SRC'			=> $this->root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
 						'U_MODIFY'			=> $this->u_action . '&amp;action=modify&amp;id=' . $row['smiley_id'] . '&amp;start=' . $start,
 						'U_BACK'			=> $this->u_action,
@@ -574,10 +573,11 @@ class admin_controller
 		}
 		else
 		{
-			$category		= 0;
+			$category		= $i = 0;
+			$url			= '';
 			$spacer_cat		= false;
 			$smilies_count	= $this->category->smilies_count($select);
-			$list_select	= $this->category->select_categories($select);
+			$cat_title		= $this->language->lang('SC_CATEGORY_DEFAUT');
 			$where			= ($select !== -1) ? "cat_id = $select" : 'smiley_id > 0';
 
 			if ($select !== 0)
@@ -591,7 +591,7 @@ class admin_controller
 							'ON'	=> "cat_id = category AND cat_lang = '$lang'",
 						),
 					),
-					'WHERE'		=> "$where AND s.code <> ''",
+					'WHERE'		=> "$where AND code <> ''",
 					'ORDER_BY'	=> 'cat_order ASC, smiley_order ASC',
 				));
 			}
@@ -605,45 +605,43 @@ class admin_controller
 				));
 			}
 			$result = $this->db->sql_query_limit($sql, $this->config['smilies_per_page_cat'], $start);
-			if ($row = $this->db->sql_fetchrow($result))
+			while ($row = $this->db->sql_fetchrow($result))
 			{
-				do
+				if ($url === $row['smiley_url'])
 				{
-					$title = (!$row['category']) ? $this->language->lang('SC_SMILIES_NO_CATEGORY') : $this->language->lang('SC_CATEGORY_IN', $row['cat_name']);
-					$this->template->assign_block_vars('items', array(
-						'S_SPACER_CAT'	=> (!$spacer_cat && ($category !== $row['category'])) ? true : false,
-						'SPACER_CAT'	=> $title,
-						'IMG_SRC'		=> $this->root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
-						'WIDTH'			=> $row['smiley_width'],
-						'HEIGHT'		=> $row['smiley_height'],
-						'CODE'			=> $row['code'],
-						'EMOTION'		=> $row['emotion'],
-						'CATEGORY'		=> ($select > 0) ? $row['cat_name'] : $this->language->lang('SC_CATEGORY_DEFAUT'),
-						'U_EDIT'		=> $this->u_action . '&amp;action=edit&amp;id=' . $row['smiley_id'] . '&amp;start=' . $start,
-					));
-
-					$category = $row['category'];
-					$cat_title = ($select > 0) ? $row['cat_name'] : $this->language->lang('SC_CATEGORY_DEFAUT');
-					if (!$spacer_cat && ($category !== $row['category']))
-					{
-						$spacer_cat = true;
-					}
-				} while ($row = $this->db->sql_fetchrow($result));
-				$empty_row = false;
-			}
-			else
-			{
-				$empty_row = true;
+					continue;
+				}
+				$title = ($row['category'] == 0) ? $this->language->lang('SC_SMILIES_NO_CATEGORY') : $this->language->lang('SC_CATEGORY_IN', $row['cat_name']);
+				$this->template->assign_block_vars('items', array(
+					'S_SPACER_CAT'	=> (!$spacer_cat && ($category !== $row['category'])) ? true : false,
+					'SPACER_CAT'	=> $title,
+					'IMG_SRC'		=> $this->root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
+					'WIDTH'			=> $row['smiley_width'],
+					'HEIGHT'		=> $row['smiley_height'],
+					'CODE'			=> $row['code'],
+					'EMOTION'		=> $row['emotion'],
+					'CATEGORY'		=> isset($row['cat_name']) ? $row['cat_name'] : '',
+					'U_EDIT'		=> $this->u_action . '&amp;action=edit&amp;id=' . $row['smiley_id'] . '&amp;start=' . $start,
+				));
+				$i++;
+				$url = $row['smiley_url'];
+				$category = $row['category'];
+				$cat_title = ($select > 0) ? $row['cat_name'] : $cat_title;
+				if (!$spacer_cat && ($category !== $row['category']))
+				{
+					$spacer_cat = true;
+				}
 			}
 			$this->db->sql_freeresult($result);
+			$empty_row = ($i == 0) ? true : false;
 
 			$this->template->assign_vars(array(
 				'NB_SMILIES'		=> $smilies_count,
 				'EMPTY_ROW'			=> $empty_row,
-				'LIST_CATEGORY'		=> $list_select['select'],
+				'LIST_CATEGORY'		=> $this->category->select_categories($select),
 				'S_SPACER_ANY'		=> ($category === 0) ? true : false,
 				'S_CAT_SELECT'		=> ($select) ? true : false,
-				'CAT_SELECT_TITLE'	=> ($select) ? $this->language->lang('SC_CATEGORY_IN', $list_select['title']) : '',
+				'CAT_SELECT_TITLE'	=> ($select) ? $this->language->lang('SC_CATEGORY_IN', $cat_title) : '',
 				'U_BACK'			=> ($select) ? $this->u_action : false,
 				'U_SELECT_CAT'		=> $this->u_action . '&amp;select=' . $select,
 			));

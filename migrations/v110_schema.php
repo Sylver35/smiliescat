@@ -23,28 +23,6 @@ class v110_schema extends migration
 		return array('\phpbb\db\migration\data\v32x\v328');
 	}
 
-	public function update_data()
-	{
-		return array(
-			// Config
-			array('config.add', array('smilies_category_nb', 0)),
-
-			// Add ACP modules
-			array('module.add', array('acp', 'ACP_MESSAGES', array(
-				'module_basename'	=> '\sylver35\smiliescat\acp\main_module',
-				'module_langname'	=> 'ACP_SC_SMILIES',
-				'module_mode'		=> 'smilies',
-				'module_auth'		=> 'ext_sylver35/smiliescat && acl_a_icons',
-			))),
-			array('module.add', array('acp', 'ACP_MESSAGES', array(
-				'module_basename'	=> '\sylver35\smiliescat\acp\main_module',
-				'module_langname'	=> 'ACP_SC_CONFIG',
-				'module_mode'		=> 'config',
-				'module_auth'		=> 'ext_sylver35/smiliescat && acl_a_icons',
-			))),
-		);
-	}
-
 	public function update_schema()
 	{
 		return array(

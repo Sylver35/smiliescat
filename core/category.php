@@ -62,7 +62,8 @@ class category
 				'version'	=> $meta['version'],
 				'homepage'	=> $meta['homepage'],
 			);
-			$this->cache->put('_smiliescat_version', $data, 604800);// cache for 7 days
+			// cache for 7 days
+			$this->cache->put('_smiliescat_version', $data, 604800);
 		}
 
 		return $data;
@@ -72,7 +73,7 @@ class category
 	{
 		$sql_where = ($cat == -1) ? "code <> ''" : "category = $cat";
 		$sql = $this->db->sql_build_query('SELECT', array(
-			'SELECT'	=> 'COUNT(smiley_id) AS smilies_count',
+			'SELECT'	=> 'COUNT(DISTINCT smiley_url) AS smilies_count',
 			'FROM'		=> array(SMILIES_TABLE => ''),
 			'WHERE'		=> $sql_where,
 		));
@@ -108,10 +109,7 @@ class category
 		$selected_defaut = ($cat == 0) ? ' selected="selected"' : '';
 		$select .= '<option title="' . $this->language->lang('SC_CATEGORY_DEFAUT') . '" value="0"' . $selected_defaut . '> ' . $this->language->lang('SC_CATEGORY_DEFAUT') . '</option>';
 
-		return array(
-			'select'	=> $select,
-			'title'		=> $row['cat_title'],
-		);
+		return $select;
 	}
 
 	public function capitalize($var)
@@ -159,7 +157,7 @@ class category
 
 	public function shoutbox_smilies($event)
 	{
-		$i = $cat_order = 0;
+		$i = $cat_order = $cat_id = 0;
 		$list_cat = [];
 		$lang = $this->user->lang_name;
 
@@ -186,7 +184,6 @@ class category
 		if ($i > 0)
 		{
 			// Add the Unclassified category
-			$cat_id = 0;
 			$list_cat[$i] = array(
 				'cat_id'		=> $cat_id,
 				'cat_order'		=> $cat_order + 1,
@@ -207,7 +204,7 @@ class category
 		if ($cat > -1)
 		{
 			$i = 0;
-			$title = '';
+			$title = $url = '';
 			$smilies = array();
 			$lang = $this->user->lang_name;
 
@@ -236,6 +233,10 @@ class category
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
 			{
+				if ($url === $row['smiley_url'])
+				{
+					continue;
+				}
 				$smilies[$i] = array(
 					'nb'		=> $i,
 					'code'		=> $row['code'],
@@ -245,6 +246,7 @@ class category
 					'image'		=> $row['smiley_url'],
 				);
 				$i++;
+				$url = $row['smiley_url'];
 			}
 
 			$empty_row = ($i == 0) ? $this->language->lang('SC_SMILIES_EMPTY_CATEGORY') : false;

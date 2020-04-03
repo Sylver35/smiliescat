@@ -78,7 +78,6 @@ class main
 	/**
 	* @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
 	*/
-
 	public function popup_smilies_category()
 	{
 		$this->user->setup('posting');
@@ -87,10 +86,10 @@ class main
 		$cat	= ($cat == -1) ? $this->config['smilies_category_nb'] : $cat;
 		$max_id	= $this->category->get_max_id();
 		$count	= $this->category->smilies_count($cat);
-		$url	= $this->helper->route('sylver35_smiliescat_controller_smilies_pop');
+		$url	= $this->helper->route('sylver35_smiliescat_smilies_pop');
 		$lang	= $this->user->lang_name;
-		$cat_order = $i = $cat_id = 0;
-		$title	= '';
+		$title	= $smiley_url = '';
+		$cat_id	= $cat_order = $i = 0;
 
 		$sql = $this->db->sql_build_query('SELECT', array(
 			'SELECT'	=> '*',
@@ -101,6 +100,10 @@ class main
 		$result = $this->db->sql_query_limit($sql, $this->config['smilies_per_page_cat'], $start);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
+			if ($smiley_url === $row['smiley_url'])
+			{
+				continue;
+			}
 			$this->template->assign_block_vars('smilies', array(
 				'SMILEY_CODE'		=> $row['code'],
 				'SMILEY_EMOTION'	=> $row['emotion'],
@@ -108,6 +111,7 @@ class main
 				'SMILEY_HEIGHT'		=> $row['smiley_height'],
 				'SMILEY_SRC'		=> $this->root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
 			));
+			$smiley_url = $row['smiley_url'];
 		}
 		$this->db->sql_freeresult($result);
 
@@ -149,11 +153,10 @@ class main
 		));
 		$title = ($cat == $cat_id) ? $unclassified : $title;
 
-		$select	= $this->category->select_categories($cat);
 		$data	= $this->category->get_version();
 		$this->template->assign_vars(array(
 			'U_SELECT_CAT'		=> $url,
-			'LIST_CATEGORY'		=> $select['select'],
+			'LIST_CATEGORY'		=> $this->category->select_categories($cat),
 			'POPUP_TITLE'		=> $this->language->lang('SC_CATEGORY_IN', $title),
 			'SC_VERSION'		=> $this->language->lang('SC_VERSION_COPY', $data['homepage'], $data['version']),
 		));
