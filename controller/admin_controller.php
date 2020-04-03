@@ -574,7 +574,7 @@ class admin_controller
 		else
 		{
 			$category		= $i = 0;
-			$url			= '';
+			$smiley_url		= '';
 			$spacer_cat		= false;
 			$smilies_count	= $this->category->smilies_count($select);
 			$cat_title		= $this->language->lang('SC_CATEGORY_DEFAUT');
@@ -607,7 +607,7 @@ class admin_controller
 			$result = $this->db->sql_query_limit($sql, $this->config['smilies_per_page_cat'], $start);
 			while ($row = $this->db->sql_fetchrow($result))
 			{
-				if ($url === $row['smiley_url'])
+				if ($smiley_url === $row['smiley_url'])
 				{
 					continue;
 				}
@@ -620,11 +620,11 @@ class admin_controller
 					'HEIGHT'		=> $row['smiley_height'],
 					'CODE'			=> $row['code'],
 					'EMOTION'		=> $row['emotion'],
-					'CATEGORY'		=> isset($row['cat_name']) ? $row['cat_name'] : '',
+					'CATEGORY'		=> (isset($row['cat_name'])) ? $row['cat_name'] : '',
 					'U_EDIT'		=> $this->u_action . '&amp;action=edit&amp;id=' . $row['smiley_id'] . '&amp;start=' . $start,
 				));
 				$i++;
-				$url = $row['smiley_url'];
+				$smiley_url = $row['smiley_url'];
 				$category = $row['category'];
 				$cat_title = ($select > 0) ? $row['cat_name'] : $cat_title;
 				if (!$spacer_cat && ($category !== $row['category']))

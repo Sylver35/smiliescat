@@ -77,7 +77,7 @@ class category
 			'FROM'		=> array(SMILIES_TABLE => ''),
 			'WHERE'		=> $sql_where,
 		));
-		$result = $this->db->sql_query($sql, 3600);
+		$result = $this->db->sql_query($sql);
 		$smilies_count = (int) $this->db->sql_fetchfield('smilies_count');
 		$this->db->sql_freeresult($result);
 
