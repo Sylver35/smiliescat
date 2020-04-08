@@ -98,7 +98,7 @@ class category
 			FROM ' . $this->category_table . "
 				WHERE cat_lang = '$lang'
 				ORDER BY cat_order ASC";
-		$result = $this->db->sql_query($sql, 3600);
+		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$selected = ($cat == $row['cat_id']) ? ' selected="selected"' : '';
@@ -122,7 +122,7 @@ class category
 		// Get max order id...
 		$sql = 'SELECT MAX(cat_order) AS maxi
 			FROM ' . $this->category_table;
-		$result = $this->db->sql_query($sql, 3600);
+		$result = $this->db->sql_query($sql);
 		$max = (int) $this->db->sql_fetchfield('maxi', $result);
 		$this->db->sql_freeresult($result);
 
@@ -134,7 +134,7 @@ class category
 		// Get max id...
 		$sql = 'SELECT MAX(cat_id) AS id_max
 			FROM ' . $this->category_table;
-		$result = $this->db->sql_query($sql, 3600);
+		$result = $this->db->sql_query($sql);
 		$id_max = (int) $this->db->sql_fetchfield('id_max', $result);
 		$this->db->sql_freeresult($result);
 
@@ -204,7 +204,7 @@ class category
 		if ($cat > -1)
 		{
 			$i = 0;
-			$title = $url = '';
+			$title = '';
 			$smilies = array();
 			$lang = $this->user->lang_name;
 
@@ -225,18 +225,15 @@ class category
 			}
 
 			$sql = $this->db->sql_build_query('SELECT', array(
-				'SELECT'	=> '*',
+				'SELECT'	=> 'smiley_url, MIN(smiley_id) AS smiley_id, MIN(code) AS code, MIN(smiley_order) AS min_smiley_order, MIN(smiley_width) AS smiley_width, MIN(smiley_height) AS smiley_height, MIN(emotion) AS emotion, MIN(display_on_shout) AS display_on_shout',
 				'FROM'		=> array(SMILIES_TABLE => ''),
 				'WHERE'		=> "category = $cat",
-				'ORDER_BY'	=> 'smiley_order ASC',
+				'GROUP_BY'	=> 'smiley_url',
+				'ORDER_BY'	=> 'min_smiley_order ASC',
 			));
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
 			{
-				if ($url === $row['smiley_url'])
-				{
-					continue;
-				}
 				$smilies[$i] = array(
 					'nb'		=> $i,
 					'code'		=> $row['code'],
@@ -246,7 +243,6 @@ class category
 					'image'		=> $row['smiley_url'],
 				);
 				$i++;
-				$url = $row['smiley_url'];
 			}
 
 			$empty_row = ($i == 0) ? $this->language->lang('SC_SMILIES_EMPTY_CATEGORY') : false;
