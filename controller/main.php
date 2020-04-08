@@ -13,6 +13,7 @@ use sylver35\smiliescat\core\category;
 use phpbb\request\request;
 use phpbb\config\config;
 use phpbb\controller\helper;
+use phpbb\path_helper;
 use phpbb\db\driver\driver_interface as db;
 use phpbb\template\template;
 use phpbb\user;
@@ -32,6 +33,9 @@ class main
 
 	/* @var \phpbb\controller\helper */
 	protected $helper;
+
+	/* @var \phpbb\path_helper */
+	protected $path_helper;
 
 	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
@@ -60,12 +64,13 @@ class main
 	/**
 	* Constructor
 	*/
-	public function __construct(category $category, request $request, config $config, helper $helper, db $db, template $template, user $user, language $language, pagination $pagination, $root_path, $smilies_category_table)
+	public function __construct(category $category, request $request, config $config, helper $helper, path_helper $path_helper, db $db, template $template, user $user, language $language, pagination $pagination, $root_path, $smilies_category_table)
 	{
 		$this->category			= $category;
 		$this->request			= $request;
 		$this->config			= $config;
 		$this->helper			= $helper;
+		$this->path_helper		= $path_helper;
 		$this->db 				= $db;
 		$this->template			= $template;
 		$this->user				= $user;
@@ -80,7 +85,8 @@ class main
 	*/
 	public function popup_smilies_category()
 	{
-		$this->user->setup('posting');
+		$title	= '';
+		$cat_id	= $cat_order = $i = 0;
 		$start	= $this->request->variable('start', 0);
 		$cat	= $this->request->variable('select', -1);
 		$cat	= ($cat == -1) ? $this->config['smilies_category_nb'] : $cat;
@@ -88,30 +94,25 @@ class main
 		$count	= $this->category->smilies_count($cat);
 		$url	= $this->helper->route('sylver35_smiliescat_smilies_pop');
 		$lang	= $this->user->lang_name;
-		$title	= $smiley_url = '';
-		$cat_id	= $cat_order = $i = 0;
+		$root_path = (defined('PHPBB_USE_BOARD_URL_PATH') && PHPBB_USE_BOARD_URL_PATH) ? generate_board_url() . '/' : $this->path_helper->get_web_root_path();
 
 		$sql = $this->db->sql_build_query('SELECT', array(
-			'SELECT'	=> '*',
+			'SELECT'	=> 'smiley_url, MIN(smiley_id) AS smiley_id, MIN(code) AS code, MIN(smiley_order) AS min_smiley_order, MIN(smiley_width) AS smiley_width, MIN(smiley_height) AS smiley_height, MIN(emotion) AS emotion, MIN(display_on_shout) AS display_on_shout',
 			'FROM'		=> array(SMILIES_TABLE => ''),
 			'WHERE'		=> "category = $cat",
-			'ORDER_BY'	=> 'smiley_order ASC',
+			'GROUP_BY'	=> 'smiley_url',
+			'ORDER_BY'	=> 'min_smiley_order ASC',
 		));
 		$result = $this->db->sql_query_limit($sql, $this->config['smilies_per_page_cat'], $start);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			if ($smiley_url === $row['smiley_url'])
-			{
-				continue;
-			}
 			$this->template->assign_block_vars('smilies', array(
 				'SMILEY_CODE'		=> $row['code'],
 				'SMILEY_EMOTION'	=> $row['emotion'],
 				'SMILEY_WIDTH'		=> $row['smiley_width'],
 				'SMILEY_HEIGHT'		=> $row['smiley_height'],
-				'SMILEY_SRC'		=> $this->root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
+				'SMILEY_SRC'		=> $root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
 			));
-			$smiley_url = $row['smiley_url'];
 		}
 		$this->db->sql_freeresult($result);
 
@@ -153,7 +154,7 @@ class main
 		));
 		$title = ($cat == $cat_id) ? $unclassified : $title;
 
-		$data	= $this->category->get_version();
+		$data = $this->category->get_version();
 		$this->template->assign_vars(array(
 			'U_SELECT_CAT'		=> $url,
 			'LIST_CATEGORY'		=> $this->category->select_categories($cat),

@@ -78,7 +78,7 @@ class admin_controller
 		$this->category_table		= $smilies_category_table;
 	}
 
-	public function acp_category_config()
+	public function acp_categories_config()
 	{
 		$this->language->add_lang('acp/language');
 		$mode		= $this->request->variable('mode', '');
@@ -322,7 +322,7 @@ class admin_controller
 					$title = $row['cat_title'];
 					$this->db->sql_freeresult($result);
 
-					if ($current_order == 0 && $action == 'move_up')
+					if ($current_order == 1 && $action == 'move_up')
 					{
 						break;
 					}
