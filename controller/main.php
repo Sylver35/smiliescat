@@ -56,33 +56,33 @@ class main
 	protected $root_path;
 
 	/**
-	* The database tables
-	*
-	* @var string */
+	 * The database tables
+	 *
+	 * @var string */
 	protected $smilies_category_table;
 
 	/**
-	* Constructor
-	*/
+	 * Constructor
+	 */
 	public function __construct(category $category, request $request, config $config, helper $helper, path_helper $path_helper, db $db, template $template, user $user, language $language, pagination $pagination, $root_path, $smilies_category_table)
 	{
-		$this->category			= $category;
-		$this->request			= $request;
-		$this->config			= $config;
-		$this->helper			= $helper;
-		$this->path_helper		= $path_helper;
-		$this->db 				= $db;
-		$this->template			= $template;
-		$this->user				= $user;
-		$this->language			= $language;
-		$this->pagination		= $pagination;
-		$this->root_path		= $root_path;
-		$this->category_table	= $smilies_category_table;
+		$this->category = $category;
+		$this->request = $request;
+		$this->config = $config;
+		$this->helper = $helper;
+		$this->path_helper = $path_helper;
+		$this->db = $db;
+		$this->template = $template;
+		$this->user = $user;
+		$this->language = $language;
+		$this->pagination = $pagination;
+		$this->root_path = $root_path;
+		$this->category_table = $smilies_category_table;
 	}
 
 	/**
-	* @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
-	*/
+	 * @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
+	 */
 	public function popup_smilies_category()
 	{
 		$title	= '';
@@ -97,7 +97,7 @@ class main
 		$root_path = (defined('PHPBB_USE_BOARD_URL_PATH') && PHPBB_USE_BOARD_URL_PATH) ? generate_board_url() . '/' : $this->path_helper->get_web_root_path();
 
 		$sql = $this->db->sql_build_query('SELECT', array(
-			'SELECT'	=> 'smiley_url, MIN(smiley_id) AS smiley_id, MIN(code) AS code, MIN(smiley_order) AS min_smiley_order, MIN(smiley_width) AS smiley_width, MIN(smiley_height) AS smiley_height, MIN(emotion) AS emotion, MIN(display_on_shout) AS display_on_shout',
+			'SELECT'	=> 'smiley_url, MIN(smiley_id) AS smiley_id, MIN(code) AS code, MIN(smiley_order) AS min_smiley_order, MIN(smiley_width) AS smiley_width, MIN(smiley_height) AS smiley_height, MIN(emotion) AS emotion',
 			'FROM'		=> array(SMILIES_TABLE => ''),
 			'WHERE'		=> "category = $cat",
 			'GROUP_BY'	=> 'smiley_url',

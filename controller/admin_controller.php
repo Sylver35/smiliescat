@@ -55,37 +55,37 @@ class admin_controller
 	protected $u_action;
 
 	/**
-	* The database tables
-	*
-	* @var string */
+	 * The database tables
+	 *
+	 * @var string */
 	protected $smilies_category_table;
 
 	/**
-	* Constructor
-	*/
+	 * Constructor
+	 */
 	public function __construct(category $category, config $config, db $db, pagination $pagination, request $request, template $template, user $user, language $language, log $log, $root_path, $smilies_category_table)
 	{
-		$this->category				= $category;
-		$this->config				= $config;
-		$this->db					= $db;
-		$this->pagination			= $pagination;
-		$this->request				= $request;
-		$this->template				= $template;
-		$this->user					= $user;
-		$this->language				= $language;
-		$this->log					= $log;
-		$this->root_path			= $root_path;
-		$this->category_table		= $smilies_category_table;
+		$this->category = $category;
+		$this->config = $config;
+		$this->db = $db;
+		$this->pagination = $pagination;
+		$this->request = $request;
+		$this->template = $template;
+		$this->user = $user;
+		$this->language = $language;
+		$this->log = $log;
+		$this->root_path = $root_path;
+		$this->category_table = $smilies_category_table;
 	}
 
 	public function acp_categories_config()
 	{
 		$this->language->add_lang('acp/language');
-		$mode		= $this->request->variable('mode', '');
-		$action		= $this->request->variable('action', '');
-		$id			= $this->request->variable('id', 0);
-		$empty_row	= false;
-		$form_key	= 'sylver35/smiliescat';
+		$mode = $this->request->variable('mode', '');
+		$action = $this->request->variable('action', '');
+		$id = $this->request->variable('id', 0);
+		$empty_row = false;
+		$form_key = 'sylver35/smiliescat';
 		add_form_key($form_key);
 
 		if ($action)
@@ -152,9 +152,9 @@ class admin_controller
 					$result = $this->db->sql_query($sql);
 					while ($row = $this->db->sql_fetchrow($result))
 					{
-						$iso	= $row['lang_iso'];
-						$lang	= $this->request->variable("lang_$iso", '', true);
-						$name	= $this->request->variable("name_$iso", '', true);
+						$iso = $row['lang_iso'];
+						$lang = $this->request->variable("lang_$iso", '', true);
+						$name = $this->request->variable("name_$iso", '', true);
 						if ($name === '')
 						{
 							trigger_error($this->language->lang('SC_CATEGORY_ERROR', $this->language->lang('SC_CATEGORY_NAME')) . adm_back_link($this->u_action . '&amp;action=add'), E_USER_WARNING);
@@ -216,9 +216,9 @@ class admin_controller
 						));
 						$i++;
 						$list_id[$i] = $row['lang_id'];
-						$cat_id		= $row['cat_id'];
-						$cat_order	= $row['cat_order'];
-						$title		= $row['cat_title'];
+						$cat_id = $row['cat_id'];
+						$cat_order = $row['cat_order'];
+						$title = $row['cat_title'];
 					}
 					$this->db->sql_freeresult($result);
 
@@ -268,11 +268,11 @@ class admin_controller
 					$result = $this->db->sql_query($sql);
 					while ($row = $this->db->sql_fetchrow($result))
 					{
-						$iso	= $row['lang_iso'];
-						$lang	= $this->request->variable("lang_$iso", '', true);
-						$name	= $this->request->variable("name_$iso", '', true);
-						$sort	= $this->request->variable("sort_$iso", '');
-						$order	= $this->request->variable('order', 0);
+						$iso = $row['lang_iso'];
+						$lang = $this->request->variable("lang_$iso", '', true);
+						$name = $this->request->variable("name_$iso", '', true);
+						$sort = $this->request->variable("sort_$iso", '');
+						$order = $this->request->variable('order', 0);
 						if ($name === '')
 						{
 							trigger_error($this->language->lang('SC_CATEGORY_ERROR', $this->language->lang('SC_CATEGORY_NAME')) . adm_back_link($this->u_action . '&amp;action=edit&amp;id=' . $id), E_USER_WARNING);
@@ -493,12 +493,12 @@ class admin_controller
 	public function acp_smilies_category()
 	{
 		$this->language->add_lang('acp/posting');
-		$action		= $this->request->variable('action', '');
-		$start		= $this->request->variable('start', 0);
-		$select		= $this->request->variable('select', -1);
-		$id			= $this->request->variable('id', -1);
-		$lang		= $this->user->lang_name;
-		$form_key	= 'sylver35/smiliescat';
+		$action = $this->request->variable('action', '');
+		$start = $this->request->variable('start', 0);
+		$select = $this->request->variable('select', -1);
+		$id = $this->request->variable('id', -1);
+		$lang = $this->user->lang_name;
+		$form_key = 'sylver35/smiliescat';
 		add_form_key($form_key);
 
 		if ($action)
@@ -573,12 +573,12 @@ class admin_controller
 		}
 		else
 		{
-			$category		= $i = 0;
-			$smiley_url		= '';
-			$spacer_cat		= false;
-			$smilies_count	= $this->category->smilies_count($select);
-			$cat_title		= $this->language->lang('SC_CATEGORY_DEFAUT');
-			$where			= ($select !== -1) ? "cat_id = $select" : 'smiley_id > 0';
+			$category = $i = 0;
+			$smiley_url = '';
+			$spacer_cat = false;
+			$smilies_count = $this->category->smilies_count($select);
+			$cat_title = $this->language->lang('SC_CATEGORY_DEFAUT');
+			$where = ($select !== -1) ? "cat_id = $select" : 'smiley_id > 0';
 
 			if ($select !== 0)
 			{
