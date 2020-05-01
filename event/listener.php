@@ -16,7 +16,7 @@ use phpbb\template\template;
 
 class listener implements EventSubscriberInterface
 {
-	/* @var \sylver35\breizh\core\category */
+	/* @var \sylver35\category\core\category */
 	protected $category;
 
 	/* @var \phpbb\controller\helper */
@@ -27,9 +27,9 @@ class listener implements EventSubscriberInterface
 
 	public function __construct(category $category, helper $helper, template $template)
 	{
-		$this->category		= $category;
-		$this->helper		= $helper;
-		$this->template		= $template;
+		$this->category = $category;
+		$this->helper = $helper;
+		$this->template = $template;
 	}
 
 	static public function getSubscribedEvents()
