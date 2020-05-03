@@ -45,8 +45,7 @@ class main_module
 		$language->add_lang('smilies_category', 'sylver35/smiliescat');
 		$this->tpl_name = 'category_' . $mode;
 		$this->page_title = 'ACP_SC_' . strtoupper($mode);
-		$meta = $category->get_version();
-		$on_id = $id;
+		$meta = $category->get_version($id);
 
 		switch ($mode)
 		{
