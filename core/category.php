@@ -33,9 +33,9 @@ class category
 	protected $ext_manager;
 
 	/**
-	* The database tables
-	*
-	* @var string */
+	 * The database tables
+	 *
+	 * @var string */
 	protected $smilies_category_table;
 
 	/**
@@ -43,12 +43,12 @@ class category
 	 */
 	public function __construct(cache $cache, db $db, user $user, language $language, manager $ext_manager, $smilies_category_table)
 	{
-		$this->cache			= $cache;
-		$this->db				= $db;
-		$this->user				= $user;
-		$this->language			= $language;
-		$this->ext_manager		= $ext_manager;
-		$this->category_table	= $smilies_category_table;
+		$this->cache = $cache;
+		$this->db = $db;
+		$this->user = $user;
+		$this->language = $language;
+		$this->ext_manager = $ext_manager;
+		$this->category_table = $smilies_category_table;
 	}
 
 	public function get_version()

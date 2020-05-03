@@ -25,6 +25,9 @@ class listener implements EventSubscriberInterface
 	/** @var \phpbb\template\template */
 	protected $template;
 
+	/**
+	 * Constructor
+	 */
 	public function __construct(category $category, helper $helper, template $template)
 	{
 		$this->category = $category;
