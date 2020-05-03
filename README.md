@@ -1,5 +1,8 @@
 # Breizh Smilies Categories Extension
 
+[![Build Status](https://scrutinizer-ci.com/g/Sylver35/smiliescat/badges/build.png?b=1.1.0)](https://scrutinizer-ci.com/g/Sylver35/smiliescat/build-status/1.1.0)
+[![Code Intelligence Status](https://scrutinizer-ci.com/g/Sylver35/smiliescat/badges/code-intelligence.svg?b=1.1.0)](https://scrutinizer-ci.com/code-intelligence)
+
 ## Minimum Requirements
 * phpBB 3.3.0
 * PHP 7.1.3
