@@ -604,7 +604,7 @@ class admin_controller
 					'ORDER_BY'	=> 'smiley_order ASC',
 				));
 			}
-			$result = $this->db->sql_query_limit($sql, $this->config['smilies_per_page_cat'], $start);
+			$result = $this->db->sql_query_limit($sql, (int) $this->config['smilies_per_page_cat'], $start);
 			while ($row = $this->db->sql_fetchrow($result))
 			{
 				if ($smiley_url === $row['smiley_url'])
@@ -646,7 +646,7 @@ class admin_controller
 				'U_SELECT_CAT'		=> $this->u_action . '&amp;select=' . $select,
 			));
 
-			$this->pagination->generate_template_pagination($this->u_action . '&amp;select=' . $select, 'pagination', 'start', $smilies_count, $this->config['smilies_per_page_cat'], $start);
+			$this->pagination->generate_template_pagination($this->u_action . '&amp;select=' . $select, 'pagination', 'start', $smilies_count, (int) $this->config['smilies_per_page_cat'], $start);
 		}
 
 		$this->template->assign_vars(array(
