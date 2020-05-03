@@ -11,7 +11,7 @@ namespace sylver35\smiliescat\acp;
 
 class main_info
 {
-	function module()
+	public function module()
 	{
 		return array(
 			'filename'	=> '\sylver35\smiliescat\acp\main_module',

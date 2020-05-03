@@ -204,7 +204,6 @@ class category
 		if ($cat > -1)
 		{
 			$i = 0;
-			$title = '';
 			$smilies = array();
 			$lang = $this->user->lang_name;
 

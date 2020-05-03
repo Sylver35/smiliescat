@@ -90,11 +90,9 @@ class main
 		$start = $this->request->variable('start', 0);
 		$cat = $this->request->variable('select', -1);
 		$cat = ($cat == -1) ? $this->config['smilies_category_nb'] : $cat;
-		$max_id = $this->category->get_max_id();
 		$count = $this->category->smilies_count($cat);
 		$url = $this->helper->route('sylver35_smiliescat_smilies_pop');
 		$lang = $this->user->lang_name;
-		$root_path = (defined('PHPBB_USE_BOARD_URL_PATH') && PHPBB_USE_BOARD_URL_PATH) ? generate_board_url() . '/' : $this->path_helper->get_web_root_path();
 
 		$sql = $this->db->sql_build_query('SELECT', array(
 			'SELECT'	=> 'smiley_url, MIN(smiley_id) AS smiley_id, MIN(code) AS code, MIN(smiley_order) AS min_smiley_order, MIN(smiley_width) AS smiley_width, MIN(smiley_height) AS smiley_height, MIN(emotion) AS emotion',
@@ -103,7 +101,7 @@ class main
 			'GROUP_BY'	=> 'smiley_url',
 			'ORDER_BY'	=> 'min_smiley_order ASC',
 		));
-		$result = $this->db->sql_query_limit($sql, $this->config['smilies_per_page_cat'], $start);
+		$result = $this->db->sql_query_limit($sql, (int) $this->config['smilies_per_page_cat'], $start);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$this->template->assign_block_vars('smilies', array(
@@ -111,13 +109,13 @@ class main
 				'SMILEY_EMOTION'	=> $row['emotion'],
 				'SMILEY_WIDTH'		=> $row['smiley_width'],
 				'SMILEY_HEIGHT'		=> $row['smiley_height'],
-				'SMILEY_SRC'		=> $root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
+				'SMILEY_SRC'		=> generate_board_url() . '/' . $this->config['smilies_path'] . '/' . $row['smiley_url'],
 			));
 		}
 		$this->db->sql_freeresult($result);
 
-		$start = $this->pagination->validate_start($start, $this->config['smilies_per_page_cat'], $count);
-		$this->pagination->generate_template_pagination("{$url}?select={$cat}", 'pagination', 'start', $count, $this->config['smilies_per_page_cat'], $start);
+		$start = $this->pagination->validate_start($start, (int) $this->config['smilies_per_page_cat'], $count);
+		$this->pagination->generate_template_pagination("{$url}?select={$cat}", 'pagination', 'start', $count, (int) $this->config['smilies_per_page_cat'], $start);
 
 		$sql = $this->db->sql_build_query('SELECT', array(
 			'SELECT'	=> '*',

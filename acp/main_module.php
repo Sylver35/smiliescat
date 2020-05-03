@@ -46,11 +46,12 @@ class main_module
 		$this->tpl_name = 'category_' . $mode;
 		$this->page_title = 'ACP_SC_' . strtoupper($mode);
 		$meta = $category->get_version();
+		$on_id = $id;
 
 		switch ($mode)
 		{
 			case 'config':
-				$admin_controller->acp_category_config();
+				$admin_controller->acp_categories_config();
 			break;
 
 			case 'smilies':
