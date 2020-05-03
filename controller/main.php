@@ -85,15 +85,15 @@ class main
 	 */
 	public function popup_smilies_category()
 	{
-		$title	= '';
-		$cat_id	= $cat_order = $i = 0;
-		$start	= $this->request->variable('start', 0);
-		$cat	= $this->request->variable('select', -1);
-		$cat	= ($cat == -1) ? $this->config['smilies_category_nb'] : $cat;
-		$max_id	= $this->category->get_max_id();
-		$count	= $this->category->smilies_count($cat);
-		$url	= $this->helper->route('sylver35_smiliescat_smilies_pop');
-		$lang	= $this->user->lang_name;
+		$title = '';
+		$cat_id = $cat_order = $i = 0;
+		$start = $this->request->variable('start', 0);
+		$cat = $this->request->variable('select', -1);
+		$cat = ($cat == -1) ? $this->config['smilies_category_nb'] : $cat;
+		$max_id = $this->category->get_max_id();
+		$count = $this->category->smilies_count($cat);
+		$url = $this->helper->route('sylver35_smiliescat_smilies_pop');
+		$lang = $this->user->lang_name;
 		$root_path = (defined('PHPBB_USE_BOARD_URL_PATH') && PHPBB_USE_BOARD_URL_PATH) ? generate_board_url() . '/' : $this->path_helper->get_web_root_path();
 
 		$sql = $this->db->sql_build_query('SELECT', array(
