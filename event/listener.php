@@ -16,7 +16,7 @@ use phpbb\template\template;
 
 class listener implements EventSubscriberInterface
 {
-	/* @var \sylver35\category\core\category */
+	/* @var \sylver35\smiliescat\core\category */
 	protected $category;
 
 	/* @var \phpbb\controller\helper */
