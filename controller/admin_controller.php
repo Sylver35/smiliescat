@@ -78,7 +78,7 @@ class admin_controller
 		$this->smilies_category_table = $smilies_category_table;
 	}
 
-	public function acp_categories_config()
+	public function acp_categories_config($id)
 	{
 		$this->language->add_lang('acp/language');
 		$mode = $this->request->variable('mode', '');
@@ -490,7 +490,7 @@ class admin_controller
 		));
 	}
 
-	public function acp_smilies_category()
+	public function acp_smilies_category($id)
 	{
 		$this->language->add_lang('acp/posting');
 		$action = $this->request->variable('action', '');
