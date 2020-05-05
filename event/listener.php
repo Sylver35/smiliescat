@@ -48,7 +48,7 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Load language files during user setup
 	 *
-	 * @param \phpbb\event\data $event The event object
+	 * @param array $event
 	 *
 	 * @return void
 	 * @access public
@@ -72,7 +72,7 @@ class listener implements EventSubscriberInterface
 
 	/**
 	 *
-	 * @param \phpbb\event\data $event The event object
+	 * @param array $event
 	 */
 	public function shoutbox_smilies($event)
 	{
@@ -81,7 +81,7 @@ class listener implements EventSubscriberInterface
 
 	/**
 	 *
-	 * @param \phpbb\event\data $event The event object
+	 * @param array $event
 	 */
 	public function shoutbox_smilies_popup($event)
 	{
