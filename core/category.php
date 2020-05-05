@@ -48,7 +48,7 @@ class category
 		$this->user = $user;
 		$this->language = $language;
 		$this->ext_manager = $ext_manager;
-		$this->category_table = $smilies_category_table;
+		$this->smilies_category_table = $smilies_category_table;
 	}
 
 	public function get_version()
@@ -95,7 +95,7 @@ class category
 		}
 
 		$sql = 'SELECT *
-			FROM ' . $this->category_table . "
+			FROM ' . $this->smilies_category_table . "
 				WHERE cat_lang = '$lang'
 				ORDER BY cat_order ASC";
 		$result = $this->db->sql_query($sql);
@@ -121,7 +121,7 @@ class category
 	{
 		// Get max order id...
 		$sql = 'SELECT MAX(cat_order) AS maxi
-			FROM ' . $this->category_table;
+			FROM ' . $this->smilies_category_table;
 		$result = $this->db->sql_query($sql);
 		$max = (int) $this->db->sql_fetchfield('maxi', $result);
 		$this->db->sql_freeresult($result);
@@ -133,7 +133,7 @@ class category
 	{
 		// Get max id...
 		$sql = 'SELECT MAX(cat_id) AS id_max
-			FROM ' . $this->category_table;
+			FROM ' . $this->smilies_category_table;
 		$result = $this->db->sql_query($sql);
 		$id_max = (int) $this->db->sql_fetchfield('id_max', $result);
 		$this->db->sql_freeresult($result);
@@ -145,7 +145,7 @@ class category
 	{
 		// Get first order id...
 		$sql = 'SELECT cat_order, cat_id
-			FROM ' . $this->category_table . '
+			FROM ' . $this->smilies_category_table . '
 			ORDER BY cat_order ASC';
 		$result = $this->db->sql_query_limit($sql, 1);
 		$row = $this->db->sql_fetchrow($result);
@@ -163,7 +163,7 @@ class category
 
 		$sql = $this->db->sql_build_query('SELECT', array(
 			'SELECT'	=> '*',
-			'FROM'		=> array($this->category_table => ''),
+			'FROM'		=> array($this->smilies_category_table => ''),
 			'WHERE'		=> "cat_lang = '$lang'",
 			'ORDER_BY'	=> 'cat_order ASC',
 		));
@@ -210,7 +210,7 @@ class category
 			if ($cat > 0)
 			{
 				$sql = 'SELECT cat_name
-					FROM ' . $this->category_table . "
+					FROM ' . $this->smilies_category_table . "
 						WHERE cat_lang = '$lang'
 						AND cat_id = $cat";
 				$result = $this->db->sql_query_limit($sql, 1);
