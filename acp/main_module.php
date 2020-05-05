@@ -50,11 +50,11 @@ class main_module
 		switch ($mode)
 		{
 			case 'config':
-				$admin_controller->acp_categories_config($id);
+				$admin_controller->acp_categories_config();
 			break;
 
 			case 'smilies':
-				$admin_controller->acp_smilies_category($id);
+				$admin_controller->acp_smilies_category();
 			break;
 
 			default:
