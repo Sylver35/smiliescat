@@ -77,7 +77,7 @@ class main
 		$this->language = $language;
 		$this->pagination = $pagination;
 		$this->root_path = $root_path;
-		$this->category_table = $smilies_category_table;
+		$this->smilies_category_table = $smilies_category_table;
 	}
 
 	/**
@@ -119,7 +119,7 @@ class main
 
 		$sql = $this->db->sql_build_query('SELECT', array(
 			'SELECT'	=> '*',
-			'FROM'		=> array($this->category_table => ''),
+			'FROM'		=> array($this->smilies_category_table => ''),
 			'WHERE'		=> "cat_lang = '$lang'",
 			'ORDER_BY'	=> 'cat_order ASC',
 		));
