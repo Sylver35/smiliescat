@@ -424,8 +424,9 @@ class category
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
+			$active = ($row['cat_id'] == $cat) ? true : false;
 			$this->template->assign_block_vars('categories', array(
-				'CLASS'			=> ($row['cat_id'] == $cat) ? 'cat-active' : 'cat-inactive',
+				'CLASS'			=> ($active) ? 'cat-active' : 'cat-inactive',
 				'SEPARATE'		=> ($i > 0) ? ' - ' : '',
 				'CAT_ID'		=> $row['cat_id'],
 				'CAT_ORDER'		=> $row['cat_order'],
@@ -433,23 +434,23 @@ class category
 				'CAT_NB'		=> $row['cat_nb'],
 			));
 			$i++;
-			$title = ($row['cat_id'] == $cat) ? $row['cat_name'] : $title;
+			$title = ($active) ? $row['cat_name'] : $title;
 			$cat_order = $row['cat_order'];
 		}
 		$this->db->sql_freeresult($result);
 
 		// Add the Unclassified category
 		$unclassified = $this->language->lang('SC_CATEGORY_DEFAUT');
+		$un_active = ($cat == 0) ? true : false;
 		$this->template->assign_block_vars('categories', array(
-			'CLASS'			=> ($cat == 0) ? 'cat-active' : 'cat-inactive',
+			'CLASS'			=> ($un_active) ? 'cat-active' : 'cat-inactive',
 			'SEPARATE'		=> ($i > 0) ? ' - ' : '',
 			'CAT_ID'		=> 0,
 			'CAT_ORDER'		=> $cat_order + 1,
 			'CAT_NAME'		=> $unclassified,
 			'CAT_NB'		=> $this->smilies_count(0),
 		));
-		$title = ($cat == 0) ? $unclassified : $title;
 
-		return $title;
+		return ($un_active) ? $unclassified : $title;
 	}
 }
