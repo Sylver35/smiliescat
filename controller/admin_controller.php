@@ -84,7 +84,6 @@ class admin_controller
 		$mode = $this->request->variable('mode', '');
 		$action = $this->request->variable('action', '');
 		$id = $this->request->variable('id', 0);
-		$empty_row = false;
 		$form_key = 'sylver35/smiliescat';
 		add_form_key($form_key);
 
@@ -108,24 +107,10 @@ class admin_controller
 
 				case 'add':
 
-					$max = $this->category->get_max_order();
-					$sql = 'SELECT lang_local_name, lang_iso
-						FROM ' . LANG_TABLE . "
-							ORDER BY lang_id ASC";
-					$result = $this->db->sql_query($sql);
-					while ($row = $this->db->sql_fetchrow($result))
-					{
-						$this->template->assign_block_vars('categories', array(
-							'CAT_LANG'			=> $row['lang_local_name'],
-							'CAT_ISO'			=> $row['lang_iso'],
-							'CAT_ORDER'			=> $max + 1,
-						));
-					}
-					$this->db->sql_freeresult($result);
+					$this->category->adm_add_cat();
 
 					$this->template->assign_vars(array(
 						'IN_ADD_ACTION'			=> true,
-						'CAT_ORDER'				=> $max + 1,
 						'U_BACK'				=> $this->u_action,
 						'U_ADD_CAT'				=> $this->u_action . '&amp;action=add_cat',
 					));
@@ -140,12 +125,13 @@ class admin_controller
 					}
 
 					$cat_order = $this->request->variable('order', 0);
+					$title = $this->request->variable('name_' . $this->user->lang_name, '', true);
+					
 					$sql_in = array(
 						'cat_id'		=> $this->category->get_max_id() + 1,
 						'cat_order'		=> $cat_order,
 					);
-
-					$title = $this->request->variable('name_' . $this->user->lang_name, '', true);
+					
 					$sql = 'SELECT lang_id, lang_iso
 						FROM ' . LANG_TABLE . "
 							ORDER BY lang_id ASC";
@@ -182,73 +168,9 @@ class admin_controller
 
 				case 'edit':
 
-					// Get total lang id...
-					$sql = 'SELECT COUNT(lang_id) as total
-						FROM ' . LANG_TABLE;
-					$result = $this->db->sql_query($sql);
-					$total = (int) $this->db->sql_fetchfield('total', $result);
-					$this->db->sql_freeresult($result);
-
-					$title = '';
-					$i = $cat_order = $cat_id = 0;
-					$list_id = [];
-					$sql = $this->db->sql_build_query('SELECT', array(
-						'SELECT'	=> 'l.*, c.*',
-						'FROM'		=> array(LANG_TABLE => 'l'),
-						'LEFT_JOIN'	=> array(
-							array(
-								'FROM'	=> array($this->smilies_category_table => 'c'),
-								'ON'	=> 'c.cat_lang = l.lang_iso',
-							),
-						),
-						'WHERE'		=> "cat_id = $id",
-						'ORDER_BY'	=> 'lang_id ASC',
-					));
-					$result = $this->db->sql_query($sql);
-					while ($row = $this->db->sql_fetchrow($result))
-					{
-						$this->template->assign_block_vars('category_lang', array(
-							'CAT_LANG'			=> $row['lang_local_name'],
-							'CAT_ISO'			=> $row['lang_iso'],
-							'CAT_ORDER'			=> $row['cat_order'],
-							'CAT_ID'			=> $row['cat_id'],
-							'CAT_TRADUCT'		=> $row['cat_name'],
-							'CAT_SORT'			=> 'edit',
-						));
-						$i++;
-						$list_id[$i] = $row['lang_id'];
-						$cat_id = $row['cat_id'];
-						$cat_order = $row['cat_order'];
-						$title = $row['cat_title'];
-					}
-					$this->db->sql_freeresult($result);
-
-					// Add rows for empty langs in this category
-					if ($i !== $total)
-					{
-						$sql = $this->db->sql_build_query('SELECT', array(
-							'SELECT'	=> '*',
-							'FROM'		=> array(LANG_TABLE => 'l'),
-							'WHERE'		=> $this->db->sql_in_set('lang_id', $list_id, true, true),
-						));
-						$result = $this->db->sql_query($sql);
-						while ($row = $this->db->sql_fetchrow($result))
-						{
-							$this->template->assign_block_vars('category_lang', array(
-								'CAT_LANG'			=> $row['lang_local_name'],
-								'CAT_ISO'			=> $row['lang_iso'],
-								'CAT_ORDER'			=> $cat_order,
-								'CAT_ID'			=> $cat_id,
-								'CAT_TRADUCT'		=> '',
-								'CAT_SORT'			=> 'create',
-							));
-						}
-						$this->db->sql_freeresult($result);
-					}
+					$this->category->adm_edit_cat($id);
 
 					$this->template->assign_vars(array(
-						'CAT_ORDER'		=> $cat_order,
-						'CAT_TITLE'		=> $title,
 						'U_BACK'		=> $this->u_action,
 						'U_EDIT_CAT'	=> $this->u_action . '&amp;action=edit_cat&amp;id=' . $id,
 					));
@@ -435,56 +357,11 @@ class admin_controller
 		}
 		else
 		{
-			$i = 1;
-			$cat = 0;
-			$max = $this->category->get_max_order();
-			$sql = $this->db->sql_build_query('SELECT', array(
-				'SELECT'	=> 'l.lang_iso, l.lang_local_name, c.*',
-				'FROM'		=> array(LANG_TABLE => 'l'),
-				'LEFT_JOIN'	=> array(
-					array(
-						'FROM'	=> array($this->smilies_category_table => 'c'),
-						'ON'	=> 'c.cat_lang = l.lang_iso',
-					),
-				),
-				'ORDER_BY'	=> 'cat_order ASC, c.cat_lang_id ASC',
-			));
-			$result = $this->db->sql_query($sql);
-			if ($row = $this->db->sql_fetchrow($result))
-			{
-				do
-				{
-					$this->template->assign_block_vars('categories', array(
-						'CAT_NR'			=> $i,
-						'CAT_LANG'			=> $row['lang_local_name'],
-						'CAT_ISO'			=> $row['lang_iso'],
-						'CAT_ID'			=> $row['cat_id'],
-						'CAT_ORDER'			=> $row['cat_order'],
-						'CAT_TRADUCT'		=> $row['cat_name'],
-						'CAT_NB'			=> $row['cat_nb'],
-						'ROW'				=> ($cat !== $row['cat_id']) ? true : false,
-						'ROW_MAX'			=> ($row['cat_order'] == $max) ? true : false,
-						'SPACER_CAT'		=> $this->language->lang('SC_CATEGORY_IN', $row['cat_title']),
-						'U_EDIT'			=> $this->u_action . '&amp;action=edit&amp;id=' . $row['cat_id'],
-						'U_DELETE'			=> $this->u_action . '&amp;action=delete&amp;id=' . $row['cat_id'],
-						'U_MOVE_UP'			=> $this->u_action . '&amp;action=move_up&amp;id=' . $row['cat_id'] . '&amp;hash=' . generate_link_hash('acp-main_module'),
-						'U_MOVE_DOWN'		=> $this->u_action . '&amp;action=move_down&amp;id=' . $row['cat_id'] . '&amp;hash=' . generate_link_hash('acp-main_module'),
-					));
-					$i++;
-					$cat = $row['cat_id'];
-					$empty_row = (!$cat) ? true : false;
-				} while ($row = $this->db->sql_fetchrow($result));
-			}
-			$this->db->sql_freeresult($result);
-
-			$this->template->assign_vars(array(
-				'U_ACTION_CONFIG'		=> $this->u_action . '&amp;action=config_cat',
-			));
+			$this->category->adm_list_cat($this->u_action);
 		}
 
 		$this->template->assign_vars(array(
 			'CATEGORIE_CONFIG'		=> true,
-			'EMPTY_ROW'				=> $empty_row,
 			'SMILIES_PER_PAGE_CAT'	=> $this->config['smilies_per_page_cat'],
 			'U_ADD'					=> $this->u_action . '&amp;action=add',
 		));

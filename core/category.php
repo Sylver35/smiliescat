@@ -13,6 +13,8 @@ use phpbb\cache\driver\driver_interface as cache;
 use phpbb\db\driver\driver_interface as db;
 use phpbb\user;
 use phpbb\language\language;
+use phpbb\template\template;
+use phpbb\request\request;
 use phpbb\extension\manager;
 
 class category
@@ -29,6 +31,12 @@ class category
 	/** @var \phpbb\language\language */
 	protected $language;
 
+	/** @var \phpbb\template\template */
+	protected $template;
+
+	/** @var \phpbb\request\request */
+	protected $request;
+
 	/** @var \phpbb\extension\manager "Extension Manager" */
 	protected $ext_manager;
 
@@ -41,12 +49,14 @@ class category
 	/**
 	 * Constructor
 	 */
-	public function __construct(cache $cache, db $db, user $user, language $language, manager $ext_manager, $smilies_category_table)
+	public function __construct(cache $cache, db $db, user $user, language $language, template $template, request $request, manager $ext_manager, $smilies_category_table)
 	{
 		$this->cache = $cache;
 		$this->db = $db;
 		$this->user = $user;
 		$this->language = $language;
+		$this->template = $template;
+		$this->request = $request;
 		$this->ext_manager = $ext_manager;
 		$this->smilies_category_table = $smilies_category_table;
 	}
@@ -255,5 +265,149 @@ class category
 				'title'			=> $this->language->lang('SC_CATEGORY_IN', $cat_name),
 			));
 		}
+	}
+
+	public function adm_add_cat()
+	{
+		$max = $this->get_max_order();
+		$sql = 'SELECT lang_local_name, lang_iso
+			FROM ' . LANG_TABLE . "
+				ORDER BY lang_id ASC";
+		$result = $this->db->sql_query($sql);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$this->template->assign_block_vars('categories', array(
+				'CAT_LANG'		=> $row['lang_local_name'],
+				'CAT_ISO'		=> $row['lang_iso'],
+				'CAT_ORDER'		=> $max + 1,
+			));
+		}
+		$this->db->sql_freeresult($result);
+
+		$this->template->assign_vars(array(
+			'CAT_ORDER'		=> $max + 1,
+		));
+	}
+	
+	public function adm_edit_cat($id)
+	{
+		// Get total lang id...
+		$sql = 'SELECT COUNT(lang_id) as total
+			FROM ' . LANG_TABLE;
+		$result = $this->db->sql_query($sql);
+		$total = (int) $this->db->sql_fetchfield('total', $result);
+		$this->db->sql_freeresult($result);
+
+		$title = '';
+		$i = $cat_order = $cat_id = 0;
+		$list_id = [];
+		$sql = $this->db->sql_build_query('SELECT', array(
+			'SELECT'	=> 'l.*, c.*',
+			'FROM'		=> array(LANG_TABLE => 'l'),
+			'LEFT_JOIN'	=> array(
+				array(
+					'FROM'	=> array($this->smilies_category_table => 'c'),
+					'ON'	=> 'c.cat_lang = l.lang_iso',
+				),
+			),
+			'WHERE'		=> "cat_id = $id",
+			'ORDER_BY'	=> 'lang_id ASC',
+		));
+		$result = $this->db->sql_query($sql);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$this->template->assign_block_vars('category_lang', array(
+				'CAT_LANG'			=> $row['lang_local_name'],
+				'CAT_ISO'			=> $row['lang_iso'],
+				'CAT_ORDER'			=> $row['cat_order'],
+				'CAT_ID'			=> $row['cat_id'],
+				'CAT_TRADUCT'		=> $row['cat_name'],
+				'CAT_SORT'			=> 'edit',
+			));
+			$i++;
+			$list_id[$i] = $row['lang_id'];
+			$cat_id = $row['cat_id'];
+			$cat_order = $row['cat_order'];
+			$title = $row['cat_title'];
+		}
+		$this->db->sql_freeresult($result);
+
+		// Add rows for empty langs in this category
+		if ($i !== $total)
+		{
+			$sql = $this->db->sql_build_query('SELECT', array(
+				'SELECT'	=> '*',
+				'FROM'		=> array(LANG_TABLE => 'l'),
+				'WHERE'		=> $this->db->sql_in_set('lang_id', $list_id, true, true),
+			));
+			$result = $this->db->sql_query($sql);
+			while ($row = $this->db->sql_fetchrow($result))
+			{
+				$this->template->assign_block_vars('category_lang', array(
+					'CAT_LANG'			=> $row['lang_local_name'],
+					'CAT_ISO'			=> $row['lang_iso'],
+					'CAT_ORDER'			=> $cat_order,
+					'CAT_ID'			=> $cat_id,
+					'CAT_TRADUCT'		=> '',
+					'CAT_SORT'			=> 'create',
+				));
+			}
+			$this->db->sql_freeresult($result);
+		}
+
+		$this->template->assign_vars(array(
+			'CAT_ORDER'		=> $cat_order,
+			'CAT_TITLE'		=> $title,
+		));
+	}
+
+	public function adm_list_cat($u_action)
+	{
+		$i = 1;
+		$cat = 0;
+		$empty_row = false;
+		$max = $this->get_max_order();
+		$sql = $this->db->sql_build_query('SELECT', array(
+			'SELECT'	=> 'l.lang_iso, l.lang_local_name, c.*',
+			'FROM'		=> array(LANG_TABLE => 'l'),
+			'LEFT_JOIN'	=> array(
+				array(
+					'FROM'	=> array($this->smilies_category_table => 'c'),
+					'ON'	=> 'c.cat_lang = l.lang_iso',
+				),
+			),
+			'ORDER_BY'	=> 'cat_order ASC, c.cat_lang_id ASC',
+		));
+		$result = $this->db->sql_query($sql);
+		if ($row = $this->db->sql_fetchrow($result))
+		{
+			do
+			{
+				$this->template->assign_block_vars('categories', array(
+					'CAT_NR'			=> $i,
+					'CAT_LANG'			=> $row['lang_local_name'],
+					'CAT_ISO'			=> $row['lang_iso'],
+					'CAT_ID'			=> $row['cat_id'],
+					'CAT_ORDER'			=> $row['cat_order'],
+					'CAT_TRADUCT'		=> $row['cat_name'],
+					'CAT_NB'			=> $row['cat_nb'],
+					'ROW'				=> ($cat !== $row['cat_id']) ? true : false,
+					'ROW_MAX'			=> ($row['cat_order'] == $max) ? true : false,
+					'SPACER_CAT'		=> $this->language->lang('SC_CATEGORY_IN', $row['cat_title']),
+					'U_EDIT'			=> $u_action . '&amp;action=edit&amp;id=' . $row['cat_id'],
+					'U_DELETE'			=> $u_action . '&amp;action=delete&amp;id=' . $row['cat_id'],
+					'U_MOVE_UP'			=> $u_action . '&amp;action=move_up&amp;id=' . $row['cat_id'] . '&amp;hash=' . generate_link_hash('acp-main_module'),
+					'U_MOVE_DOWN'		=> $u_action . '&amp;action=move_down&amp;id=' . $row['cat_id'] . '&amp;hash=' . generate_link_hash('acp-main_module'),
+				));
+				$i++;
+				$cat = $row['cat_id'];
+				$empty_row = (!$cat) ? true : false;
+			} while ($row = $this->db->sql_fetchrow($result));
+		}
+		$this->db->sql_freeresult($result);
+
+		$this->template->assign_vars(array(
+			'EMPTY_ROW'		=> $empty_row,
+		));
 	}
 }
