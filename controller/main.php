@@ -85,14 +85,11 @@ class main
 	 */
 	public function popup_smilies_category()
 	{
-		$title = '';
-		$cat_order = $i = 0;
 		$start = $this->request->variable('start', 0);
 		$cat = $this->request->variable('select', -1);
 		$cat = ($cat == -1) ? $this->config['smilies_category_nb'] : $cat;
 		$count = $this->category->smilies_count($cat);
 		$url = $this->helper->route('sylver35_smiliescat_smilies_pop');
-		$lang = $this->user->lang_name;
 
 		$sql = $this->db->sql_build_query('SELECT', array(
 			'SELECT'	=> 'smiley_url, MIN(smiley_id) AS smiley_id, MIN(code) AS code, MIN(smiley_order) AS min_smiley_order, MIN(smiley_width) AS smiley_width, MIN(smiley_height) AS smiley_height, MIN(emotion) AS emotion',

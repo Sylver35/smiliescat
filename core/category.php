@@ -415,18 +415,17 @@ class category
 	{
 		$title = '';
 		$cat_order = $i = 0;
-		$lang = $this->user->lang_name;
 		$sql = $this->db->sql_build_query('SELECT', array(
 			'SELECT'	=> '*',
 			'FROM'		=> array($this->smilies_category_table => ''),
-			'WHERE'		=> "cat_lang = '$lang'",
+			'WHERE'		=> "cat_lang = '$this->user->lang_name'",
 			'ORDER_BY'	=> 'cat_order ASC',
 		));
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$this->template->assign_block_vars('categories', array(
-				'CLASS'			=> ($cat == $row['cat_id']) ? 'cat-active' : 'cat-inactive',
+				'CLASS'			=> ($row['cat_id'] == $cat) ? 'cat-active' : 'cat-inactive',
 				'SEPARATE'		=> ($i > 0) ? ' - ' : '',
 				'CAT_ID'		=> $row['cat_id'],
 				'CAT_ORDER'		=> $row['cat_order'],
