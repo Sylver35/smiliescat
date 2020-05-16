@@ -86,7 +86,7 @@ class main
 	public function popup_smilies_category()
 	{
 		$title = '';
-		$cat_id = $cat_order = $i = 0;
+		$cat_order = $i = 0;
 		$start = $this->request->variable('start', 0);
 		$cat = $this->request->variable('select', -1);
 		$cat = ($cat == -1) ? $this->config['smilies_category_nb'] : $cat;
@@ -117,41 +117,7 @@ class main
 		$start = $this->pagination->validate_start($start, (int) $this->config['smilies_per_page_cat'], $count);
 		$this->pagination->generate_template_pagination("{$url}?select={$cat}", 'pagination', 'start', $count, (int) $this->config['smilies_per_page_cat'], $start);
 
-		$sql = $this->db->sql_build_query('SELECT', array(
-			'SELECT'	=> '*',
-			'FROM'		=> array($this->smilies_category_table => ''),
-			'WHERE'		=> "cat_lang = '$lang'",
-			'ORDER_BY'	=> 'cat_order ASC',
-		));
-		$result = $this->db->sql_query($sql, 3600);
-		while ($row = $this->db->sql_fetchrow($result))
-		{
-			$this->template->assign_block_vars('categories', array(
-				'CLASS'			=> ($cat == $row['cat_id']) ? 'cat-active' : 'cat-inactive',
-				'SEPARATE'		=> ($i > 0) ? ' - ' : '',
-				'CAT_ID'		=> $row['cat_id'],
-				'CAT_ORDER'		=> $row['cat_order'],
-				'CAT_NAME'		=> $row['cat_name'],
-				'CAT_NB'		=> $row['cat_nb'],
-			));
-			$i++;
-			$title = ($row['cat_id'] == $cat) ? $row['cat_name'] : $title;
-			$cat_order = $row['cat_order'];
-		}
-		$this->db->sql_freeresult($result);
-
-		// Add the Unclassified category
-		$unclassified = $this->language->lang('SC_CATEGORY_DEFAUT');
-		$this->template->assign_block_vars('categories', array(
-			'CLASS'			=> ($cat == $cat_id) ? 'cat-active' : 'cat-inactive',
-			'SEPARATE'		=> ($i > 0) ? ' - ' : '',
-			'CAT_ID'		=> $cat_id,
-			'CAT_ORDER'		=> $cat_order + 1,
-			'CAT_NAME'		=> $unclassified,
-			'CAT_NB'		=> $this->category->smilies_count($cat_id),
-		));
-		$title = ($cat == $cat_id) ? $unclassified : $title;
-
+		$title = $this->category->extract_categories($cat);
 		$data = $this->category->get_version();
 		$this->template->assign_vars(array(
 			'U_SELECT_CAT'		=> $url,
