@@ -1,5 +1,6 @@
 # Breizh Smilies Categories Extension
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Sylver35/smiliescat/badges/quality-score.png?b=1.1.0)](https://scrutinizer-ci.com/g/Sylver35/smiliescat/?branch=1.1.0)
 [![Build Status](https://scrutinizer-ci.com/g/Sylver35/smiliescat/badges/build.png?b=1.1.0)](https://scrutinizer-ci.com/g/Sylver35/smiliescat/build-status/1.1.0)
 [![Code Intelligence Status](https://scrutinizer-ci.com/g/Sylver35/smiliescat/badges/code-intelligence.svg?b=1.1.0)](https://scrutinizer-ci.com/code-intelligence)
 
