@@ -35,7 +35,6 @@ services:
             - '@language'
             - '@template'
             - '@request'
-            - '@pagination'
             - '@ext.manager'
             - '%sylver35.smiliescat.tables.smilies_category%'
             - '%core.root_path%'
