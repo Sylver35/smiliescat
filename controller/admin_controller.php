@@ -265,7 +265,7 @@ class admin_controller
 
 					if (confirm_box(true))
 					{
-						$this->delete_cat($action, $id);
+						$this->delete_cat($id);
 
 						if ($this->request->is_ajax())
 						{
@@ -513,23 +513,40 @@ class admin_controller
 		$this->pagination->generate_template_pagination($this->u_action . '&amp;select=' . $select, 'pagination', 'start', $smilies_count, (int) $this->config['smilies_per_page_cat'], $start);
 	}
 
-	private function delete_cat($action, $id)
+	private function delete_cat($id)
 	{
-		$sql = 'SELECT cat_title
+		$sql = 'SELECT cat_title, cat_order
 			FROM ' . $this->smilies_category_table . "
 				WHERE cat_id = $id";
 		$result = $this->db->sql_query($sql);
-		$title = (string) $this->db->sql_fetchfield('cat_title');
+		$row = $this->db->sql_fetchrow($result);
+		$title = $row['cat_title'];
+		$order = $row['cat_order'];
 		$this->db->sql_freeresult($result);
 
 		$sql_delete = 'DELETE FROM ' . $this->smilies_category_table . " WHERE cat_id = $id";
 		$this->db->sql_query($sql_delete);
 
+		// Decrement orders if needed
+		$sql_decrement = 'SELECT cat_id, cat_order
+			FROM ' . $this->smilies_category_table . "
+				WHERE cat_order > $order";
+		$result = $this->db->sql_query($sql_decrement);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$new_order = $row['cat_order'] - 1;
+			$sql_order = 'UPDATE ' . $this->smilies_category_table . '
+				SET cat_order = ' . $new_order . '
+					WHERE cat_id = ' . $row['cat_id'] . ' AND cat_order = ' . $row['cat_order'];
+			$this->db->sql_query($sql_order);
+		}
+		$this->db->sql_freeresult($result);
+
 		// Reset appropriate smilies category id
 		$sql_update = 'UPDATE ' . SMILIES_TABLE . " SET category = 0 WHERE category = $id";
 		$this->db->sql_query($sql_update);
 
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_' . strtoupper($action) . '_CAT', time(), array($title));
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_DELETE_CAT', time(), array($title));
 	}
 
 	/**
