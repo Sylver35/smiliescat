@@ -265,22 +265,7 @@ class admin_controller
 
 					if (confirm_box(true))
 					{
-						$sql = 'SELECT cat_title
-							FROM ' . $this->smilies_category_table . "
-								WHERE cat_id = $id";
-						$result = $this->db->sql_query($sql);
-						$row = $this->db->sql_fetchrow($result);
-						$title = $row['cat_title'];
-						$this->db->sql_freeresult($result);
-
-						$sql_delete = 'DELETE FROM ' . $this->smilies_category_table . " WHERE cat_id = $id";
-						$this->db->sql_query($sql_delete);
-
-						// Reset appropriate smilies category id
-						$sql_update = 'UPDATE ' . SMILIES_TABLE . " SET category = 0 WHERE category = $id";
-						$this->db->sql_query($sql_update);
-
-						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_' . strtoupper($action) . '_CAT', time(), array($title));
+						$this->delete_cat($action, $id);
 
 						if ($this->request->is_ajax())
 						{
@@ -289,7 +274,7 @@ class admin_controller
 							$json_response->send(array(
 								'MESSAGE_TITLE'	=> $this->language->lang('INFORMATION'),
 								'MESSAGE_TEXT'	=> $this->language->lang('SC_DELETE_SUCCESS'),
-								'REFRESH_DATA'	=> array('time'		=> 2),
+								'REFRESH_DATA'	=> array('time' => 2),
 							));
 						}
 						else
@@ -460,7 +445,7 @@ class admin_controller
 		$lang = $this->user->lang_name;
 		$smilies_count = $this->category->smilies_count($select);
 		$cat_title = $this->language->lang('SC_CATEGORY_DEFAUT');
-		$where = ($select !== -1) ? "cat_id = $select" : 'smiley_id > 0';
+		$where = ($select !== -1) ? "cat_id = $select AND " : '';
 
 		if ($select !== 0)
 		{
@@ -473,7 +458,7 @@ class admin_controller
 						'ON'	=> "cat_id = category AND cat_lang = '$lang'",
 					),
 				),
-				'WHERE'		=> "$where AND code <> ''",
+				'WHERE'		=> "$where code <> ''",
 				'ORDER_BY'	=> 'cat_order ASC, smiley_order ASC',
 			));
 		}
@@ -518,7 +503,7 @@ class admin_controller
 			'NB_SMILIES'		=> $smilies_count,
 			'EMPTY_ROW'			=> $empty_row,
 			'LIST_CATEGORY'		=> $this->category->select_categories($select),
-			'S_SPACER_ANY'		=> ($cat === 0) ? true : false,
+			'S_SPACER_ANY'		=> ($cat == 0) ? true : false,
 			'S_CAT_SELECT'		=> ($select) ? true : false,
 			'CAT_SELECT_TITLE'	=> ($select) ? $this->language->lang('SC_CATEGORY_IN', $cat_title) : '',
 			'U_BACK'			=> ($select) ? $this->u_action : false,
@@ -526,6 +511,25 @@ class admin_controller
 		));
 
 		$this->pagination->generate_template_pagination($this->u_action . '&amp;select=' . $select, 'pagination', 'start', $smilies_count, (int) $this->config['smilies_per_page_cat'], $start);
+	}
+
+	private function delete_cat($action, $id)
+	{
+		$sql = 'SELECT cat_title
+			FROM ' . $this->smilies_category_table . "
+				WHERE cat_id = $id";
+		$result = $this->db->sql_query($sql);
+		$title = (string) $this->db->sql_fetchfield('cat_title');
+		$this->db->sql_freeresult($result);
+
+		$sql_delete = 'DELETE FROM ' . $this->smilies_category_table . " WHERE cat_id = $id";
+		$this->db->sql_query($sql_delete);
+
+		// Reset appropriate smilies category id
+		$sql_update = 'UPDATE ' . SMILIES_TABLE . " SET category = 0 WHERE category = $id";
+		$this->db->sql_query($sql_update);
+
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_' . strtoupper($action) . '_CAT', time(), array($title));
 	}
 
 	/**
