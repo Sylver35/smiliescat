@@ -114,7 +114,7 @@ class main
 		$start = $this->pagination->validate_start($start, (int) $this->config['smilies_per_page_cat'], $count);
 		$this->pagination->generate_template_pagination("{$url}?select={$cat}", 'pagination', 'start', $count, (int) $this->config['smilies_per_page_cat'], $start);
 
-		$title = $this->category->extract_categories($cat);
+		$title = $this->extract_categories($cat);
 		$data = $this->category->get_version();
 		$this->template->assign_vars(array(
 			'U_SELECT_CAT'		=> $url,
@@ -130,5 +130,49 @@ class main
 		);
 
 		page_footer();
+	}
+	
+	private function extract_categories($cat)
+	{
+		$title = '';
+		$cat_order = $i = 0;
+		$lang = $this->user->lang_name;
+		$sql = $this->db->sql_build_query('SELECT', array(
+			'SELECT'	=> '*',
+			'FROM'		=> array($this->smilies_category_table => ''),
+			'WHERE'		=> "cat_lang = '$lang'",
+			'ORDER_BY'	=> 'cat_order ASC',
+		));
+		$result = $this->db->sql_query($sql);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$active = ($row['cat_id'] == $cat) ? true : false;
+			$this->template->assign_block_vars('categories', array(
+				'CLASS'			=> ($active) ? 'cat-active' : 'cat-inactive',
+				'SEPARATE'		=> ($i > 0) ? ' - ' : '',
+				'CAT_ID'		=> $row['cat_id'],
+				'CAT_ORDER'		=> $row['cat_order'],
+				'CAT_NAME'		=> $row['cat_name'],
+				'CAT_NB'		=> $row['cat_nb'],
+			));
+			$i++;
+			$title = ($active) ? $row['cat_name'] : $title;
+			$cat_order = $row['cat_order'];
+		}
+		$this->db->sql_freeresult($result);
+
+		// Add the Unclassified category
+		$unclassified = $this->language->lang('SC_CATEGORY_DEFAUT');
+		$un_active = ($cat == 0) ? true : false;
+		$this->template->assign_block_vars('categories', array(
+			'CLASS'			=> ($un_active) ? 'cat-active' : 'cat-inactive',
+			'SEPARATE'		=> ($i > 0) ? ' - ' : '',
+			'CAT_ID'		=> 0,
+			'CAT_ORDER'		=> $cat_order + 1,
+			'CAT_NAME'		=> $unclassified,
+			'CAT_NB'		=> $this->category->smilies_count(0),
+		));
+
+		return ($un_active) ? $unclassified : $title;
 	}
 }

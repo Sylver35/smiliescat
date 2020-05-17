@@ -436,7 +436,6 @@ class admin_controller
 	{
 		$cat = $i = 0;
 		$smiley_url = '';
-		$spacer_cat = false;
 		$lang = $this->user->lang_name;
 		$smilies_count = $this->category->smilies_count($select);
 		$cat_title = $this->language->lang('SC_CATEGORY_DEFAUT');
@@ -473,9 +472,10 @@ class admin_controller
 			{
 				continue;
 			}
+			$on_spacer = ($cat !== $row['category']) ? true : false;
 			$title = ($row['category'] == 0) ? $this->language->lang('SC_SMILIES_NO_CATEGORY') : $this->language->lang('SC_CATEGORY_IN', $row['cat_name']);
 			$this->template->assign_block_vars('items', array(
-				'S_SPACER_CAT'	=> (!$spacer_cat && ($cat !== $row['category'])) ? true : false,
+				'S_SPACER_CAT'	=> $on_spacer,
 				'SPACER_CAT'	=> $title,
 				'IMG_SRC'		=> $this->root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
 				'WIDTH'			=> $row['smiley_width'],
@@ -489,10 +489,6 @@ class admin_controller
 			$smiley_url = $row['smiley_url'];
 			$cat = $row['category'];
 			$cat_title = ($select > 0) ? $row['cat_name'] : $cat_title;
-			if (!$spacer_cat && ($cat !== $row['category']))
-			{
-				$spacer_cat = true;
-			}
 		}
 		$this->db->sql_freeresult($result);
 		$empty_row = ($i == 0) ? true : false;

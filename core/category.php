@@ -419,49 +419,6 @@ class category
 			'EMPTY_ROW'		=> $empty_row,
 		));
 	}
-	
-	public function extract_categories($cat)
-	{
-		$title = '';
-		$cat_order = $i = 0;
-		$sql = $this->db->sql_build_query('SELECT', array(
-			'SELECT'	=> '*',
-			'FROM'		=> array($this->smilies_category_table => ''),
-			'WHERE'		=> "cat_lang = '$this->user->lang_name'",
-			'ORDER_BY'	=> 'cat_order ASC',
-		));
-		$result = $this->db->sql_query($sql);
-		while ($row = $this->db->sql_fetchrow($result))
-		{
-			$active = ($row['cat_id'] == $cat) ? true : false;
-			$this->template->assign_block_vars('categories', array(
-				'CLASS'			=> ($active) ? 'cat-active' : 'cat-inactive',
-				'SEPARATE'		=> ($i > 0) ? ' - ' : '',
-				'CAT_ID'		=> $row['cat_id'],
-				'CAT_ORDER'		=> $row['cat_order'],
-				'CAT_NAME'		=> $row['cat_name'],
-				'CAT_NB'		=> $row['cat_nb'],
-			));
-			$i++;
-			$title = ($active) ? $row['cat_name'] : $title;
-			$cat_order = $row['cat_order'];
-		}
-		$this->db->sql_freeresult($result);
-
-		// Add the Unclassified category
-		$unclassified = $this->language->lang('SC_CATEGORY_DEFAUT');
-		$un_active = ($cat == 0) ? true : false;
-		$this->template->assign_block_vars('categories', array(
-			'CLASS'			=> ($un_active) ? 'cat-active' : 'cat-inactive',
-			'SEPARATE'		=> ($i > 0) ? ' - ' : '',
-			'CAT_ID'		=> 0,
-			'CAT_ORDER'		=> $cat_order + 1,
-			'CAT_NAME'		=> $unclassified,
-			'CAT_NB'		=> $this->smilies_count(0),
-		));
-
-		return ($un_active) ? $unclassified : $title;
-	}
 
 	public function adm_edit_smiley($id, $u_action, $start)
 	{
