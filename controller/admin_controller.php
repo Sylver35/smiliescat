@@ -234,56 +234,15 @@ class admin_controller
 					{
 						trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
 					}
-
-					// Get current order id and title...
-					$sql = 'SELECT cat_order, cat_title
-						FROM ' . $this->smilies_category_table . "
-							WHERE cat_id = $id";
-					$result = $this->db->sql_query($sql);
-					$row = $this->db->sql_fetchrow($result);
-					$current_order = $row['cat_order'];
-					$title = $row['cat_title'];
-					$this->db->sql_freeresult($result);
-
-					if ($current_order == 1 && $action == 'move_up')
+					
+					$result = $this->move_cat($action, $id);
+					
+					if ($result['return'] === false)
 					{
 						break;
 					}
 
-					$max_order = $this->category->get_max_order();
-
-					if ($current_order == $max_order && $action == 'move_down')
-					{
-						break;
-					}
-
-					// on move_down, switch position with next order_id...
-					// on move_up, switch position with previous order_id...
-					$switch_order_id = ($action == 'move_down') ? $current_order + 1 : $current_order - 1;
-
-					$sql = 'UPDATE ' . $this->smilies_category_table . "
-						SET cat_order = $current_order
-						WHERE cat_order = $switch_order_id
-							AND cat_id <> $id";
-					$this->db->sql_query($sql);
-					$move_executed = (bool) $this->db->sql_affectedrows();
-
-					// Only update the other entry too if the previous entry got updated
-					if ($move_executed)
-					{
-						$sql = 'UPDATE ' . $this->smilies_category_table . "
-							SET cat_order = $switch_order_id
-							WHERE cat_order = $current_order
-								AND cat_id = $id";
-						$this->db->sql_query($sql);
-
-						if ($switch_order_id == 1)
-						{
-							$this->config->set('smilies_category_nb', $id);
-						}
-					}
-
-					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_' . strtoupper($action) . '_CAT', time(), array($title));
+					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_' . strtoupper($action) . '_CAT', time(), array($result['title']));
 
 					if ($this->request->is_ajax())
 					{
@@ -430,6 +389,68 @@ class admin_controller
 		$this->template->assign_vars(array(
 			'CATEGORIE_SMILIES'		=> true,
 		));
+	}
+	
+	private function move_cat($action, $id)
+	{
+		// Get current order id and title...
+		$sql = 'SELECT cat_order, cat_title
+			FROM ' . $this->smilies_category_table . "
+				WHERE cat_id = $id";
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+		$current_order = $row['cat_order'];
+		$title = $row['cat_title'];
+		$this->db->sql_freeresult($result);
+
+		if ($current_order == 1 && $action == 'move_up')
+		{
+			return array(
+				'return'	=> false,
+				'title'		=> '',
+			);
+		}
+
+		$max_order = $this->category->get_max_order();
+
+		if ($current_order == $max_order && $action == 'move_down')
+		{
+			return array(
+				'return'	=> false,
+				'title'		=> '',
+			);
+		}
+
+		// on move_down, switch position with next order_id...
+		// on move_up, switch position with previous order_id...
+		$switch_order_id = ($action == 'move_down') ? $current_order + 1 : $current_order - 1;
+
+		$sql = 'UPDATE ' . $this->smilies_category_table . "
+			SET cat_order = $current_order
+			WHERE cat_order = $switch_order_id
+				AND cat_id <> $id";
+		$this->db->sql_query($sql);
+		$move_executed = (bool) $this->db->sql_affectedrows();
+
+		// Only update the other entry too if the previous entry got updated
+		if ($move_executed)
+		{
+			$sql = 'UPDATE ' . $this->smilies_category_table . "
+				SET cat_order = $switch_order_id
+				WHERE cat_order = $current_order
+					AND cat_id = $id";
+			$this->db->sql_query($sql);
+
+			if ($switch_order_id == 1)
+			{
+				$this->config->set('smilies_category_nb', $id);
+			}
+		}
+
+		return array(
+			'return'	=> true,
+			'title'		=> $title,
+		);
 	}
 	
 	private function extract_list_smilies($select, $start)
