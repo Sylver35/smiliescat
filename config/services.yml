@@ -30,10 +30,15 @@ services:
         arguments:
             - '@cache.driver'
             - '@dbal.conn'
+            - '@config'
             - '@user'
             - '@language'
+            - '@template'
+            - '@request'
+            - '@pagination'
             - '@ext.manager'
             - '%sylver35.smiliescat.tables.smilies_category%'
+            - '%core.root_path%'
 
     sylver35.smiliescat.controller:
         class: sylver35\smiliescat\controller\main

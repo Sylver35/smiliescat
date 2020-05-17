@@ -11,10 +11,12 @@ namespace sylver35\smiliescat\core;
 
 use phpbb\cache\driver\driver_interface as cache;
 use phpbb\db\driver\driver_interface as db;
+use phpbb\config\config;
 use phpbb\user;
 use phpbb\language\language;
 use phpbb\template\template;
 use phpbb\request\request;
+use phpbb\pagination;
 use phpbb\extension\manager;
 
 class category
@@ -24,6 +26,9 @@ class category
 
 	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
+
+	/** @var \phpbb\config\config */
+	protected $config;
 
 	/** @var \phpbb\user */
 	protected $user;
@@ -37,6 +42,9 @@ class category
 	/** @var \phpbb\request\request */
 	protected $request;
 
+	/** @var \phpbb\pagination */
+	protected $pagination;
+
 	/** @var \phpbb\extension\manager "Extension Manager" */
 	protected $ext_manager;
 
@@ -46,19 +54,25 @@ class category
 	 * @var string */
 	protected $smilies_category_table;
 
+	/** @var string phpBB root path */
+	protected $root_path;
+
 	/**
 	 * Constructor
 	 */
-	public function __construct(cache $cache, db $db, user $user, language $language, template $template, request $request, manager $ext_manager, $smilies_category_table)
+	public function __construct(cache $cache, db $db, config $config, user $user, language $language, template $template, request $request, pagination $pagination, manager $ext_manager, $smilies_category_table, $root_path)
 	{
 		$this->cache = $cache;
 		$this->db = $db;
+		$this->config = $config;
 		$this->user = $user;
 		$this->language = $language;
 		$this->template = $template;
 		$this->request = $request;
+		$this->pagination = $pagination;
 		$this->ext_manager = $ext_manager;
 		$this->smilies_category_table = $smilies_category_table;
+		$this->root_path = $root_path;
 	}
 
 	public function get_version()
@@ -452,5 +466,116 @@ class category
 		));
 
 		return ($un_active) ? $unclassified : $title;
+	}
+
+	public function adm_edit_smiley($id, $u_action, $start)
+	{
+		$lang = $this->user->lang_name;
+		$sql = $this->db->sql_build_query('SELECT', array(
+			'SELECT'	=> 's.*, c.*',
+			'FROM'		=> array(SMILIES_TABLE => 's'),
+			'LEFT_JOIN'	=> array(
+				array(
+					'FROM'	=> array($this->smilies_category_table => 'c'),
+					'ON'	=> "c.cat_id = s.category AND c.cat_lang = '$lang'",
+				),
+			),
+			'WHERE'	=> "smiley_id = $id",
+		));
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+
+		$this->template->assign_vars(array(
+			'WIDTH'				=> $row['smiley_width'],
+			'HEIGHT'			=> $row['smiley_height'],
+			'CODE'				=> $row['code'],
+			'EMOTION'			=> $row['emotion'],
+			'CATEGORY'			=> $row['cat_name'],
+			'EX_CAT'			=> ($row['cat_id']) ? $row['cat_id'] : 0,
+			'SELECT_CATEGORY'	=> $this->select_categories($row['cat_id'], true),
+			'IMG_SRC'			=> $this->root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
+			'U_MODIFY'			=> $u_action . '&amp;action=modify&amp;id=' . $row['smiley_id'] . '&amp;start=' . $start,
+			'U_BACK'			=> $u_action,
+		));
+		$this->db->sql_freeresult($result);
+	}
+
+	public function extract_list_smilies($select, $start, $u_action)
+	{
+		$cat = $i = 0;
+		$smiley_url = '';
+		$spacer_cat = false;
+		$lang = $this->user->lang_name;
+		$smilies_count = $this->smilies_count($select);
+		$cat_title = $this->language->lang('SC_CATEGORY_DEFAUT');
+		$where = ($select !== -1) ? "cat_id = $select" : 'smiley_id > 0';
+
+		if ($select !== 0)
+		{
+			$sql = $this->db->sql_build_query('SELECT', array(
+				'SELECT'	=> 's.*, c.*',
+				'FROM'		=> array(SMILIES_TABLE => 's'),
+				'LEFT_JOIN'	=> array(
+					array(
+						'FROM'	=> array($this->smilies_category_table => 'c'),
+						'ON'	=> "cat_id = category AND cat_lang = '$lang'",
+					),
+				),
+				'WHERE'		=> "$where AND code <> ''",
+				'ORDER_BY'	=> 'cat_order ASC, smiley_order ASC',
+			));
+		}
+		else
+		{
+			$sql = $this->db->sql_build_query('SELECT', array(
+				'SELECT'	=> '*',
+				'FROM'		=> array(SMILIES_TABLE => ''),
+				'WHERE'		=> "category = 0",
+				'ORDER_BY'	=> 'smiley_order ASC',
+			));
+		}
+		$result = $this->db->sql_query_limit($sql, (int) $this->config['smilies_per_page_cat'], $start);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			if ($smiley_url === $row['smiley_url'])
+			{
+				continue;
+			}
+			$title = ($row['category'] == 0) ? $this->language->lang('SC_SMILIES_NO_CATEGORY') : $this->language->lang('SC_CATEGORY_IN', $row['cat_name']);
+			$this->template->assign_block_vars('items', array(
+				'S_SPACER_CAT'	=> (!$spacer_cat && ($cat !== $row['category'])) ? true : false,
+				'SPACER_CAT'	=> $title,
+				'IMG_SRC'		=> $this->root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
+				'WIDTH'			=> $row['smiley_width'],
+				'HEIGHT'		=> $row['smiley_height'],
+				'CODE'			=> $row['code'],
+				'EMOTION'		=> $row['emotion'],
+				'CATEGORY'		=> (isset($row['cat_name'])) ? $row['cat_name'] : '',
+				'U_EDIT'		=> $u_action . '&amp;action=edit&amp;id=' . $row['smiley_id'] . '&amp;start=' . $start,
+			));
+			$i++;
+			$smiley_url = $row['smiley_url'];
+			$cat = $row['category'];
+			$cat_title = ($select > 0) ? $row['cat_name'] : $cat_title;
+			if (!$spacer_cat && ($cat !== $row['category']))
+			{
+				$spacer_cat = true;
+			}
+		}
+		$this->db->sql_freeresult($result);
+		$empty_row = ($i == 0) ? true : false;
+
+		$this->template->assign_vars(array(
+			'NB_SMILIES'		=> $smilies_count,
+			'EMPTY_ROW'			=> $empty_row,
+			'LIST_CATEGORY'		=> $this->select_categories($select),
+			'S_SPACER_ANY'		=> ($cat === 0) ? true : false,
+			'S_CAT_SELECT'		=> ($select) ? true : false,
+			'CAT_SELECT_TITLE'	=> ($select) ? $this->language->lang('SC_CATEGORY_IN', $cat_title) : '',
+			'U_BACK'			=> ($select) ? $u_action : false,
+			'U_SELECT_CAT'		=> $u_action . '&amp;select=' . $select,
+		));
+
+		$this->pagination->generate_template_pagination($u_action . '&amp;select=' . $select, 'pagination', 'start', $smilies_count, (int) $this->config['smilies_per_page_cat'], $start);
 	}
 }
