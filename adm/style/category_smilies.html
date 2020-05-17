@@ -45,7 +45,7 @@
 	<form id="acp_smilies_category" method="post" action="{{ U_SELECT_CAT }}">
 	<fieldset class="tabulated">
 	<div class="pagination" style="float: left;">
-		<strong>{% if S_CAT_SELECT %}{{ CAT_SELECT_TITLE }}{% else %}{{ lang('SC_CATEGORY_SELECT') }} :{% endif %} </strong>
+		<strong>{% if CAT_SELECT_TITLE %}{{ CAT_SELECT_TITLE }}{% else %}{{ lang('SC_CATEGORY_SELECT') }} :{% endif %} </strong>
 		<select id="select" name="select" onchange="if(this.options[this.selectedIndex].value != '')this.form.submit();">{{ LIST_CATEGORY }}</select>&nbsp;
 		<input class="button2" type="submit" value="{{ lang('GO') }}">
 	</div>
@@ -67,11 +67,7 @@
 	</tr>
 	</thead>
 	<tbody>
-		{% if EMPTY_ROW %}
-		<tr>
-			<td class="row3" colspan="5" style="text-align: center;"><b>{{ lang('SC_SMILIES_EMPTY_CATEGORY') }}</b></td>
-		</tr>
-		{% endif %}
+		{% if items|length %}
 		{% for item in items %}
 		{% if item.S_SPACER_CAT %}
 		<tr>
@@ -86,6 +82,11 @@
 			<td class="actions" style="text-align: center;"><a href="{{ item.U_EDIT }}">{{ ICON_EDIT }}</a></td>
 		</tr>
 		{% endfor %}
+		{% else %}
+		<tr>
+			<td class="row3" colspan="5" style="text-align: center;"><b>{{ lang('SC_SMILIES_EMPTY_CATEGORY') }}</b></td>
+		</tr>
+		{% endif %}
 	</tbody>
 	</table>
 	<div class="pagination">

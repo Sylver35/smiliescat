@@ -497,15 +497,12 @@ class admin_controller
 			$cat_title = ($select > 0) ? $row['cat_name'] : $cat_title;
 		}
 		$this->db->sql_freeresult($result);
-		$empty_row = ($i == 0) ? true : false;
 
 		$this->template->assign_vars(array(
 			'NB_SMILIES'		=> $smilies_count,
-			'EMPTY_ROW'			=> $empty_row,
 			'LIST_CATEGORY'		=> $this->category->select_categories($select),
 			'S_SPACER_ANY'		=> ($cat == 0) ? true : false,
-			'S_CAT_SELECT'		=> ($select) ? true : false,
-			'CAT_SELECT_TITLE'	=> ($select) ? $this->language->lang('SC_CATEGORY_IN', $cat_title) : '',
+			'CAT_SELECT_TITLE'	=> ($select != -1) ? $this->language->lang('SC_CATEGORY_IN', $cat_title) : false,
 			'U_BACK'			=> ($select) ? $this->u_action : false,
 			'U_SELECT_CAT'		=> $this->u_action . '&amp;select=' . $select,
 		));
