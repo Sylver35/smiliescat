@@ -425,12 +425,9 @@ class admin_controller
 				WHERE cat_order = $current_order
 					AND cat_id = $id";
 			$this->db->sql_query($sql);
-
-			if ($switch_order_id == 1)
-			{
-				$this->config->set('smilies_category_nb', $id);
-			}
 		}
+
+		$this->category->reset_first_cat($current_order, $switch_order_id);
 
 		return array(
 			'return'	=> true,

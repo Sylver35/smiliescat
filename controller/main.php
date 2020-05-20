@@ -118,7 +118,7 @@ class main
 		$data = $this->category->get_version();
 		$this->template->assign_vars(array(
 			'U_SELECT_CAT'		=> $url,
-			'LIST_CATEGORY'		=> $this->category->select_categories($cat),
+			'LIST_CATEGORY'		=> $this->category->select_categories($cat, false),
 			'POPUP_TITLE'		=> $this->language->lang('SC_CATEGORY_IN', $title),
 			'SC_VERSION'		=> $this->language->lang('SC_VERSION_COPY', $data['homepage'], $data['version']),
 		));

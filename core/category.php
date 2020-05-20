@@ -92,7 +92,7 @@ class category
 	{
 		$sql_where = ($cat == -1) ? "code <> ''" : "category = $cat";
 		$sql = $this->db->sql_build_query('SELECT', array(
-			'SELECT'	=> 'COUNT(DISTINCT smiley_url) AS smilies_count',
+			'SELECT'	=> 'COUNT(DISTINCT smiley_id) AS smilies_count',
 			'FROM'		=> array(SMILIES_TABLE => ''),
 			'WHERE'		=> $sql_where,
 		));
@@ -109,8 +109,7 @@ class category
 		$select = '<option>' . $this->language->lang('SC_CATEGORY_SELECT') . '</option>';
 		if (!$modify)
 		{
-			$sel = ($cat == -1) ? ' selected="selected"' : '';
-			$select .= '<option value="-1"' . $sel . '>' . $this->language->lang('SC_CATEGORY_ANY') . '</option>';
+			$select .= '<option value="-1"' . (($cat == -1) ? ' selected="selected"' : '') . '>' . $this->language->lang('SC_CATEGORY_ANY') . '</option>';
 		}
 
 		$sql = 'SELECT *
@@ -225,6 +224,7 @@ class category
 			$i = 0;
 			$smilies = array();
 			$lang = $this->user->lang_name;
+			$cat_name = $this->language->lang('SC_CATEGORY_DEFAUT');
 
 			if ($cat > 0)
 			{
@@ -236,10 +236,6 @@ class category
 				$row = $this->db->sql_fetchrow($result);
 				$cat_name = $row['cat_name'];
 				$this->db->sql_freeresult($result);
-			}
-			else
-			{
-				$cat_name = $this->language->lang('SC_CATEGORY_DEFAUT');
 			}
 
 			$sql = $this->db->sql_build_query('SELECT', array(
@@ -450,5 +446,20 @@ class category
 			'U_BACK'			=> $u_action,
 		));
 		$this->db->sql_freeresult($result);
+	}
+
+	public function reset_first_cat($current_order, $switch_order_id)
+	{
+		if ($current_order == 1 || $switch_order_id == 1)
+		{
+			$sql = 'SELECT cat_id
+				FROM ' . $this->smilies_category_table . '
+				ORDER BY cat_order ASC';
+			$result = $this->db->sql_query_limit($sql, 1);
+			$first_cat = (int) $this->db->sql_fetchfield('cat_id');
+			$this->db->sql_freeresult($result);
+
+			$this->config->set('smilies_category_nb', $first_cat);
+		}
 	}
 }
