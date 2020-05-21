@@ -189,21 +189,6 @@ class admin_controller
 					if (confirm_box(true))
 					{
 						$this->delete_cat($id);
-
-						if ($this->request->is_ajax())
-						{
-							trigger_error($this->language->lang('SC_DELETE_SUCCESS') . adm_back_link($this->u_action));
-							$json_response = new \phpbb\json_response;
-							$json_response->send(array(
-								'MESSAGE_TITLE'	=> $this->language->lang('INFORMATION'),
-								'MESSAGE_TEXT'	=> $this->language->lang('SC_DELETE_SUCCESS'),
-								'REFRESH_DATA'	=> array('time' => 2),
-							));
-						}
-						else
-						{
-							trigger_error($this->language->lang('SC_DELETE_SUCCESS') . adm_back_link($this->u_action));
-						}
 					}
 					else
 					{
@@ -467,6 +452,21 @@ class admin_controller
 		$this->db->sql_query($sql_update);
 
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_DELETE_CAT', time(), array($title));
+
+		if ($this->request->is_ajax())
+		{
+			trigger_error($this->language->lang('SC_DELETE_SUCCESS') . adm_back_link($this->u_action));
+			$json_response = new \phpbb\json_response;
+			$json_response->send(array(
+				'MESSAGE_TITLE'	=> $this->language->lang('INFORMATION'),
+				'MESSAGE_TEXT'	=> $this->language->lang('SC_DELETE_SUCCESS'),
+				'REFRESH_DATA'	=> array('time' => 2),
+			));
+		}
+		else
+		{
+			trigger_error($this->language->lang('SC_DELETE_SUCCESS') . adm_back_link($this->u_action));
+		}
 	}
 
 	private function add_categorie()
