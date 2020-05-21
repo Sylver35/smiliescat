@@ -303,7 +303,7 @@ class category
 		$this->db->sql_freeresult($result);
 
 		$title = '';
-		$i = $cat_order = $cat_id = 0;
+		$i = $cat_order = 0;
 		$list_id = [];
 		$sql = $this->db->sql_build_query('SELECT', array(
 			'SELECT'	=> 'l.*, c.*',
