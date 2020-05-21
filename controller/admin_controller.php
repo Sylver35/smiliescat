@@ -508,7 +508,7 @@ class admin_controller
 			}
 		}
 
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_' . strtoupper($action), time(), array($title));
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_ADD_CAT', time(), array($title));
 		trigger_error($this->language->lang('SC_CREATE_SUCCESS') . adm_back_link($this->u_action));
 	}
 	
