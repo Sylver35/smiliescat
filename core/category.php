@@ -166,8 +166,7 @@ class category
 			FROM ' . $this->smilies_category_table . '
 			ORDER BY cat_order ASC';
 		$result = $this->db->sql_query_limit($sql, 1);
-		$row = $this->db->sql_fetchrow($result);
-		$mini = $row['cat_id'];
+		$mini = (int) $this->db->sql_fetchfield('cat_id');
 		$this->db->sql_freeresult($result);
 
 		return $mini;
@@ -331,7 +330,6 @@ class category
 			));
 			$i++;
 			$list_id[$i] = $row['lang_id'];
-			$cat_id = $row['cat_id'];
 			$cat_order = $row['cat_order'];
 			$title = $row['cat_title'];
 		}
@@ -352,7 +350,7 @@ class category
 					'CAT_LANG'			=> $row['lang_local_name'],
 					'CAT_ISO'			=> $row['lang_iso'],
 					'CAT_ORDER'			=> $cat_order,
-					'CAT_ID'			=> $cat_id,
+					'CAT_ID'			=> $id,
 					'CAT_TRADUCT'		=> '',
 					'CAT_SORT'			=> 'create',
 				));
@@ -396,7 +394,7 @@ class category
 					'CAT_ORDER'			=> $row['cat_order'],
 					'CAT_TRADUCT'		=> $row['cat_name'],
 					'CAT_NB'			=> $row['cat_nb'],
-					'ROW'				=> ($cat !== $row['cat_id']) ? true : false,
+					'ROW'				=> ($row['cat_id'] !== $cat) ? true : false,
 					'ROW_MAX'			=> ($row['cat_order'] == $max) ? true : false,
 					'SPACER_CAT'		=> $this->language->lang('SC_CATEGORY_IN', $row['cat_title']),
 					'U_EDIT'			=> $u_action . '&amp;action=edit&amp;id=' . $row['cat_id'],
@@ -439,7 +437,7 @@ class category
 			'CODE'				=> $row['code'],
 			'EMOTION'			=> $row['emotion'],
 			'CATEGORY'			=> $row['cat_name'],
-			'EX_CAT'			=> ($row['cat_id']) ? $row['cat_id'] : 0,
+			'EX_CAT'			=> $row['cat_id'],
 			'SELECT_CATEGORY'	=> $this->select_categories($row['cat_id'], true),
 			'IMG_SRC'			=> $this->root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
 			'U_MODIFY'			=> $u_action . '&amp;action=modify&amp;id=' . $row['smiley_id'] . '&amp;start=' . $start,
@@ -452,14 +450,7 @@ class category
 	{
 		if ($current_order == 1 || $switch_order_id == 1)
 		{
-			$sql = 'SELECT cat_id
-				FROM ' . $this->smilies_category_table . '
-				ORDER BY cat_order ASC';
-			$result = $this->db->sql_query_limit($sql, 1);
-			$first_cat = (int) $this->db->sql_fetchfield('cat_id');
-			$this->db->sql_freeresult($result);
-
-			$this->config->set('smilies_category_nb', $first_cat);
+			$this->config->set('smilies_category_nb', $this->get_first_order());
 		}
 	}
 }

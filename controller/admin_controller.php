@@ -369,6 +369,13 @@ class admin_controller
 		else
 		{
 			$this->extract_list_smilies($select, $start);
+
+			$this->template->assign_vars(array(
+				'NB_SMILIES'		=> $this->category->smilies_count($select),
+				'LIST_CATEGORY'		=> $this->category->select_categories($select),
+				'U_BACK'			=> ($select) ? $this->u_action : false,
+				'U_SELECT_CAT'		=> $this->u_action . '&amp;select=' . $select,
+			));
 		}
 
 		$this->template->assign_vars(array(
@@ -440,7 +447,6 @@ class admin_controller
 		$cat = $i = 0;
 		$smiley_url = '';
 		$lang = $this->user->lang_name;
-		$smilies_count = $this->category->smilies_count($select);
 		$cat_title = $this->language->lang('SC_CATEGORY_DEFAUT');
 		$where = ($select !== -1) ? "cat_id = $select AND " : '';
 
@@ -471,7 +477,7 @@ class admin_controller
 		$result = $this->db->sql_query_limit($sql, (int) $this->config['smilies_per_page_cat'], $start);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			if ($smiley_url === $row['smiley_url'])
+			if ($smiley_url == $row['smiley_url'])
 			{
 				continue;
 			}
@@ -496,12 +502,8 @@ class admin_controller
 		$this->db->sql_freeresult($result);
 
 		$this->template->assign_vars(array(
-			'NB_SMILIES'		=> $smilies_count,
-			'LIST_CATEGORY'		=> $this->category->select_categories($select),
 			'S_SPACER_ANY'		=> ($cat == 0) ? true : false,
 			'CAT_SELECT_TITLE'	=> ($select != -1) ? $this->language->lang('SC_CATEGORY_IN', $cat_title) : false,
-			'U_BACK'			=> ($select) ? $this->u_action : false,
-			'U_SELECT_CAT'		=> $this->u_action . '&amp;select=' . $select,
 		));
 
 		$this->pagination->generate_template_pagination($this->u_action . '&amp;select=' . $select, 'pagination', 'start', $smilies_count, (int) $this->config['smilies_per_page_cat'], $start);

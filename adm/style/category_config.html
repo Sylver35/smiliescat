@@ -26,7 +26,7 @@
 		<tbody>
 			{% for category in categories %}
 			<tr>
-				<td style="text-align: center;">{{ category.CAT_ORDER }}</td>
+				<td style="text-align: center;">{{ CAT_ORDER }}</td>
 				<td style="text-align: center;"><input class="text post" type="text" name="name_{{ category.CAT_ISO }}" value="" size="20" maxlength="50" /></td>
 				<td style="text-align: center;">{{ category.CAT_LANG }}</td>
 				<td style="text-align: center;"><strong>{{ category.CAT_ISO }}</strong><input type="hidden" name="lang_{{ category.CAT_ISO }}" value="{{ category.CAT_ISO }}"></td>
@@ -59,7 +59,7 @@
 			{% for category in category_lang %}
 			<tr>
 				<td style="text-align: center;">{{ category.CAT_ID }}<input type="hidden" name="sort_{{ category.CAT_ISO }}" value="{{ category.CAT_SORT }}"></td>
-				<td style="text-align: center;">{{ category.CAT_ORDER }}</td>
+				<td style="text-align: center;">{{ CAT_ORDER }}</td>
 				<td style="text-align: center;"><input class="text post" type="text" name="name_{{ category.CAT_ISO }}" value="{{ category.CAT_TRADUCT }}" size="20" maxlength="50" /></td>
 				<td style="text-align: center;">{{ category.CAT_LANG }}</td>
 				<td style="text-align: center;"><strong>{{ category.CAT_ISO }}</strong><input type="hidden" name="lang_{{ category.CAT_ISO }}" value="{{ category.CAT_ISO }}"></td>
