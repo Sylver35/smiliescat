@@ -158,29 +158,7 @@ class admin_controller
 						trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
 					}
 					
-					$result = $this->move_cat($action, $id);
-					
-					if ($result['return'] === false)
-					{
-						break;
-					}
-
-					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_' . strtoupper($action) . '_CAT', time(), array($result['title']));
-
-					if ($this->request->is_ajax())
-					{
-						trigger_error($this->language->lang('SC_MOVE_SUCCESS') . adm_back_link($this->u_action));
-						$json_response = new \phpbb\json_response;
-						$json_response->send(array(
-							'MESSAGE_TITLE'	=> $this->language->lang('INFORMATION'),
-							'MESSAGE_TEXT'	=> $this->language->lang('SC_MOVE_SUCCESS'),
-							'REFRESH_DATA'	=> array('time'		=> 2),
-						));
-					}
-					else
-					{
-						trigger_error($this->language->lang('SC_MOVE_SUCCESS') . adm_back_link($this->u_action));
-					}
+					$this->move_cat($action, $id);
 
 				break;
 
@@ -304,20 +282,14 @@ class admin_controller
 
 		if ($current_order == 1 && $action == 'move_up')
 		{
-			return array(
-				'return'	=> false,
-				'title'		=> '',
-			);
+			return;
 		}
 
 		$max_order = $this->category->get_max_order();
 
 		if ($current_order == $max_order && $action == 'move_down')
 		{
-			return array(
-				'return'	=> false,
-				'title'		=> '',
-			);
+			return;
 		}
 
 		// on move_down, switch position with next order_id...
@@ -343,10 +315,22 @@ class admin_controller
 
 		$this->category->reset_first_cat($current_order, $switch_order_id);
 
-		return array(
-			'return'	=> true,
-			'title'		=> $title,
-		);
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_' . strtoupper($action) . '_CAT', time(), array($title));
+
+		if ($this->request->is_ajax())
+		{
+			trigger_error($this->language->lang('SC_MOVE_SUCCESS') . adm_back_link($this->u_action));
+			$json_response = new \phpbb\json_response;
+			$json_response->send(array(
+				'MESSAGE_TITLE'	=> $this->language->lang('INFORMATION'),
+				'MESSAGE_TEXT'	=> $this->language->lang('SC_MOVE_SUCCESS'),
+				'REFRESH_DATA'	=> array('time'		=> 2),
+			));
+		}
+		else
+		{
+			trigger_error($this->language->lang('SC_MOVE_SUCCESS') . adm_back_link($this->u_action));
+		}
 	}
 	
 	private function extract_list_smilies($select, $start)
