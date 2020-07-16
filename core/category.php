@@ -97,10 +97,10 @@ class category
 			'WHERE'		=> $sql_where,
 		));
 		$result = $this->db->sql_query($sql);
-		$smilies_count = (int) $this->db->sql_fetchfield('smilies_count');
+		$nb = (int) $this->db->sql_fetchfield('smilies_count');
 		$this->db->sql_freeresult($result);
 
-		return $smilies_count;
+		return $nb;
 	}
 
 	public function select_categories($cat, $modify = false)
@@ -174,17 +174,14 @@ class category
 
 	public function shoutbox_smilies($event)
 	{
-		$i = $cat_order = $cat_id = 0;
+		$i = $cat_order = 0;
 		$list_cat = [];
 		$lang = $this->user->lang_name;
 
-		$sql = $this->db->sql_build_query('SELECT', array(
-			'SELECT'	=> '*',
-			'FROM'		=> array($this->smilies_category_table => ''),
-			'WHERE'		=> "cat_lang = '$lang'",
-			'ORDER_BY'	=> 'cat_order ASC',
-		));
-		$result = $this->db->sql_query($sql, 3600);
+		$sql = 'SELECT * FROM ' . $this->smilies_category_table . "
+			WHERE cat_lang = '$lang'
+			ORDER BY cat_order ASC";
+		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$list_cat[$i] = array(
@@ -200,13 +197,17 @@ class category
 
 		if ($i > 0)
 		{
-			// Add the Unclassified category
-			$list_cat[$i] = array(
-				'cat_id'		=> $cat_id,
-				'cat_order'		=> $cat_order + 1,
-				'cat_name'		=> $this->language->lang('SC_CATEGORY_DEFAUT'),
-				'cat_nb'		=> $this->smilies_count($cat_id),
-			);
+			// Add the Unclassified category if not empty
+			$nb = $this->smilies_count(0);
+			if ($nb)
+			{
+				$list_cat[$i] = array(
+					'cat_id'		=> 0,
+					'cat_order'		=> $cat_order + 1,
+					'cat_name'		=> $this->language->lang('SC_CATEGORY_DEFAUT'),
+					'cat_nb'		=> $nb,
+				);
+			}
 
 			$event['content'] = array_merge($event['content'], array(
 				'title_cat'		=> $this->language->lang('ACP_SC_SMILIES'),
