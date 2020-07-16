@@ -89,14 +89,13 @@ class admin_controller
 
 		if ($action)
 		{
+			if (in_array($action, array('config_cat', 'add_cat', 'edit_cat', 'move_up', 'move_down')) && !check_form_key($form_key))
+			{
+				trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
+			}
 			switch ($action)
 			{
 				case 'config_cat':
-
-					if (!check_form_key($form_key))
-					{
-						trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
-					}
 
 					$this->config->set('smilies_per_page_cat', $this->request->variable('smilies_per_page_cat', 15));
 
@@ -119,11 +118,6 @@ class admin_controller
 
 				case 'add_cat':
 
-					if (!check_form_key($form_key))
-					{
-						trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
-					}
-
 					$this->add_categorie();
 
 				break;
@@ -141,22 +135,12 @@ class admin_controller
 
 				case 'edit_cat':
 
-					if (!check_form_key($form_key))
-					{
-						trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
-					}
-
 					$this->edit_categorie($id);
 
 				break;
 
 				case 'move_up':
 				case 'move_down':
-
-					if (!check_link_hash($this->request->variable('hash', ''), 'acp-main_module'))
-					{
-						trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
-					}
 					
 					$this->move_cat($action, $id);
 
@@ -340,10 +324,10 @@ class admin_controller
 		$lang = $this->user->lang_name;
 		$smilies_count = $this->category->smilies_count($select);
 		$cat_title = $this->language->lang('SC_CATEGORY_DEFAUT');
-		$where = ($select !== -1) ? "cat_id = $select AND " : '';
 
 		if ($select !== 0)
 		{
+			$where = ($select !== -1) ? "cat_id = $select AND " : '';
 			$sql = $this->db->sql_build_query('SELECT', array(
 				'SELECT'	=> 's.*, c.*',
 				'FROM'		=> array(SMILIES_TABLE => 's'),
