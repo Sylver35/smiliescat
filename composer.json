@@ -3,22 +3,24 @@
     "type": "phpbb-extension",
     "description": "This extension add categories for the smilies.",
     "homepage": "https://breizhcode.com",
-    "version": "1.1.0",
-    "time": "2020-03-30",
+    "version": "1.2.0",
+    "time": "2020-07-17",
     "keywords": [
         "phpbb",
         "extension",
         "breizh",
+        "smiley",
         "smilies",
         "categories",
         "posting"
     ],
-    "license": "GPL-2.0",
+    "license": "GPL-2.0-only",
     "authors": [
         {
             "name": "Sylver35",
             "homepage": "https://breizhcode.com",
-            "role": "Developer"
+            "email": "webmaster@breizhcode.com",
+            "role": "Extension Developer"
         },
         {
             "name": "Skouat",
