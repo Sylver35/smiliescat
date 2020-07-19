@@ -276,7 +276,7 @@ class category
 		}
 	}
 
-	public function adm_add_cat()
+	public function adm_add_cat($u_action)
 	{
 		$max = $this->get_max_order();
 		$sql = 'SELECT lang_local_name, lang_iso
@@ -294,11 +294,14 @@ class category
 		$this->db->sql_freeresult($result);
 
 		$this->template->assign_vars(array(
-			'CAT_ORDER'	=> $max + 1,
+			'IN_ADD_ACTION'		=> true,
+			'CAT_ORDER'			=> $max + 1,
+			'U_BACK'			=> $u_action,
+			'U_ADD_CAT'			=> $u_action . '&amp;action=add_cat',
 		));
 	}
 
-	public function adm_edit_cat($id)
+	public function adm_edit_cat($id, $u_action)
 	{
 		// Get total lang id...
 		$sql = 'SELECT COUNT(lang_id) as total
@@ -366,6 +369,8 @@ class category
 		$this->template->assign_vars(array(
 			'CAT_ORDER'		=> $cat_order,
 			'CAT_TITLE'		=> $title,
+			'U_BACK'		=> $u_action,
+			'U_EDIT_CAT'	=> $u_action . '&amp;action=edit_cat&amp;id=' . $id,
 		));
 	}
 

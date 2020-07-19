@@ -178,13 +178,7 @@ class admin_controller
 
 				case 'add':
 
-					$this->category->adm_add_cat();
-
-					$this->template->assign_vars(array(
-						'IN_ADD_ACTION'			=> true,
-						'U_BACK'				=> $this->u_action,
-						'U_ADD_CAT'				=> $this->u_action . '&amp;action=add_cat',
-					));
+					$this->category->adm_add_cat($this->u_action);
 
 				break;
 
@@ -196,12 +190,7 @@ class admin_controller
 
 				case 'edit':
 
-					$this->category->adm_edit_cat($id);
-
-					$this->template->assign_vars(array(
-						'U_BACK'		=> $this->u_action,
-						'U_EDIT_CAT'	=> $this->u_action . '&amp;action=edit_cat&amp;id=' . $id,
-					));
+					$this->category->adm_edit_cat($id, $this->u_action);
 
 				break;
 
