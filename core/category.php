@@ -178,19 +178,23 @@ class category
 		$list_cat = [];
 		$lang = $this->user->lang_name;
 
-		$sql = 'SELECT * FROM ' . $this->smilies_category_table . "
-			WHERE cat_lang = '$lang'
-			ORDER BY cat_order ASC";
+		$sql = 'SELECT * 
+			FROM ' . $this->smilies_category_table . "
+				WHERE cat_lang = '$lang'
+				ORDER BY cat_order ASC";
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$list_cat[$i] = array(
-				'cat_id'		=> $row['cat_id'],
-				'cat_order'		=> $row['cat_order'],
-				'cat_name'		=> $row['cat_name'],
-				'cat_nb'		=> $row['cat_nb'],
-			);
-			$i++;
+			if ($row['cat_nb'])
+			{
+				$list_cat[$i] = array(
+					'cat_id'		=> $row['cat_id'],
+					'cat_order'		=> $row['cat_order'],
+					'cat_name'		=> $row['cat_name'],
+					'cat_nb'		=> $row['cat_nb'],
+				);
+				$i++;
+			}
 			$cat_order = $row['cat_order'];
 		}
 		$this->db->sql_freeresult($result);
@@ -241,7 +245,7 @@ class category
 			$sql = $this->db->sql_build_query('SELECT', array(
 				'SELECT'	=> 'smiley_url, MIN(smiley_id) AS smiley_id, MIN(code) AS code, MIN(smiley_order) AS min_smiley_order, MIN(smiley_width) AS smiley_width, MIN(smiley_height) AS smiley_height, MIN(emotion) AS emotion, MIN(display_on_shout) AS display_on_shout',
 				'FROM'		=> array(SMILIES_TABLE => ''),
-				'WHERE'		=> "category = $cat",
+				'WHERE'		=> 'category = ' . $cat,
 				'GROUP_BY'	=> 'smiley_url',
 				'ORDER_BY'	=> 'min_smiley_order ASC',
 			));
@@ -276,8 +280,8 @@ class category
 	{
 		$max = $this->get_max_order();
 		$sql = 'SELECT lang_local_name, lang_iso
-			FROM ' . LANG_TABLE . "
-				ORDER BY lang_id ASC";
+			FROM ' . LANG_TABLE . '
+				ORDER BY lang_id ASC';
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
@@ -290,10 +294,10 @@ class category
 		$this->db->sql_freeresult($result);
 
 		$this->template->assign_vars(array(
-			'CAT_ORDER'		=> $max + 1,
+			'CAT_ORDER'	=> $max + 1,
 		));
 	}
-	
+
 	public function adm_edit_cat($id)
 	{
 		// Get total lang id...
@@ -315,7 +319,7 @@ class category
 					'ON'	=> 'c.cat_lang = l.lang_iso',
 				),
 			),
-			'WHERE'		=> "cat_id = $id",
+			'WHERE'		=> 'cat_id = ' . $id,
 			'ORDER_BY'	=> 'lang_id ASC',
 		));
 		$result = $this->db->sql_query($sql);

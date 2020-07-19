@@ -71,8 +71,10 @@ class listener implements EventSubscriberInterface
 	}
 
 	/**
-	 *
 	 * @param array $event
+	 *
+	 * @return void
+	 * @access public
 	 */
 	public function shoutbox_smilies($event)
 	{
@@ -80,8 +82,10 @@ class listener implements EventSubscriberInterface
 	}
 
 	/**
-	 *
 	 * @param array $event
+	 *
+	 * @return void
+	 * @access public
 	 */
 	public function shoutbox_smilies_popup($event)
 	{

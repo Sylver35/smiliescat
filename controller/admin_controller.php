@@ -252,7 +252,7 @@ class admin_controller
 			'U_ADD'					=> $this->u_action . '&amp;action=add',
 		));
 	}
-	
+
 	private function move_cat($action, $id)
 	{
 		// Get current order id and title...
@@ -272,7 +272,7 @@ class admin_controller
 
 		$max_order = $this->category->get_max_order();
 
-		if ($current_order == $max_order && $action == 'move_down')
+		if (($current_order == $max_order) && ($action == 'move_down'))
 		{
 			return;
 		}
@@ -317,7 +317,7 @@ class admin_controller
 			trigger_error($this->language->lang('SC_MOVE_SUCCESS') . adm_back_link($this->u_action));
 		}
 	}
-	
+
 	private function extract_list_smilies($select, $start)
 	{
 		$cat = $i = 0;
@@ -442,12 +442,12 @@ class admin_controller
 	{
 		$cat_order = $this->request->variable('order', 0);
 		$title = $this->request->variable('name_' . $this->user->lang_name, '', true);
-		
+
 		$sql_in = array(
 			'cat_id'		=> $this->category->get_max_id() + 1,
 			'cat_order'		=> $cat_order,
 		);
-		
+
 		$sql = 'SELECT lang_id, lang_iso
 			FROM ' . LANG_TABLE . "
 				ORDER BY lang_id ASC";
@@ -480,7 +480,7 @@ class admin_controller
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_ADD_CAT', time(), array($title));
 		trigger_error($this->language->lang('SC_CREATE_SUCCESS') . adm_back_link($this->u_action));
 	}
-	
+
 	private function edit_categorie($id)
 	{
 		$title = $this->request->variable('name_' . $this->user->lang_name, '', true);
@@ -503,8 +503,10 @@ class admin_controller
 			{
 				if ($sort == 'edit')
 				{
-					$sql = 'UPDATE ' . $this->smilies_category_table . " SET cat_name = '" . $this->category->capitalize($name) . "', cat_title = '" . $this->category->capitalize($title) . "'
-						WHERE cat_lang = '" . $this->db->sql_escape($lang) . "' AND cat_id = $id";
+					$sql = 'UPDATE ' . $this->smilies_category_table . "
+						SET cat_name = '" . $this->category->capitalize($name) . "', cat_title = '" . $this->category->capitalize($title) . "'
+						WHERE cat_lang = '" . $this->db->sql_escape($lang) . "'
+						AND cat_id = $id";
 					$this->db->sql_query($sql);
 				}
 				else if ($sort == 'create')
