@@ -111,15 +111,14 @@
 				<td class="row3" style="text-align: center;"><strong>{{ categorie.CAT_NB }}</strong></td>
 				<td class="row3 actions" style="text-align: center;">
 					<span class="up-disabled" style="display:none;">{{ ICON_MOVE_UP_DISABLED }}</span>
-					<span class="up"><a href="{{ categorie.U_MOVE_UP }}" data-ajax="row_up">{{ ICON_MOVE_UP }}</a></span>
+					<span class="up"><a href="{{ categorie.U_MOVE_UP }}">{{ ICON_MOVE_UP }}</a></span>
 					{% if categorie.ROW_MAX %}
 					<span class="down-disabled">{{ ICON_MOVE_DOWN_DISABLED }}</span>
 					{% else %}
-					<span class="down"><a href="{{ categorie.U_MOVE_DOWN }}" data-ajax="row_down">{{ ICON_MOVE_DOWN }}</a></span>
+					<span class="down"><a href="{{ categorie.U_MOVE_DOWN }}">{{ ICON_MOVE_DOWN }}</a></span>
 					{% endif %}
 					<a href="{{ categorie.U_EDIT }}">{{ ICON_EDIT }}</a>
-					<a href="{{ categorie.U_DELETE }}" data-ajax="row_delete">{{ ICON_DELETE }}</a>
-				</td>
+					<a href="{{ categorie.U_DELETE }}">{{ ICON_DELETE }}</a>
 			</tr>
 			{% endif %}
 			<tr>
