@@ -1,8 +1,8 @@
 # Breizh Smilies Categories Extension
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Sylver35/smiliescat/badges/quality-score.png?b=1.2.0)](https://scrutinizer-ci.com/g/Sylver35/smiliescat/?branch=1.2.0)
-[![Build Status](https://scrutinizer-ci.com/g/Sylver35/smiliescat/badges/build.png?b=1.2.0)](https://scrutinizer-ci.com/g/Sylver35/smiliescat/build-status/1.2.0)
-[![Code Intelligence Status](https://scrutinizer-ci.com/g/Sylver35/smiliescat/badges/code-intelligence.svg?b=1.2.0)](https://scrutinizer-ci.com/code-intelligence)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Sylver35/smiliescat/badges/quality-score.png?b=1.3.0)](https://scrutinizer-ci.com/g/Sylver35/smiliescat/?branch=1.3.0)
+[![Build Status](https://scrutinizer-ci.com/g/Sylver35/smiliescat/badges/build.png?b=1.3.0)](https://scrutinizer-ci.com/g/Sylver35/smiliescat/build-status/1.3.0)
+[![Code Intelligence Status](https://scrutinizer-ci.com/g/Sylver35/smiliescat/badges/code-intelligence.svg?b=1.3.0)](https://scrutinizer-ci.com/code-intelligence)
 
 ## Minimum Requirements
 * phpBB 3.3.0
