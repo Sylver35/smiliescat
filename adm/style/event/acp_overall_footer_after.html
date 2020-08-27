@@ -1,18 +1,36 @@
 {% if CATEGORIE_CONFIG %}
 <script>
+var errorTitle = '{{ lang("SC_CATEGORY_ERROR") | escape("js") }}';
 $(document).ready(function(){
+	$('#cat-action input[type="text"]').each(function(){
+		$(this).on({
+			'keyup': function(){validInputs()},
+			'blur': function(){validInputs()},
+		});
+		if($(this).val().trim() == ''){
+			$(this).css('outline', '1px solid red');
+			$('#info').css('display', 'block').html(errorTitle);
+			$('#submit').prop('disabled', true).attr({'disabled': 'disabled', 'title': errorTitle});
+		}
+	});
+});
+function validInputs(){
+	var inputEmpty = false;
 	$('#cat-action input[type="text"]').each(function(){
 		if($(this).val().trim() == ''){
 			$(this).css('outline', '1px solid red');
-		}
-	});
-	$('#cat-action input[type="text"]').blur(function(){
-		if($(this).val().trim() == ''){
-			$(this).css('outline', '1px solid red');
+			inputEmpty = true;
 		}else{
 			$(this).css('outline', '');
 		}
 	});
-});
+	if(inputEmpty === true){
+		$('#submit').prop('disabled', true).attr({'disabled': 'disabled', 'title': errorTitle});
+		$('#info').css('display', 'block').html(errorTitle);
+	}else{
+		$('#submit').prop('disabled', false).attr('title', '{{ lang("SUBMIT") | escape("js") }}');
+		$('#info').hide();
+	}
+}
 </script>
 {% endif %}

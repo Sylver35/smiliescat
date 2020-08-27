@@ -20,9 +20,7 @@ class v110_data extends migration
 
 	static public function depends_on()
 	{
-		return array(
-			'\sylver35\smiliescat\migrations\v110_schema',
-		);
+		return array('\sylver35\smiliescat\migrations\v110_schema');
 	}
 
 	public function update_data()
@@ -30,7 +28,7 @@ class v110_data extends migration
 		return array(
 			// Config
 			array('config.add', array('smilies_category_nb', 0)),
-			array('config.add', array('smilies_per_page_cat', 25)),
+			array('config.add', array('smilies_per_page_cat', 15)),
 
 			// Add ACP modules
 			array('module.add', array('acp', 'ACP_MESSAGES', array(

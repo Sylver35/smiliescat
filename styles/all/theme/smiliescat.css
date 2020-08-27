@@ -1,8 +1,8 @@
 a.category_red {
 	color: red;
 	font-size: 1.1em;
-	cursor: help;
 	font-weight: bold;
+	cursor: pointer;
 }
 
 a.pointer {
@@ -12,8 +12,8 @@ a.pointer {
 a.cat-active {
 	color: red;
 	font-size: 1.1em;
-	cursor: help;
 	font-weight: bold;
+	cursor: pointer;
 }
 
 a.cat-inactive {

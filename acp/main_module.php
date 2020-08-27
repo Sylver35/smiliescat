@@ -59,7 +59,7 @@ class main_module
 
 			default:
 				trigger_error('NO_MODE', E_USER_ERROR);
-			break;
+			/* No break here */
 		}
 
 		$template->assign_vars(array(

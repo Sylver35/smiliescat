@@ -35,8 +35,9 @@
 		</tbody>
 	</table>
 	<p class="submit-buttons">
+		<span id="info" style="display: none;color: red;"></span><br />
 		<input type="hidden" name="order" value="{{ CAT_ORDER }}">
-		<input class="button1" type="submit" id="submit" name="submit" onsubmit='validInputs();' value="{{ lang('SUBMIT') }}" />
+		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" title="{{ lang('SUBMIT') }}" />
 	</p>
 	{{ S_FORM_TOKEN }}
 	</fieldset>
@@ -60,7 +61,7 @@
 			<tr>
 				<td style="text-align: center;">{{ category.CAT_ID }}<input type="hidden" name="sort_{{ category.CAT_ISO }}" value="{{ category.CAT_SORT }}"></td>
 				<td style="text-align: center;">{{ CAT_ORDER }}</td>
-				<td style="text-align: center;"><input class="text post" type="text" name="name_{{ category.CAT_ISO }}" value="{{ category.CAT_TRADUCT }}" size="20" maxlength="50" /></td>
+				<td style="text-align: center;"><input class="text post" type="text" name="name_{{ category.CAT_ISO }}" value="{{ category.CAT_TRANSLATE }}" size="20" maxlength="50" /></td>
 				<td style="text-align: center;">{{ category.CAT_LANG }}</td>
 				<td style="text-align: center;"><strong>{{ category.CAT_ISO }}</strong><input type="hidden" name="lang_{{ category.CAT_ISO }}" value="{{ category.CAT_ISO }}"></td>
 			</tr>
@@ -68,8 +69,9 @@
 		</tbody>
 	</table>
 	<p class="submit-buttons">
+		<span id="info" style="display: none;color: red;"></span><br />
 		<input type="hidden" name="order" value="{{ CAT_ORDER }}">
-		<input class="button1" type="submit" id="submit" name="submit" onsubmit='validInputs();' value="{{ lang('SUBMIT') }}" />
+		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" title="{{ lang('SUBMIT') }}" />
 	</p>
 	{{ S_FORM_TOKEN }}
 	</fieldset>
@@ -81,7 +83,7 @@
 		<thead>
 			<tr>
 				<th style="text-align: center;">{{ lang('SC_CATEGORY_ID') }}</th>
-				<th style="text-align: center;">{{ lang('SC_CAT_ORDER') }}</th>
+				<th style="text-align: center;">{{ lang('SC_CATEGORY_ORDER') }}</th>
 				<th style="text-align: center;">{{ lang('SC_CATEGORY_NAME') }}</th>
 				<th style="text-align: center;">{{ lang('SC_CATEGORY_LANG') }}</th>
 				<th style="text-align: center;">{{ lang('LANGUAGE_PACK_ISO') }}</th>
@@ -90,12 +92,17 @@
 			</tr>
 		</thead>
 		<tbody>
-			{% if EMPTY_ROW %}
+		{% if EMPTY_ROW %}
 			<tr>
 				<td class="row3" colspan="7" style="text-align: center;color: red;"><strong>{{ lang('SC_CATEGORY_ANY_CREATE') }}</strong></td>
 			</tr>
-			{% else %}
+		{% else %}
 			{% for categorie in categories %}
+			{% if categorie.LANG_EMPTY %}
+			<tr>
+				<td class="row3" colspan="7" style="text-align: center;color: red;"><strong>{{ lang('SC_LANGUAGE_EMPTY') }} {{ categorie.CAT_LANG }} - {{ categorie.CAT_ISO }}</strong></td>
+			</tr>
+			{% else %}
 			{% if categorie.ROW %}
 			<tr>
 				<td class="row3" style="text-align: center;"><strong>{{ categorie.CAT_ID }}</strong></td>
@@ -118,13 +125,14 @@
 			<tr>
 				<td style="text-align: center;background-color: #F9F9F9;"></td>
 				<td style="text-align: center;background-color: #F9F9F9;"></td>
-				<td style="text-align: center;"><strong>{{ categorie.CAT_TRADUCT }}</strong></td>
+				<td style="text-align: center;"><strong>{{ categorie.CAT_TRANSLATE }}</strong></td>
 				<td style="text-align: center;">{{ categorie.CAT_LANG }}</td>
 				<td style="text-align: center;">{{ categorie.CAT_ISO }}</td>
 				<td style="text-align: center;background-color: #F9F9F9;"></td>
 			</tr>
-			{% endfor %}
 			{% endif %}
+			{% endfor %}
+		{% endif %}
 		</tbody>
 	</table>
 	<p class="quick">

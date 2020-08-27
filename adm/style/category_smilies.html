@@ -45,15 +45,14 @@
 	<form id="acp_smilies_category" method="post" action="{{ U_SELECT_CAT }}">
 	<fieldset class="tabulated">
 	<div class="pagination" style="float: left;">
-		<strong>{% if CAT_SELECT_TITLE %}{{ CAT_SELECT_TITLE }}{% else %}{{ lang('SC_CATEGORY_SELECT') }} :{% endif %} </strong>
+		<strong>{{ lang('SC_CATEGORY_SELECT') }} : </strong>
 		<select id="select" name="select" onchange="if(this.options[this.selectedIndex].value != '')this.form.submit();">{{ LIST_CATEGORY }}</select>&nbsp;
 		<input class="button2" type="submit" value="{{ lang('GO') }}">
 	</div>
 	<div class="pagination" style="float: right;">
+	<strong>{{ NB_SMILIES }} {% if NB_SMILIES > 1 %}{{ lang('SC_SMILIES') }}{% else %}{{ lang('SC_SMILIE') }}{% endif %} &bull;</strong> 
 	{% if pagination|length %}
 		{% INCLUDE 'pagination.html' %}
-	{% else %}
-	<strong>{{ NB_SMILIES }} {{ lang('ACP_SMILIES') }} &bull;</strong>
 	{% endif %}
 	</div>
 	<table class="table1 zebra-table">
@@ -69,13 +68,13 @@
 	<tbody>
 		{% if items|length %}
 		{% for item in items %}
-		{% if item.S_SPACER_CAT %}
+		{% if item.SPACER_CAT %}
 		<tr>
 			<td class="row3" colspan="5" style="text-align: center;"><b>{{ item.SPACER_CAT }}</b></td>
 		</tr>
 		{% endif %}
 		<tr>
-			<td style="width: 60%; text-align: center;"><img src="{{ item.IMG_SRC }}" width="{{ item.WIDTH }}" height="{{ item.HEIGHT }}" alt="{{ item.CODE }}" title="{{ item.EMOTION }}" /></td>
+			<td style="width: 60%; text-align: center;"><img src="{{ U_SMILIES }}{{ item.IMG_SRC }}" width="{{ item.WIDTH }}" height="{{ item.HEIGHT }}" alt="{{ item.CODE }}" title="{{ item.EMOTION }}" /></td>
 			<td style="text-align: center;">{{ item.CODE }}</td>
 			<td style="text-align: center;">{{ item.EMOTION }}</td>
 			<td style="text-align: center;">{{ item.CATEGORY }}</td>

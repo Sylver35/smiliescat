@@ -43,7 +43,7 @@
 	<input id="hidden-select" type="hidden" name="select" value="">
 	<h3>{{ lang('ACP_SC_SMILIES') }}</h3>
 	{% for category in categories %}
-		{{ category.SEPARATE }}<a class="{{ category.CLASS }}" id="pointer-{{ category.CAT_ID }}" onclick="document.getElementById('hidden-select').value='{{ category.CAT_ID }}';document.getElementById('categories').submit();" title="{{ category.CAT_NAME }}">{{ category.CAT_NAME }}</a> ({{ category.CAT_NB }})
+		{{ category.SEPARATE }}<a class="{{ category.CLASS }}" id="pointer-{{ category.CAT_ID }}" title="{{ category.CAT_NAME }}">{{ category.CAT_NAME }}</a> ({{ category.CAT_NB }})
 	{% endfor %}
 	</div>
 </div>
