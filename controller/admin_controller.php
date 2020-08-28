@@ -248,29 +248,19 @@ class admin_controller
 		$id = (int) $id;
 		// Get current order id and title...
 		$sql = 'SELECT cat_order, cat_title
-			FROM ' . $this->smilies_category_table . "
-				WHERE cat_id = $id";
+			FROM ' . $this->smilies_category_table . '
+				WHERE cat_id = ' . $id;
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 		$current_order = (int) $row['cat_order'];
 		$title = $row['cat_title'];
 		$this->db->sql_freeresult($result);
 
-		if ($current_order === 1 && $action === 'move_up')
+		$switch_order_id = $this->set_order($action, $current_order);
+		if ($switch_order_id === 0)
 		{
 			return;
 		}
-
-		$max_order = (int) $this->category->get_max_order();
-
-		if (($current_order === $max_order) && ($action === 'move_down'))
-		{
-			return;
-		}
-
-		// on move_down, switch position with next order_id...
-		// on move_up, switch position with previous order_id...
-		$switch_order_id = ($action === 'move_down') ? $current_order + 1 : $current_order - 1;
 
 		$sql = 'UPDATE ' . $this->smilies_category_table . "
 			SET cat_order = $current_order
@@ -293,6 +283,28 @@ class admin_controller
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_' . strtoupper($action) . '_CAT', time(), array($title));
 
 		trigger_error($this->language->lang('SC_MOVE_SUCCESS') . adm_back_link($this->u_action));
+	}
+
+	private function set_order($action, $current_order)
+	{
+		$switch_order_id = 0;
+		if ($current_order === 1 && $action === 'move_up')
+		{
+			return $switch_order_id;
+		}
+
+		$max_order = (int) $this->category->get_max_order();
+
+		if (($current_order === $max_order) && ($action === 'move_down'))
+		{
+			return $switch_order_id;
+		}
+
+		// on move_down, switch position with next order_id...
+		// on move_up, switch position with previous order_id...
+		$switch_order_id = ($action === 'move_down') ? $current_order + 1 : $current_order - 1;
+
+		return $switch_order_id;
 	}
 
 	private function extract_list_smilies($select, $start)
@@ -361,25 +373,25 @@ class admin_controller
 	{
 		$id = (int) $id;
 		$sql = 'SELECT cat_title, cat_order
-			FROM ' . $this->smilies_category_table . "
-				WHERE cat_id = $id";
+			FROM ' . $this->smilies_category_table . '
+				WHERE cat_id = ' . $id;
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 		$title = $row['cat_title'];
 		$order = $row['cat_order'];
 		$this->db->sql_freeresult($result);
 
-		$sql_delete = 'DELETE FROM ' . $this->smilies_category_table . " WHERE cat_id = $id";
+		$sql_delete = 'DELETE FROM ' . $this->smilies_category_table . ' WHERE cat_id = ' . $id;
 		$this->db->sql_query($sql_delete);
 
 		// Decrement orders if needed
 		$sql_decrement = 'SELECT cat_id, cat_order
-			FROM ' . $this->smilies_category_table . "
-				WHERE cat_order > $order";
+			FROM ' . $this->smilies_category_table . '
+				WHERE cat_order > ' . (int) $order;
 		$result = $this->db->sql_query($sql_decrement);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$new_order = $row['cat_order'] - 1;
+			$new_order = (int) $row['cat_order'] - 1;
 			$sql_order = 'UPDATE ' . $this->smilies_category_table . '
 				SET cat_order = ' . $new_order . '
 					WHERE cat_id = ' . $row['cat_id'] . ' AND cat_order = ' . $row['cat_order'];
@@ -388,7 +400,7 @@ class admin_controller
 		$this->db->sql_freeresult($result);
 
 		// Reset appropriate smilies category id
-		$sql_update = 'UPDATE ' . SMILIES_TABLE . " SET category = 0 WHERE category = $id";
+		$sql_update = 'UPDATE ' . SMILIES_TABLE . ' SET category = 0 WHERE category = ' . $id;
 		$this->db->sql_query($sql_update);
 
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_DELETE_CAT', time(), array($title));

@@ -467,6 +467,7 @@ class category
 					'U_MOVE_DOWN'		=> $u_action . '&amp;action=move_down&amp;id=' . $row['cat_id'] . '&amp;hash=' . generate_link_hash('acp-main_module'),
 				));
 				$i++;
+				// Keep this value in memory
 				$cat = (int) $row['cat_id'];
 			}
 		}
