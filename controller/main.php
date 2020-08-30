@@ -48,6 +48,12 @@ class main
 	/** @var \phpbb\pagination */
 	protected $pagination;
 
+	/** @var string phpBB root path */
+	protected $root_path;
+
+	/** @var string phpEx */
+	protected $php_ext;
+
 	/**
 	 * The database tables
 	 *
@@ -57,7 +63,7 @@ class main
 	/**
 	 * Constructor
 	 */
-	public function __construct(category $category, request $request, config $config, helper $helper, db $db, template $template, user $user, language $language, pagination $pagination, $smilies_category_table)
+	public function __construct(category $category, request $request, config $config, helper $helper, db $db, template $template, user $user, language $language, pagination $pagination, $root_path, $php_ext, $smilies_category_table)
 	{
 		$this->category = $category;
 		$this->request = $request;
@@ -69,6 +75,8 @@ class main
 		$this->language = $language;
 		$this->pagination = $pagination;
 		$this->smilies_category_table = $smilies_category_table;
+		$this->root_path = $root_path;
+		$this->php_ext = $php_ext;
 	}
 
 	/**
@@ -119,5 +127,57 @@ class main
 		);
 
 		page_footer();
+	}
+
+	public function ajax_list_cat()
+	{
+		$i = $cat = 0;
+		$list_cat = array();
+		$id = (int) $this->request->variable('id', 0);
+		$action = (string) $this->request->variable('action', '');
+		
+		$this->category->move_cat($action, $id);
+		$max = $this->category->get_max_order();
+
+		$sql = $this->db->sql_build_query('SELECT', array(
+			'SELECT'	=> 'l.lang_iso, l.lang_local_name, c.*',
+			'FROM'		=> array(LANG_TABLE => 'l'),
+			'LEFT_JOIN'	=> array(
+				array(
+					'FROM'	=> array($this->smilies_category_table => 'c'),
+					'ON'	=> 'cat_lang = lang_iso',
+				),
+			),
+			'ORDER_BY'	=> 'cat_order ASC, cat_lang_id ASC',
+		));
+		$result = $this->db->sql_query($sql);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$list_cat[$i] = array(
+				'catNr'			=> $i + 1,
+				'langEmpty'		=> !$row['cat_id'] && !$row['cat_order'] && !$row['cat_name'],
+				'spacerCat'		=> $this->language->lang('SC_CATEGORY_IN', $row['cat_title']),
+				'catLang'		=> $row['lang_local_name'],
+				'catIso'		=> $row['lang_iso'],
+				'catTranslate'	=> $row['cat_name'],
+				'catId'			=> (int) $row['cat_id'],
+				'catOrder'		=> (int) $row['cat_order'],
+				'catNb'			=> (int) $row['cat_nb'],
+				'row'			=> (int) $row['cat_id'] !== $cat,
+				'rowMax'		=> (int) $row['cat_order'] === $max,
+				'uEdit'			=> '&amp;action=edit&amp;id=' . $row['cat_id'],
+				'uDelete'		=> '&amp;action=delete&amp;id=' . $row['cat_id'],
+			);
+			$i++;
+			// Keep this value in memory
+			$cat = (int) $row['cat_id'];
+		}
+		$this->db->sql_freeresult($result);
+		
+		$json_response = new \phpbb\json_response;
+		$json_response->send(array(
+			'total'	=> $i,
+			'datas'	=> $list_cat,
+		));
 	}
 }

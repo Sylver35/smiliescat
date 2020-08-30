@@ -93,13 +93,10 @@ class admin_controller
 			switch ($action)
 			{
 				case 'edit':
-
 					$this->category->adm_edit_smiley($id, $this->u_action, $start);
-
 				break;
 
 				case 'modify':
-
 					if (!check_form_key($form_key))
 					{
 						trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
@@ -125,7 +122,6 @@ class admin_controller
 					}
 
 					trigger_error($this->language->lang('SMILIES_EDITED', 1) . adm_back_link($this->u_action . '&amp;start=' . $start . '#acp_smilies_category'));
-
 				break;
 			}
 
@@ -168,47 +164,34 @@ class admin_controller
 			switch ($action)
 			{
 				case 'config_cat':
-
 					$this->config->set('smilies_per_page_cat', (int) $this->request->variable('smilies_per_page_cat', 15));
 
 					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_CONFIG', time());
 					trigger_error($this->language->lang('CONFIG_UPDATED') . adm_back_link($this->u_action));
-
 				break;
 
 				case 'add':
-
 					$this->category->adm_add_cat($this->u_action);
-
 				break;
 
 				case 'add_cat':
-
 					$this->add_category();
-
 				break;
 
 				case 'edit':
-
 					$this->category->adm_edit_cat($id, $this->u_action);
-
 				break;
 
 				case 'edit_cat':
-
 					$this->edit_category($id);
-
 				break;
 
 				case 'move_up':
 				case 'move_down':
-					
 					$this->move_cat($action, $id);
-
 				break;
 
 				case 'delete':
-
 					if (confirm_box(true))
 					{
 						$this->delete_cat($id);
@@ -218,10 +201,9 @@ class admin_controller
 						confirm_box(false, $this->language->lang('CONFIRM_OPERATION'), build_hidden_fields(array(
 							'mode'		=> $mode,
 							'id'		=> $id,
-							'action'	=> 'delete',
+							'action'	=> $action,
 						)));
 					}
-
 				break;
 				
 			}
@@ -241,70 +223,6 @@ class admin_controller
 			'U_ACTION_CONFIG'		=> $this->u_action . '&amp;action=config_cat',
 			'U_ADD'					=> $this->u_action . '&amp;action=add',
 		));
-	}
-
-	private function move_cat($action, $id)
-	{
-		$id = (int) $id;
-		// Get current order id and title...
-		$sql = 'SELECT cat_order, cat_title
-			FROM ' . $this->smilies_category_table . '
-				WHERE cat_id = ' . $id;
-		$result = $this->db->sql_query($sql);
-		$row = $this->db->sql_fetchrow($result);
-		$current_order = (int) $row['cat_order'];
-		$title = $row['cat_title'];
-		$this->db->sql_freeresult($result);
-
-		$switch_order_id = $this->set_order($action, $current_order);
-		if ($switch_order_id === 0)
-		{
-			return;
-		}
-
-		$sql = 'UPDATE ' . $this->smilies_category_table . "
-			SET cat_order = $current_order
-			WHERE cat_order = $switch_order_id
-				AND cat_id <> $id";
-		$this->db->sql_query($sql);
-		$move_executed = (bool) $this->db->sql_affectedrows();
-
-		// Only update the other entry too if the previous entry got updated
-		if ($move_executed)
-		{
-			$sql = 'UPDATE ' . $this->smilies_category_table . "
-				SET cat_order = $switch_order_id
-				WHERE cat_order = $current_order
-					AND cat_id = $id";
-			$this->db->sql_query($sql);
-		}
-
-		$this->category->reset_first_cat((int) $current_order, (int) $switch_order_id);
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_' . strtoupper($action) . '_CAT', time(), array($title));
-
-		trigger_error($this->language->lang('SC_MOVE_SUCCESS') . adm_back_link($this->u_action));
-	}
-
-	private function set_order($action, $current_order)
-	{
-		$switch_order_id = 0;
-		if ($current_order === 1 && $action === 'move_up')
-		{
-			return $switch_order_id;
-		}
-
-		$max_order = (int) $this->category->get_max_order();
-
-		if (($current_order === $max_order) && ($action === 'move_down'))
-		{
-			return $switch_order_id;
-		}
-
-		// on move_down, switch position with next order_id...
-		// on move_up, switch position with previous order_id...
-		$switch_order_id = ($action === 'move_down') ? $current_order + 1 : $current_order - 1;
-
-		return $switch_order_id;
 	}
 
 	private function extract_list_smilies($select, $start)
@@ -404,7 +322,6 @@ class admin_controller
 		$this->db->sql_query($sql_update);
 
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_DELETE_CAT', time(), array($title));
-
 		trigger_error($this->language->lang('SC_DELETE_SUCCESS') . adm_back_link($this->u_action));
 	}
 

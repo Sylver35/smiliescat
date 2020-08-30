@@ -62,7 +62,6 @@ $lang = array_merge($lang, array(
 	'SC_CREATE_SUCCESS'			=> 'La catégorie a bien été créée',
 	'SC_DELETE_SUCCESS'			=> 'La catégorie a bien été supprimée',
 	'SC_EDIT_SUCCESS'			=> 'La catégorie a bien été éditée',
-	'SC_MOVE_SUCCESS'			=> 'L’ordre d’affichage des catégories a bien modifié',
 	'SC_SMILIES_ANY_CATEGORY'	=> 'Aucun smiley n’a de catégorie attribuée',
 	'SC_SMILIES_EMPTY_CATEGORY'	=> 'Cette catégorie ne contient aucun smiley',
 	'SC_SMILIES_NO_CATEGORY'	=> 'Les smileys suivants n’ont pas de catégorie attribuée',

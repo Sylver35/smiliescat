@@ -12,10 +12,12 @@ namespace sylver35\smiliescat\core;
 use phpbb\cache\driver\driver_interface as cache;
 use phpbb\db\driver\driver_interface as db;
 use phpbb\config\config;
+use phpbb\controller\helper;
 use phpbb\user;
 use phpbb\language\language;
 use phpbb\template\template;
 use phpbb\extension\manager;
+use phpbb\log\log;
 
 class category
 {
@@ -27,6 +29,9 @@ class category
 
 	/** @var \phpbb\config\config */
 	protected $config;
+
+	/* @var \phpbb\controller\helper */
+	protected $helper;
 
 	/** @var \phpbb\user */
 	protected $user;
@@ -40,6 +45,9 @@ class category
 	/** @var \phpbb\extension\manager "Extension Manager" */
 	protected $ext_manager;
 
+	/** @var \phpbb\log\log */
+	protected $log;
+
 	/**
 	 * The database tables
 	 *
@@ -52,15 +60,17 @@ class category
 	/**
 	 * Constructor
 	 */
-	public function __construct(cache $cache, db $db, config $config, user $user, language $language, template $template, manager $ext_manager, $smilies_category_table, $root_path)
+	public function __construct(cache $cache, db $db, config $config, helper $helper, user $user, language $language, template $template, manager $ext_manager, log $log, $smilies_category_table, $root_path)
 	{
 		$this->cache = $cache;
 		$this->db = $db;
 		$this->config = $config;
+		$this->helper = $helper;
 		$this->user = $user;
 		$this->language = $language;
 		$this->template = $template;
 		$this->ext_manager = $ext_manager;
+		$this->log = $log;
 		$this->smilies_category_table = $smilies_category_table;
 		$this->root_path = $root_path;
 	}
@@ -140,10 +150,10 @@ class category
 		$sql = 'SELECT MAX(cat_order) AS maxi
 			FROM ' . $this->smilies_category_table;
 		$result = $this->db->sql_query($sql);
-		$max = (int) $this->db->sql_fetchfield('maxi', $result);
+		$max = $this->db->sql_fetchfield('maxi', $result);
 		$this->db->sql_freeresult($result);
 
-		return $max;
+		return (int) $max;
 	}
 
 	public function get_max_id()
@@ -315,8 +325,8 @@ class category
 
 			$event['content'] = array_merge($event['content'], array(
 				'in_cat'		=> true,
-				'cat'			=> (int) $cat,
-				'total'			=> (int) $i,
+				'cat'			=> $cat,
+				'total'			=> $i,
 				'smilies'		=> $smilies,
 				'emptyRow'		=> (!$i) ? $this->language->lang('SC_SMILIES_EMPTY_CATEGORY') : '',
 				'title'			=> $this->language->lang('SC_CATEGORY_IN', $cat_name),
@@ -324,9 +334,30 @@ class category
 		}
 	}
 
+	public function set_order($action, $current_order)
+	{
+		$switch_order_id = 0;
+		$max_order = $this->get_max_order();
+		if ($current_order == 1 && $action == 'move_up')
+		{
+			return $switch_order_id;
+		}
+
+		if (($current_order == $max_order) && ($action == 'move_down'))
+		{
+			return $switch_order_id;
+		}
+
+		// on move_down, switch position with next order_id...
+		// on move_up, switch position with previous order_id...
+		$switch_order_id = ($action === 'move_down') ? $current_order + 1 : $current_order - 1;
+
+		return $switch_order_id;
+	}
+
 	public function adm_add_cat($u_action)
 	{
-		$max = (int) $this->get_max_order();
+		$max = $this->get_max_order();
 		$sql = 'SELECT lang_local_name, lang_iso
 			FROM ' . LANG_TABLE . '
 				ORDER BY lang_id ASC';
@@ -342,6 +373,7 @@ class category
 		$this->db->sql_freeresult($result);
 
 		$this->template->assign_vars(array(
+			'IN_CAT_ACTION'		=> true,
 			'IN_ADD_ACTION'		=> true,
 			'CAT_ORDER'			=> $max + 1,
 			'U_BACK'			=> $u_action,
@@ -415,6 +447,7 @@ class category
 		}
 
 		$this->template->assign_vars(array(
+			'IN_CAT_ACTION'	=> true,
 			'CAT_ORDER'		=> $cat_order,
 			'CAT_TITLE'		=> $title,
 			'U_BACK'		=> $u_action,
@@ -424,19 +457,18 @@ class category
 
 	public function adm_list_cat($u_action)
 	{
-		$i = 1;
-		$cat = 0;
-		$max = (int) $this->get_max_order();
+		$i = $cat = 0;
+		$max = $this->get_max_order();
 		$sql = $this->db->sql_build_query('SELECT', array(
 			'SELECT'	=> 'l.lang_iso, l.lang_local_name, c.*',
 			'FROM'		=> array(LANG_TABLE => 'l'),
 			'LEFT_JOIN'	=> array(
 				array(
 					'FROM'	=> array($this->smilies_category_table => 'c'),
-					'ON'	=> 'c.cat_lang = l.lang_iso',
+					'ON'	=> 'cat_lang = lang_iso',
 				),
 			),
-			'ORDER_BY'	=> 'cat_order ASC, c.cat_lang_id ASC',
+			'ORDER_BY'	=> 'cat_order ASC, cat_lang_id ASC',
 		));
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
@@ -450,7 +482,9 @@ class category
 			else
 			{
 				$this->template->assign_block_vars('categories', array(
-					'CAT_NR'			=> $i,
+					'CAT_NR'			=> $i + 1,
+					'LANG_EMPTY'		=> !$row['cat_id'] && !$row['cat_order'] && !$row['cat_name'],
+					'SPACER_CAT'		=> $this->language->lang('SC_CATEGORY_IN', $row['cat_title']),
 					'CAT_LANG'			=> $row['lang_local_name'],
 					'CAT_ISO'			=> $row['lang_iso'],
 					'CAT_ID'			=> $row['cat_id'],
@@ -459,12 +493,8 @@ class category
 					'CAT_NB'			=> $row['cat_nb'],
 					'ROW'				=> (int) $row['cat_id'] !== $cat,
 					'ROW_MAX'			=> (int) $row['cat_order'] === $max,
-					'SPACER_CAT'		=> $this->language->lang('SC_CATEGORY_IN', $row['cat_title']),
-					'LANG_EMPTY'		=> !$row['cat_id'] && !$row['cat_order'] && !$row['cat_name'],
 					'U_EDIT'			=> $u_action . '&amp;action=edit&amp;id=' . $row['cat_id'],
 					'U_DELETE'			=> $u_action . '&amp;action=delete&amp;id=' . $row['cat_id'],
-					'U_MOVE_UP'			=> $u_action . '&amp;action=move_up&amp;id=' . $row['cat_id'] . '&amp;hash=' . generate_link_hash('acp-main_module'),
-					'U_MOVE_DOWN'		=> $u_action . '&amp;action=move_down&amp;id=' . $row['cat_id'] . '&amp;hash=' . generate_link_hash('acp-main_module'),
 				));
 				$i++;
 				// Keep this value in memory
@@ -472,6 +502,12 @@ class category
 			}
 		}
 		$this->db->sql_freeresult($result);
+
+		$this->template->assign_vars(array(
+			'IN_LIST_CAT'	=> true,
+			'U_ACTION'		=> $u_action,
+			'U_MOVE_CATS'	=> $this->helper->route('sylver35_smiliescat_ajax_list_cat'),
+		));
 	}
 
 	public function adm_edit_smiley($id, $u_action, $start)
@@ -483,7 +519,7 @@ class category
 			'LEFT_JOIN'	=> array(
 				array(
 					'FROM'	=> array($this->smilies_category_table => 'c'),
-					'ON'	=> "c.cat_id = s.category AND c.cat_lang = '$lang'",
+					'ON'	=> "cat_id = category AND cat_lang = '$lang'",
 				),
 			),
 			'WHERE'	=> 'smiley_id = ' . (int) $id,
@@ -508,9 +544,50 @@ class category
 
 	public function reset_first_cat($current_order, $switch_order_id)
 	{
+		$first = $this->get_first_order();
 		if ($current_order === 1 || $switch_order_id === 1)
 		{
-			$this->config->set('smilies_category_nb', $this->get_first_order());
+			$this->config->set('smilies_category_nb', $first);
 		}
+	}
+
+	public function move_cat($action, $id)
+	{
+		$id = (int) $id;
+		// Get current order id and title...
+		$sql = 'SELECT cat_order, cat_title
+			FROM ' . $this->smilies_category_table . '
+				WHERE cat_id = ' . $id;
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+		$current_order = (int) $row['cat_order'];
+		$title = $row['cat_title'];
+		$this->db->sql_freeresult($result);
+
+		$switch_order_id = $this->set_order($action, $current_order);
+		if ($switch_order_id === 0)
+		{
+			return;
+		}
+
+		$sql = 'UPDATE ' . $this->smilies_category_table . "
+			SET cat_order = $current_order
+			WHERE cat_order = $switch_order_id
+				AND cat_id <> $id";
+		$this->db->sql_query($sql);
+		$move_executed = (bool) $this->db->sql_affectedrows();
+
+		// Only update the other entry too if the previous entry got updated
+		if ($move_executed)
+		{
+			$sql = 'UPDATE ' . $this->smilies_category_table . "
+				SET cat_order = $switch_order_id
+				WHERE cat_order = $current_order
+					AND cat_id = $id";
+			$this->db->sql_query($sql);
+		}
+
+		$this->reset_first_cat($current_order, $switch_order_id);
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_' . strtoupper($action) . '_CAT', time(), array($title));
 	}
 }

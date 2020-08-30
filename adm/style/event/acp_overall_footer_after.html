@@ -1,6 +1,7 @@
-{% if CATEGORIE_CONFIG %}
+{% if IN_CAT_ACTION or IN_LIST_CAT %}
 <script>
-var errorTitle = '{{ lang("SC_CATEGORY_ERROR") | escape("js") }}';
+{% if IN_CAT_ACTION %}
+var errorTitle = '{{ lang("SC_CATEGORY_ERROR")|escape("js") }}';
 $(document).ready(function(){
 	$('#cat-action input[type="text"]').each(function(){
 		$(this).on({
@@ -28,9 +29,51 @@ function validInputs(){
 		$('#submit').prop('disabled', true).attr({'disabled': 'disabled', 'title': errorTitle});
 		$('#info').css('display', 'block').html(errorTitle);
 	}else{
-		$('#submit').prop('disabled', false).attr('title', '{{ lang("SUBMIT") | escape("js") }}');
+		$('#submit').prop('disabled', false).attr('title', '{{ lang("SUBMIT")|escape("js") }}');
 		$('#info').hide();
 	}
 }
+{% else %}
+function moveCats(action, id){
+	$.ajax({
+		type: 'POST',
+		dataType: 'json',
+		data: 'action='+action+'&id='+id,
+		url: '{{ U_MOVE_CATS }}',
+		cache: false,
+		success: function(response){
+			var tbodyRow = '', action_url = $('#action_url').val();
+			for(var i = 0; i < response.total; i++){
+				var data = response.datas[i];
+				if(data.langEmpty){
+					tbodyRow += '<tr><td class="row3" colspan="7" style="text-align: center;color: red;"><strong>{{ lang("SC_LANGUAGE_EMPTY")|escape("js") }} '+data.catLang+' - '+data.catIso+'</strong></td></tr>';
+				}else{
+					if(data.row){
+						tbodyRow += '<tr><td class="row3" style="text-align: center;"><strong>'+data.catId+'</strong></td>';
+						tbodyRow += '<td class="row3" style="text-align: center;"><strong>'+data.catOrder+'</strong></td>';
+						tbodyRow += '<td class="row3" style="text-align: center;" colspan="3"><strong>'+data.spacerCat+'</strong></td>';
+						tbodyRow += '<td class="row3" style="text-align: center;"><strong>'+data.catNb+'</strong></td><td class="row3 actions" style="text-align: center;">';
+						if(data.catOrder == 1){
+							tbodyRow += '<span class="up-disabled">{{ ICON_MOVE_UP_DISABLED }}</span> ';
+						}else{
+							tbodyRow += '<span class="up"><a style="cursor: pointer;" onclick="moveCats(\'move_up\','+data.catId+')">{{ ICON_MOVE_UP }}</a></span> ';
+						}
+						if(data.rowMax){
+							tbodyRow += '<span class="down-disabled">{{ ICON_MOVE_DOWN_DISABLED }}</span> ';
+						}else{
+							tbodyRow += '<span class="down"><a style="cursor: pointer;" onclick="moveCats(\'move_down\','+data.catId+')">{{ ICON_MOVE_DOWN }}</a></span> ';
+						}
+						tbodyRow += '<a href="'+action_url+data.uEdit+'">{{ ICON_EDIT }}</a> <a href="'+action_url+data.uDelete+'">{{ ICON_DELETE }}</a></tr>';
+					}
+					tbodyRow += '<tr><td style="text-align: center;background-color: #F9F9F9;"></td><td style="text-align: center;background-color: #F9F9F9;"></td>';
+					tbodyRow += '<td style="text-align: center;"><strong>'+data.catTranslate+'</strong></td><td style="text-align: center;">'+data.catLang+'</td>';
+					tbodyRow += '<td style="text-align: center;">'+data.catIso+'</td><td style="text-align: center;background-color: #F9F9F9;"></td></tr>';
+				}
+			}
+			$('#body_cat').html(tbodyRow);
+		}
+	});
+};
+{% endif %}
 </script>
 {% endif %}

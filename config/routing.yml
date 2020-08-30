@@ -4,3 +4,6 @@ sylver35_smiliescat_smilies_pop:
     requirements:
         select: \d+
         start: \d+
+sylver35_smiliescat_ajax_list_cat:
+    path: /ajax_list_cat
+    defaults: { _controller: sylver35.smiliescat.controller:ajax_list_cat }

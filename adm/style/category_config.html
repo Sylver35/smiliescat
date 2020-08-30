@@ -42,7 +42,95 @@
 	{{ S_FORM_TOKEN }}
 	</fieldset>
 	</form>
-{% elseif IN_ACTION %}
+{% elseif IN_LIST_CAT %}
+	<form  method="post" action="{{ U_ADD }}">
+	<fieldset class="tabulated">
+	<table class="table1 zebra-table responsive">
+		<thead>
+			<tr>
+				<th style="text-align: center;">{{ lang('SC_CATEGORY_ID') }}</th>
+				<th style="text-align: center;">{{ lang('SC_CATEGORY_ORDER') }}</th>
+				<th style="text-align: center;">{{ lang('SC_CATEGORY_NAME') }}</th>
+				<th style="text-align: center;">{{ lang('SC_CATEGORY_LANG') }}</th>
+				<th style="text-align: center;">{{ lang('LANGUAGE_PACK_ISO') }}</th>
+				<th style="text-align: center;">{{ lang('ACP_SMILIES') }}</th>
+				<th style="text-align: center;">{{ lang('OPTIONS') }}</th>
+			</tr>
+		</thead>
+		<tbody id="body_cat">
+		{% if EMPTY_ROW %}
+			<tr>
+				<td class="row3" colspan="7" style="text-align: center;color: red;"><strong>{{ lang('SC_CATEGORY_ANY_CREATE') }}</strong></td>
+			</tr>
+		{% else %}
+			{% for categorie in categories %}
+			{% if categorie.LANG_EMPTY %}
+			<tr>
+				<td class="row3" colspan="7" style="text-align: center;color: red;"><strong>{{ lang('SC_LANGUAGE_EMPTY') }} {{ categorie.CAT_LANG }} - {{ categorie.CAT_ISO }}</strong></td>
+			</tr>
+			{% else %}
+			{% if categorie.ROW %}
+			<tr>
+				<td class="row3" style="text-align: center;"><strong>{{ categorie.CAT_ID }}</strong></td>
+				<td class="row3" style="text-align: center;"><strong>{{ categorie.CAT_ORDER }}</strong></td>
+				<td class="row3" style="text-align: center;" colspan="3"><strong>{{ categorie.SPACER_CAT }}</strong></td>
+				<td class="row3" style="text-align: center;"><strong>{{ categorie.CAT_NB }}</strong></td>
+				<td class="row3 actions" style="text-align: center;">
+					{% if categorie.CAT_ORDER eq 1 %}
+					<span class="up-disabled">{{ ICON_MOVE_UP_DISABLED }}</span>
+					{% else %}
+					<span class="up"><a style="cursor: pointer;" onclick="moveCats('move_up',{{ categorie.CAT_ID }})">{{ ICON_MOVE_UP }}</a></span>
+					{% endif %}
+					{% if categorie.ROW_MAX %}
+					<span class="down-disabled">{{ ICON_MOVE_DOWN_DISABLED }}</span>
+					{% else %}
+					<span class="down"><a style="cursor: pointer;" onclick="moveCats('move_down',{{ categorie.CAT_ID }})">{{ ICON_MOVE_DOWN }}</a></span>
+					{% endif %}
+					<a href="{{ categorie.U_EDIT }}">{{ ICON_EDIT }}</a>
+					<a href="{{ categorie.U_DELETE }}">{{ ICON_DELETE }}</a>
+			</tr>
+			{% endif %}
+			<tr>
+				<td style="text-align: center;background-color: #F9F9F9;"></td>
+				<td style="text-align: center;background-color: #F9F9F9;"></td>
+				<td style="text-align: center;"><strong>{{ categorie.CAT_TRANSLATE }}</strong></td>
+				<td style="text-align: center;">{{ categorie.CAT_LANG }}</td>
+				<td style="text-align: center;">{{ categorie.CAT_ISO }}</td>
+				<td style="text-align: center;background-color: #F9F9F9;"></td>
+			</tr>
+			{% endif %}
+			{% endfor %}
+		{% endif %}
+		</tbody>
+	</table>
+	<p class="quick">
+		<input type="hidden" id="action_url" value="{{ U_ACTION }}">
+		<input class="button2" name="add" type="submit" value="{{ lang('SC_CATEGORY_ADD') }}" />
+	</p>
+	{{ S_FORM_TOKEN }}
+	</fieldset>
+	</form>
+	
+	<form id="smiliescat_config" method="post" action="{{ U_ACTION_CONFIG }}">
+	<fieldset>
+		<legend>{{ lang('SC_CONFIG_TITLE') }}</legend>
+			
+			<dl>
+				<dt><label for="smilies_per_page_cat">{{ lang('SC_CONFIG_PAGE') }}{{ lang('COLON') }}</label><br /><span>{{ lang('SC_CONFIG_EXPLAIN') }}</span></dt>
+				<dd>
+					<input id="smilies_per_page_cat" type="number" max="99" name="smilies_per_page_cat" value="{{ SMILIES_PER_PAGE_CAT }}">
+				</dd>
+			</dl>
+			
+			<p class="submit-buttons">
+				<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
+				<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+			</p>
+		
+	</fieldset>
+	{{ S_FORM_TOKEN }}
+	</form>
+{% else %}
 	<h2>{{ lang('SC_CATEGORY_EDIT') }} : {{ CAT_TITLE }}</h2>
 	<form id="cat-action" method="post" action="{{ U_EDIT_CAT }}">
 	<fieldset class="tabulated">
@@ -75,90 +163,6 @@
 	</p>
 	{{ S_FORM_TOKEN }}
 	</fieldset>
-	</form>
-{% else %}
-	<form  method="post" action="{{ U_ADD }}">
-	<fieldset class="tabulated">
-	<table class="table1 zebra-table responsive">
-		<thead>
-			<tr>
-				<th style="text-align: center;">{{ lang('SC_CATEGORY_ID') }}</th>
-				<th style="text-align: center;">{{ lang('SC_CATEGORY_ORDER') }}</th>
-				<th style="text-align: center;">{{ lang('SC_CATEGORY_NAME') }}</th>
-				<th style="text-align: center;">{{ lang('SC_CATEGORY_LANG') }}</th>
-				<th style="text-align: center;">{{ lang('LANGUAGE_PACK_ISO') }}</th>
-				<th style="text-align: center;">{{ lang('ACP_SMILIES') }}</th>
-				<th style="text-align: center;">{{ lang('OPTIONS') }}</th>
-			</tr>
-		</thead>
-		<tbody>
-		{% if EMPTY_ROW %}
-			<tr>
-				<td class="row3" colspan="7" style="text-align: center;color: red;"><strong>{{ lang('SC_CATEGORY_ANY_CREATE') }}</strong></td>
-			</tr>
-		{% else %}
-			{% for categorie in categories %}
-			{% if categorie.LANG_EMPTY %}
-			<tr>
-				<td class="row3" colspan="7" style="text-align: center;color: red;"><strong>{{ lang('SC_LANGUAGE_EMPTY') }} {{ categorie.CAT_LANG }} - {{ categorie.CAT_ISO }}</strong></td>
-			</tr>
-			{% else %}
-			{% if categorie.ROW %}
-			<tr>
-				<td class="row3" style="text-align: center;"><strong>{{ categorie.CAT_ID }}</strong></td>
-				<td class="row3" style="text-align: center;"><strong>{{ categorie.CAT_ORDER }}</strong></td>
-				<td class="row3" colspan="3" style="text-align: center;"><strong>{{ categorie.SPACER_CAT }}</strong></td>
-				<td class="row3" style="text-align: center;"><strong>{{ categorie.CAT_NB }}</strong></td>
-				<td class="row3 actions" style="text-align: center;">
-					<span class="up-disabled" style="display:none;">{{ ICON_MOVE_UP_DISABLED }}</span>
-					<span class="up"><a href="{{ categorie.U_MOVE_UP }}">{{ ICON_MOVE_UP }}</a></span>
-					{% if categorie.ROW_MAX %}
-					<span class="down-disabled">{{ ICON_MOVE_DOWN_DISABLED }}</span>
-					{% else %}
-					<span class="down"><a href="{{ categorie.U_MOVE_DOWN }}">{{ ICON_MOVE_DOWN }}</a></span>
-					{% endif %}
-					<a href="{{ categorie.U_EDIT }}">{{ ICON_EDIT }}</a>
-					<a href="{{ categorie.U_DELETE }}">{{ ICON_DELETE }}</a>
-			</tr>
-			{% endif %}
-			<tr>
-				<td style="text-align: center;background-color: #F9F9F9;"></td>
-				<td style="text-align: center;background-color: #F9F9F9;"></td>
-				<td style="text-align: center;"><strong>{{ categorie.CAT_TRANSLATE }}</strong></td>
-				<td style="text-align: center;">{{ categorie.CAT_LANG }}</td>
-				<td style="text-align: center;">{{ categorie.CAT_ISO }}</td>
-				<td style="text-align: center;background-color: #F9F9F9;"></td>
-			</tr>
-			{% endif %}
-			{% endfor %}
-		{% endif %}
-		</tbody>
-	</table>
-	<p class="quick">
-		<input class="button2" name="add" type="submit" value="{{ lang('SC_CATEGORY_ADD') }}" />
-	</p>
-	{{ S_FORM_TOKEN }}
-	</fieldset>
-	</form>
-	
-	<form id="smiliescat_config" method="post" action="{{ U_ACTION_CONFIG }}">
-	<fieldset>
-		<legend>{{ lang('SC_CONFIG_TITLE') }}</legend>
-			
-			<dl>
-				<dt><label for="smilies_per_page_cat">{{ lang('SC_CONFIG_PAGE') }}{{ lang('COLON') }}</label><br /><span>{{ lang('SC_CONFIG_EXPLAIN') }}</span></dt>
-				<dd>
-					<input id="smilies_per_page_cat" type="number" max="99" name="smilies_per_page_cat" value="{{ SMILIES_PER_PAGE_CAT }}">
-				</dd>
-			</dl>
-			
-			<p class="submit-buttons">
-				<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
-				<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
-			</p>
-		
-	</fieldset>
-	{{ S_FORM_TOKEN }}
 	</form>
 {% endif %}
 
