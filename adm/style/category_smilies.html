@@ -50,7 +50,7 @@
 		<input class="button2" type="submit" value="{{ lang('GO') }}">
 	</div>
 	<div class="pagination" style="float: right;">
-	<strong>{{ NB_SMILIES }} {% if NB_SMILIES > 1 %}{{ lang('SC_SMILIES') }}{% else %}{{ lang('SC_SMILIE') }}{% endif %} &bull;</strong> 
+	<strong>{{ NB_SMILIES }} &bull;</strong> 
 	{% if pagination|length %}
 		{% INCLUDE 'pagination.html' %}
 	{% endif %}

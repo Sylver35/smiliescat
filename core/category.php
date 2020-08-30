@@ -542,26 +542,6 @@ class category
 		$this->db->sql_freeresult($result);
 	}
 
-	public function modify_smiley($id, $cat_id, $ex_cat)
-	{
-		$sql = 'UPDATE ' . SMILIES_TABLE . ' SET category = ' . (int) $cat_id . ' WHERE smiley_id = ' . (int) $id;
-		$this->db->sql_query($sql);
-
-		// Decrement nb value if wanted
-		if ($ex_cat)
-		{
-			$sql_decrement = 'UPDATE ' . $this->smilies_category_table . ' SET cat_nb = cat_nb - 1 WHERE cat_id = ' . (int) $ex_cat;
-			$this->db->sql_query($sql_decrement);
-		}
-
-		// Increment nb value if wanted
-		if ($cat_id)
-		{
-			$sql_increment = 'UPDATE ' . $this->smilies_category_table . ' SET cat_nb = cat_nb + 1 WHERE cat_id = ' . (int) $cat_id;
-			$this->db->sql_query($sql_increment);
-		}
-	}
-
 	public function reset_first_cat($current_order, $switch_order_id)
 	{
 		$first = $this->get_first_order();
