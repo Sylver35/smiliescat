@@ -102,26 +102,7 @@ class admin_controller
 						trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
 					}
 
-					$cat_id = (int) $this->request->variable('cat_id', 0);
-					$ex_cat = (int) $this->request->variable('ex_cat', 0);
-
-					$sql = 'UPDATE ' . SMILIES_TABLE . " SET category = $cat_id WHERE smiley_id = $id";
-					$this->db->sql_query($sql);
-
-					// Decrement nb value if wanted
-					if ($ex_cat !== 0)
-					{
-						$sql = 'UPDATE ' . $this->smilies_category_table . " SET cat_nb = cat_nb - 1 WHERE cat_id = $ex_cat";
-						$this->db->sql_query($sql);
-					}
-					// Increment nb value if wanted
-					if ($cat_id !== 0)
-					{
-						$sql = 'UPDATE ' . $this->smilies_category_table . " SET cat_nb = cat_nb + 1 WHERE cat_id = $cat_id";
-						$this->db->sql_query($sql);
-					}
-
-					trigger_error($this->language->lang('SMILIES_EDITED', 1) . adm_back_link($this->u_action . '&amp;start=' . $start . '#acp_smilies_category'));
+					$this->modify_smiley($id, (int) $this->request->variable('cat_id', 0), (int) $this->request->variable('ex_cat', 0), $start);
 				break;
 			}
 
@@ -135,8 +116,8 @@ class admin_controller
 
 			$this->template->assign_vars(array(
 				'LIST_CATEGORY'		=> $this->category->select_categories($select, true),
-				'U_BACK'			=> ($select) ? $this->u_action : '',
 				'U_SELECT_CAT'		=> $this->u_action . '&amp;select=' . $select,
+				'U_BACK'			=> ($select) ? $this->u_action : '',
 			));
 		}
 
@@ -186,11 +167,6 @@ class admin_controller
 					$this->edit_category($id);
 				break;
 
-				case 'move_up':
-				case 'move_down':
-					$this->move_cat($action, $id);
-				break;
-
 				case 'delete':
 					if (confirm_box(true))
 					{
@@ -223,6 +199,27 @@ class admin_controller
 			'U_ACTION_CONFIG'		=> $this->u_action . '&amp;action=config_cat',
 			'U_ADD'					=> $this->u_action . '&amp;action=add',
 		));
+	}
+
+	private function modify_smiley($id, $cat_id, $ex_cat, $start)
+	{
+		$sql = 'UPDATE ' . SMILIES_TABLE . " SET category = $cat_id WHERE smiley_id = $id";
+		$this->db->sql_query($sql);
+
+		// Decrement nb value if wanted
+		if ($ex_cat !== 0)
+		{
+			$sql = 'UPDATE ' . $this->smilies_category_table . ' SET cat_nb = cat_nb - 1 WHERE cat_id = ' . $ex_cat;
+			$this->db->sql_query($sql);
+		}
+		// Increment nb value if wanted
+		if ($cat_id !== 0)
+		{
+			$sql = 'UPDATE ' . $this->smilies_category_table . ' SET cat_nb = cat_nb + 1 WHERE cat_id = ' . $cat_id;
+			$this->db->sql_query($sql);
+		}
+
+		trigger_error($this->language->lang('SMILIES_EDITED', 1) . adm_back_link($this->u_action . '&amp;start=' . $start . '#acp_smilies_category'));
 	}
 
 	private function extract_list_smilies($select, $start)
