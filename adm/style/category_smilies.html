@@ -66,13 +66,13 @@
 	</tr>
 	</thead>
 	<tbody>
-		{% if items|length %}
-		{% for item in items %}
-		{% if item.SPACER_CAT %}
+	{% if items|length %}
+	{% for item in items %}
+	{% if item.SPACER_CAT %}
 		<tr>
 			<td class="row3" colspan="5" style="text-align: center;"><b>{{ item.SPACER_CAT }}</b></td>
 		</tr>
-		{% endif %}
+	{% endif %}
 		<tr>
 			<td style="width: 60%; text-align: center;"><img src="{{ U_SMILIES }}{{ item.IMG_SRC }}" width="{{ item.WIDTH }}" height="{{ item.HEIGHT }}" alt="{{ item.CODE }}" title="{{ item.EMOTION }}" /></td>
 			<td style="text-align: center;">{{ item.CODE }}</td>
@@ -80,12 +80,12 @@
 			<td style="text-align: center;">{{ item.CATEGORY }}</td>
 			<td class="actions" style="text-align: center;"><a href="{{ item.U_EDIT }}">{{ ICON_EDIT }}</a></td>
 		</tr>
-		{% endfor %}
-		{% else %}
+	{% endfor %}
+	{% else %}
 		<tr>
 			<td class="row3" colspan="5" style="text-align: center;"><b>{{ lang('SC_SMILIES_EMPTY_CATEGORY') }}</b></td>
 		</tr>
-		{% endif %}
+	{% endif %}
 	</tbody>
 	</table>
 	<div class="pagination">

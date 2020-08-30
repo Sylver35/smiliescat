@@ -63,33 +63,33 @@
 				<td class="row3" colspan="7" style="text-align: center;color: red;"><strong>{{ lang('SC_CATEGORY_ANY_CREATE') }}</strong></td>
 			</tr>
 		{% else %}
-			{% for categorie in categories %}
-			{% if categorie.LANG_EMPTY %}
+		{% for categorie in categories %}
+		{% if categorie.LANG_EMPTY %}
 			<tr>
 				<td class="row3" colspan="7" style="text-align: center;color: red;"><strong>{{ lang('SC_LANGUAGE_EMPTY') }} {{ categorie.CAT_LANG }} - {{ categorie.CAT_ISO }}</strong></td>
 			</tr>
-			{% else %}
-			{% if categorie.ROW %}
+		{% else %}
+		{% if categorie.ROW %}
 			<tr>
 				<td class="row3" style="text-align: center;"><strong>{{ categorie.CAT_ID }}</strong></td>
 				<td class="row3" style="text-align: center;"><strong>{{ categorie.CAT_ORDER }}</strong></td>
 				<td class="row3" style="text-align: center;" colspan="3"><strong>{{ categorie.SPACER_CAT }}</strong></td>
 				<td class="row3" style="text-align: center;"><strong>{{ categorie.CAT_NB }}</strong></td>
 				<td class="row3 actions" style="text-align: center;">
-					{% if categorie.CAT_ORDER eq 1 %}
+				{% if categorie.CAT_ORDER eq 1 %}
 					<span class="up-disabled">{{ ICON_MOVE_UP_DISABLED }}</span>
-					{% else %}
+				{% else %}
 					<span class="up"><a style="cursor: pointer;" onclick="moveCats('move_up',{{ categorie.CAT_ID }})">{{ ICON_MOVE_UP }}</a></span>
-					{% endif %}
-					{% if categorie.ROW_MAX %}
+				{% endif %}
+				{% if categorie.ROW_MAX %}
 					<span class="down-disabled">{{ ICON_MOVE_DOWN_DISABLED }}</span>
-					{% else %}
+				{% else %}
 					<span class="down"><a style="cursor: pointer;" onclick="moveCats('move_down',{{ categorie.CAT_ID }})">{{ ICON_MOVE_DOWN }}</a></span>
-					{% endif %}
+				{% endif %}
 					<a href="{{ categorie.U_EDIT }}">{{ ICON_EDIT }}</a>
 					<a href="{{ categorie.U_DELETE }}">{{ ICON_DELETE }}</a>
 			</tr>
-			{% endif %}
+		{% endif %}
 			<tr>
 				<td style="text-align: center;background-color: #F9F9F9;"></td>
 				<td style="text-align: center;background-color: #F9F9F9;"></td>
@@ -98,8 +98,8 @@
 				<td style="text-align: center;">{{ categorie.CAT_ISO }}</td>
 				<td style="text-align: center;background-color: #F9F9F9;"></td>
 			</tr>
-			{% endif %}
-			{% endfor %}
+		{% endif %}
+		{% endfor %}
 		{% endif %}
 		</tbody>
 	</table>
