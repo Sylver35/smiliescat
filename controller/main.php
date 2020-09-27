@@ -135,7 +135,7 @@ class main
 		$list_cat = array();
 		$id = (int) $this->request->variable('id', 0);
 		$action = (string) $this->request->variable('action', '');
-		
+
 		$this->category->move_cat($action, $id);
 		$max = $this->category->get_max_order();
 
@@ -173,7 +173,7 @@ class main
 			$cat = (int) $row['cat_id'];
 		}
 		$this->db->sql_freeresult($result);
-		
+
 		$json_response = new \phpbb\json_response;
 		$json_response->send(array(
 			'total'	=> $i,
