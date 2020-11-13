@@ -36,7 +36,7 @@ class v110_schema extends migration
 						'cat_name'			=> ['VCHAR:50', ''],
 						'cat_title'			=> ['VCHAR:50', ''],
 						'cat_nb'			=> ['UINT', 0],
-					),
+					],
 					'PRIMARY_KEY'	=> ['cat_lang_id'],
 				],
 			],
@@ -45,7 +45,7 @@ class v110_schema extends migration
 					'category'	=> ['UINT', 0],
 				],
 			],
-		);
+		];
 	}
 
 	public function revert_schema()
