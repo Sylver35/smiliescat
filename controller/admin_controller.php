@@ -107,7 +107,9 @@ class admin_controller
 				break;
 			}
 
-			$this->template->assign_var('IN_ACTION', true);
+			$this->template->assign_vars([
+				'IN_ACTION'	=> true,
+			]);
 		}
 		else
 		{
@@ -120,7 +122,9 @@ class admin_controller
 			]);
 		}
 
-		$this->template->assign_var('CATEGORIE_SMILIES', true);
+		$this->template->assign_vars([
+			'CATEGORIE_SMILIES'	=> true,
+		]);
 	}
 
 	public function acp_categories_config()
