@@ -42,12 +42,14 @@ function moveCats(action, id){
 		url: '{{ U_MOVE_CATS }}',
 		cache: false,
 		success: function(response){
-			var tbodyRow = '', action_url = $('#action_url').val();
+			var tbodyRow = '', actionUrl = $('#action_url').val();
 			for(var i = 0; i < response.total; i++){
 				var data = response.datas[i];
 				if(data.langEmpty){
 					tbodyRow += '<tr><td class="row3" colspan="7" style="text-align: center;color: red;"><strong>{{ lang("SC_LANGUAGE_EMPTY")|escape("js") }} '+data.catLang+' - '+data.catIso+'</strong></td></tr>';
 				}else{
+					$('#succes-div').show();
+					setTimeout(function(){$('#succes-div').hide()},2000);
 					if(data.row){
 						tbodyRow += '<tr><td class="row3" style="text-align: center;"><strong>'+data.catId+'</strong></td>';
 						tbodyRow += '<td class="row3" style="text-align: center;"><strong>'+data.catOrder+'</strong></td>';
@@ -63,7 +65,7 @@ function moveCats(action, id){
 						}else{
 							tbodyRow += '<span class="down"><a style="cursor: pointer;" onclick="moveCats(\'move_down\','+data.catId+')">{{ ICON_MOVE_DOWN }}</a></span> ';
 						}
-						tbodyRow += '<a href="'+action_url+data.uEdit+'">{{ ICON_EDIT }}</a> <a href="'+action_url+data.uDelete+'">{{ ICON_DELETE }}</a></tr>';
+						tbodyRow += '<a href="'+actionUrl+data.uEdit+'">{{ ICON_EDIT }}</a> <a href="'+actionUrl+data.uDelete+'">{{ ICON_DELETE }}</a></tr>';
 					}
 					tbodyRow += '<tr><td style="text-align: center;background-color: #F9F9F9;"></td><td style="text-align: center;background-color: #F9F9F9;"></td>';
 					tbodyRow += '<td style="text-align: center;"><strong>'+data.catTranslate+'</strong></td><td style="text-align: center;">'+data.catLang+'</td>';
@@ -71,6 +73,10 @@ function moveCats(action, id){
 				}
 			}
 			$('#body_cat').html(tbodyRow);
+		},
+		error: function(){
+			$('#error-div').show();
+			setTimeout(function(){$('#error-div').hide()},2500);
 		}
 	});
 };

@@ -20,45 +20,45 @@ class v110_schema extends migration
 
 	static public function depends_on()
 	{
-		return array('\phpbb\db\migration\data\v32x\v328');
+		return ['\phpbb\db\migration\data\v32x\v328'];
 	}
 
 	public function update_schema()
 	{
-		return array(
-			'add_tables' => array(
-				$this->table_prefix . 'smilies_category' => array(
-					'COLUMNS'		=> array(
-						'cat_lang_id'		=> array('UINT', null, 'auto_increment'),
-						'cat_id'			=> array('UINT', 0),
-						'cat_order'			=> array('UINT', 0),
-						'cat_lang'			=> array('VCHAR:30', ''),
-						'cat_name'			=> array('VCHAR:50', ''),
-						'cat_title'			=> array('VCHAR:50', ''),
-						'cat_nb'			=> array('UINT', 0),
+		return [
+			'add_tables' => [
+				$this->table_prefix . 'smilies_category' => [
+					'COLUMNS'		=> [
+						'cat_lang_id'		=> ['UINT', null, 'auto_increment'],
+						'cat_id'			=> ['UINT', 0],
+						'cat_order'			=> ['UINT', 0],
+						'cat_lang'			=> ['VCHAR:30', ''],
+						'cat_name'			=> ['VCHAR:50', ''],
+						'cat_title'			=> ['VCHAR:50', ''],
+						'cat_nb'			=> ['UINT', 0],
 					),
-					'PRIMARY_KEY'	=> array('cat_lang_id'),
-				),
-			),
-			'add_columns' => array(
-				$this->table_prefix . 'smilies' => array(
-					'category'	=> array('UINT', 0),
-				),
-			),
+					'PRIMARY_KEY'	=> ['cat_lang_id'],
+				],
+			],
+			'add_columns' => [
+				$this->table_prefix . 'smilies' => [
+					'category'	=> ['UINT', 0],
+				],
+			],
 		);
 	}
 
 	public function revert_schema()
 	{
-		return array(
-			'drop_tables' => array(
+		return [
+			'drop_tables' => [
 				$this->table_prefix . 'smilies_category',
-			),
-			'drop_columns' => array(
-				$this->table_prefix . 'smilies' => array(
+			],
+			'drop_columns' => [
+				$this->table_prefix . 'smilies' => [
 					'category',
-				),
-			),
-		);
+				],
+			],
+		];
 	}
 }

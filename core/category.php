@@ -82,10 +82,10 @@ class category
 			$md_manager = $this->ext_manager->create_extension_metadata_manager('sylver35/smiliescat');
 			$meta = $md_manager->get_metadata();
 
-			$data = array(
+			$data = [
 				'version'	=> $meta['version'],
 				'homepage'	=> $meta['homepage'],
-			);
+			];
 			// cache for 7 days
 			$this->cache->put('_smiliescat_version', $data, 604800);
 		}
@@ -95,11 +95,11 @@ class category
 
 	public function smilies_count($cat, $compact = false)
 	{
-		$sql = $this->db->sql_build_query('SELECT', array(
+		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> (!$compact) ? 'COUNT(DISTINCT smiley_id) AS smilies_count' : 'COUNT(DISTINCT smiley_url) AS smilies_count',
-			'FROM'		=> array(SMILIES_TABLE => ''),
+			'FROM'		=> [SMILIES_TABLE => ''],
 			'WHERE'		=> ($cat > -1) ? 'category = ' . (int) $cat : "code <> ''",
-		));
+		]);
 		$result = $this->db->sql_query($sql);
 		$nb = (int) $this->db->sql_fetchfield('smilies_count');
 		$this->db->sql_freeresult($result);
@@ -127,7 +127,6 @@ class category
 			{
 				continue;
 			}
-			$row['cat_name'] = $row['cat_name'] ? $row['cat_name'] : $row['cat_title'];
 			$selected = ($cat === (int) $row['cat_id']) ? ' selected="selected"' : '';
 			$select .= '<option title="' . $row['cat_name'] . '" value="' . $row['cat_id'] . '"' . $selected . '> ' . $row['cat_name'] . '</option>';
 		}
@@ -150,10 +149,10 @@ class category
 		$sql = 'SELECT MAX(cat_order) AS maxi
 			FROM ' . $this->smilies_category_table;
 		$result = $this->db->sql_query($sql);
-		$max = $this->db->sql_fetchfield('maxi', $result);
+		$max = (int) $this->db->sql_fetchfield('maxi', $result);
 		$this->db->sql_freeresult($result);
 
-		return (int) $max;
+		return $max;
 	}
 
 	public function get_max_id()
@@ -186,12 +185,12 @@ class category
 		$title = '';
 		$cat_order = $i = 0;
 		$lang = $this->user->lang_name;
-		$sql = $this->db->sql_build_query('SELECT', array(
+		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> '*',
-			'FROM'		=> array($this->smilies_category_table => ''),
+			'FROM'		=> [$this->smilies_category_table => ''],
 			'WHERE'		=> "cat_lang = '$lang'",
 			'ORDER_BY'	=> 'cat_order ASC',
-		));
+		]);
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
@@ -199,14 +198,14 @@ class category
 			if ($row['cat_nb'])
 			{
 				$actual_cat = (int) $row['cat_id'] === $cat;
-				$this->template->assign_block_vars('categories', array(
+				$this->template->assign_block_vars('categories', [
 					'CLASS'			=> $actual_cat ? 'cat-active' : 'cat-inactive',
 					'SEPARATE'		=> ($i > 0) ? ' - ' : '',
 					'CAT_ID'		=> $row['cat_id'],
 					'CAT_ORDER'		=> $row['cat_order'],
 					'CAT_NAME'		=> $row['cat_name'] ? $row['cat_name'] : $row['cat_title'],
 					'CAT_NB'		=> $row['cat_nb'],
-				));
+				]);
 				$i++;
 
 				// Keep these values in memory
@@ -220,14 +219,14 @@ class category
 		$nb = $this->smilies_count(0);
 		if ($nb)
 		{
-			$this->template->assign_block_vars('categories', array(
+			$this->template->assign_block_vars('categories', [
 				'CLASS'			=> ($cat === 0) ? 'cat-active' : 'cat-inactive',
 				'SEPARATE'		=> ($i > 0) ? ' - ' : '',
 				'CAT_ID'		=> 0,
 				'CAT_ORDER'		=> $cat_order + 1,
 				'CAT_NAME'		=> $this->language->lang('SC_CATEGORY_DEFAUT'),
 				'CAT_NB'		=> $nb,
-			));
+			]);
 		}
 
 		return (!$cat) ? $this->language->lang('SC_CATEGORY_DEFAUT') : $title;
@@ -249,12 +248,12 @@ class category
 			// Choose only non-empty categories
 			if ($row['cat_nb'])
 			{
-				$list_cat[$i] = array(
+				$list_cat[$i] = [
 					'cat_id'		=> (int) $row['cat_id'],
 					'cat_order'		=> (int) $row['cat_order'],
 					'cat_name'		=> (string) $row['cat_name'],
 					'cat_nb'		=> (int) $row['cat_nb'],
-				);
+				];
 				$i++;
 			}
 			// Keep this value in memory
@@ -266,18 +265,18 @@ class category
 		$nb = $this->smilies_count(0, true);
 		if ($nb)
 		{
-			$list_cat[$i] = array(
+			$list_cat[$i] = [
 				'cat_id'		=> 0,
 				'cat_order'		=> $cat_order + 1,
 				'cat_name'		=> $this->language->lang('SC_CATEGORY_DEFAUT'),
 				'cat_nb'		=> $nb,
-			);
+			];
 		}
 
-		$event['content'] = array_merge($event['content'], array(
+		$event['content'] = array_merge($event['content'], [
 			'title_cat'		=> $this->language->lang('ACP_SC_SMILIES'),
 			'categories'	=> $list_cat,
-		));
+		]);
 	}
 
 	public function shoutbox_smilies_popup($event)
@@ -286,7 +285,7 @@ class category
 		if ($cat > -1)
 		{
 			$i = 0;
-			$smilies = array();
+			$smilies = [];
 			$lang = $this->user->lang_name;
 			$cat_name = $this->language->lang('SC_CATEGORY_DEFAUT');
 
@@ -302,35 +301,35 @@ class category
 				$this->db->sql_freeresult($result);
 			}
 
-			$sql = $this->db->sql_build_query('SELECT', array(
+			$sql = $this->db->sql_build_query('SELECT', [
 				'SELECT'	=> 'smiley_url, MIN(smiley_id) AS smiley_id, MIN(code) AS code, MIN(smiley_order) AS min_smiley_order, MIN(smiley_width) AS smiley_width, MIN(smiley_height) AS smiley_height, MIN(emotion) AS emotion',
-				'FROM'		=> array(SMILIES_TABLE => ''),
+				'FROM'		=> [SMILIES_TABLE => ''],
 				'WHERE'		=> 'category = ' . $cat,
 				'GROUP_BY'	=> 'smiley_url',
 				'ORDER_BY'	=> 'min_smiley_order ASC',
-			));
+			]);
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
 			{
-				$smilies[$i] = array(
+				$smilies[$i] = [
 					'nb'		=> (int) $i,
 					'code'		=> (string) $row['code'],
 					'emotion'	=> (string) $row['emotion'],
 					'image'		=> (string) $row['smiley_url'],
 					'width'		=> (int) $row['smiley_width'],
 					'height'	=> (int) $row['smiley_height'],
-				);
+				];
 				$i++;
 			}
 
-			$event['content'] = array_merge($event['content'], array(
+			$event['content'] = array_merge($event['content'], [
 				'in_cat'		=> true,
 				'cat'			=> $cat,
 				'total'			=> $i,
 				'smilies'		=> $smilies,
 				'emptyRow'		=> (!$i) ? $this->language->lang('SC_SMILIES_EMPTY_CATEGORY') : '',
 				'title'			=> $this->language->lang('SC_CATEGORY_IN', $cat_name),
-			));
+			]);
 		}
 	}
 
@@ -364,21 +363,21 @@ class category
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$this->template->assign_block_vars('categories', array(
+			$this->template->assign_block_vars('categories', [
 				'CAT_LANG'		=> $row['lang_local_name'],
 				'CAT_ISO'		=> $row['lang_iso'],
 				'CAT_ORDER'		=> $max + 1,
-			));
+			]);
 		}
 		$this->db->sql_freeresult($result);
 
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'IN_CAT_ACTION'		=> true,
 			'IN_ADD_ACTION'		=> true,
 			'CAT_ORDER'			=> $max + 1,
 			'U_BACK'			=> $u_action,
 			'U_ADD_CAT'			=> $u_action . '&amp;action=add_cat',
-		));
+		]);
 	}
 
 	public function adm_edit_cat($id, $u_action)
@@ -393,29 +392,29 @@ class category
 		$title = '';
 		$i = $cat_order = 0;
 		$list_id = [];
-		$sql = $this->db->sql_build_query('SELECT', array(
+		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> 'l.*, c.*',
-			'FROM'		=> array(LANG_TABLE => 'l'),
-			'LEFT_JOIN'	=> array(
-				array(
-					'FROM'	=> array($this->smilies_category_table => 'c'),
+			'FROM'		=> [LANG_TABLE => 'l'],
+			'LEFT_JOIN'	=> [
+				[
+					'FROM'	=> [$this->smilies_category_table => 'c'],
 					'ON'	=> 'c.cat_lang = l.lang_iso',
-				),
-			),
+				],
+			],
 			'WHERE'		=> 'cat_id = ' . $id,
 			'ORDER_BY'	=> 'lang_id ASC',
-		));
+		]);
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$this->template->assign_block_vars('category_lang', array(
+			$this->template->assign_block_vars('category_lang', [
 				'CAT_LANG'			=> $row['lang_local_name'],
 				'CAT_ISO'			=> $row['lang_iso'],
 				'CAT_ORDER'			=> $row['cat_order'],
 				'CAT_ID'			=> $row['cat_id'],
 				'CAT_TRANSLATE'		=> $row['cat_name'],
 				'CAT_SORT'			=> 'edit',
-			));
+			]);
 			$i++;
 			$list_id[$i] = $row['lang_id'];
 			$cat_order = $row['cat_order'];
@@ -426,62 +425,60 @@ class category
 		// Add rows for empty langs in this category
 		if ($i !== $total)
 		{
-			$sql = $this->db->sql_build_query('SELECT', array(
+			$sql = $this->db->sql_build_query('SELECT', [
 				'SELECT'	=> '*',
-				'FROM'		=> array(LANG_TABLE => 'l'),
+				'FROM'		=> [LANG_TABLE => 'l'],
 				'WHERE'		=> $this->db->sql_in_set('lang_id', $list_id, true, true),
-			));
+			]);
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
 			{
-				$this->template->assign_block_vars('category_lang', array(
+				$this->template->assign_block_vars('category_lang', [
 					'CAT_LANG'			=> $row['lang_local_name'],
 					'CAT_ISO'			=> $row['lang_iso'],
 					'CAT_ORDER'			=> $cat_order,
 					'CAT_ID'			=> $id,
 					'CAT_TRANSLATE'		=> '',
 					'CAT_SORT'			=> 'create',
-				));
+				]);
 			}
 			$this->db->sql_freeresult($result);
 		}
 
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'IN_CAT_ACTION'	=> true,
 			'CAT_ORDER'		=> $cat_order,
 			'CAT_TITLE'		=> $title,
 			'U_BACK'		=> $u_action,
 			'U_EDIT_CAT'	=> $u_action . '&amp;action=edit_cat&amp;id=' . $id,
-		));
+		]);
 	}
 
 	public function adm_list_cat($u_action)
 	{
 		$i = $cat = 0;
 		$max = $this->get_max_order();
-		$sql = $this->db->sql_build_query('SELECT', array(
+		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> 'l.lang_iso, l.lang_local_name, c.*',
-			'FROM'		=> array(LANG_TABLE => 'l'),
-			'LEFT_JOIN'	=> array(
-				array(
-					'FROM'	=> array($this->smilies_category_table => 'c'),
+			'FROM'		=> [LANG_TABLE => 'l'],
+			'LEFT_JOIN'	=> [
+				[
+					'FROM'	=> [$this->smilies_category_table => 'c'],
 					'ON'	=> 'cat_lang = lang_iso',
-				),
-			),
+				],
+			],
 			'ORDER_BY'	=> 'cat_order ASC, cat_lang_id ASC',
-		));
+		]);
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			if (!$row)
 			{
-				$this->template->assign_vars(array(
-					'EMPTY_ROW'		=> true,
-				));
+				$this->template->assign_var('EMPTY_ROW', true);
 			}
 			else
 			{
-				$this->template->assign_block_vars('categories', array(
+				$this->template->assign_block_vars('categories', [
 					'CAT_NR'			=> $i + 1,
 					'LANG_EMPTY'		=> !$row['cat_id'] && !$row['cat_order'] && !$row['cat_name'],
 					'SPACER_CAT'		=> $this->language->lang('SC_CATEGORY_IN', $row['cat_title']),
@@ -495,7 +492,7 @@ class category
 					'ROW_MAX'			=> (int) $row['cat_order'] === $max,
 					'U_EDIT'			=> $u_action . '&amp;action=edit&amp;id=' . $row['cat_id'],
 					'U_DELETE'			=> $u_action . '&amp;action=delete&amp;id=' . $row['cat_id'],
-				));
+				]);
 				$i++;
 				// Keep this value in memory
 				$cat = (int) $row['cat_id'];
@@ -503,31 +500,31 @@ class category
 		}
 		$this->db->sql_freeresult($result);
 
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'IN_LIST_CAT'	=> true,
 			'U_ACTION'		=> $u_action,
 			'U_MOVE_CATS'	=> $this->helper->route('sylver35_smiliescat_ajax_list_cat'),
-		));
+		]);
 	}
 
 	public function adm_edit_smiley($id, $u_action, $start)
 	{
 		$lang = $this->user->lang_name;
-		$sql = $this->db->sql_build_query('SELECT', array(
+		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> 's.*, c.*',
-			'FROM'		=> array(SMILIES_TABLE => 's'),
-			'LEFT_JOIN'	=> array(
-				array(
-					'FROM'	=> array($this->smilies_category_table => 'c'),
+			'FROM'		=> [SMILIES_TABLE => 's'],
+			'LEFT_JOIN'	=> [
+				[
+					'FROM'	=> [$this->smilies_category_table => 'c'],
 					'ON'	=> "cat_id = category AND cat_lang = '$lang'",
-				),
-			),
+				],
+			],
 			'WHERE'	=> 'smiley_id = ' . (int) $id,
-		));
+		]);
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'WIDTH'				=> $row['smiley_width'],
 			'HEIGHT'			=> $row['smiley_height'],
 			'CODE'				=> $row['code'],
@@ -538,7 +535,7 @@ class category
 			'IMG_SRC'			=> $this->root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
 			'U_MODIFY'			=> $u_action . '&amp;action=modify&amp;id=' . $row['smiley_id'] . '&amp;start=' . $start,
 			'U_BACK'			=> $u_action,
-		));
+		]);
 		$this->db->sql_freeresult($result);
 	}
 
@@ -588,6 +585,6 @@ class category
 		}
 
 		$this->reset_first_cat($current_order, $switch_order_id);
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_' . strtoupper($action) . '_CAT', time(), array($title));
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_' . strtoupper($action) . '_CAT', time(), [$title]);
 	}
 }

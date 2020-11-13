@@ -13,21 +13,21 @@ class main_info
 {
 	public function module()
 	{
-		return array(
+		return [
 			'filename'	=> '\sylver35\smiliescat\acp\main_module',
 			'title'		=> 'ACP_SC_CATEGORY',
-			'modes'		=> array(
-				'config'	=> array(
+			'modes'		=> [
+				'config'	=> [
 					'title'	=> 'ACP_SC_CATEGORY',
 					'auth'	=> 'ext_sylver35/smiliescat && acl_a_icons',
-					'cat'	=> array('ACP_MESSAGES'),
-				),
-				'smilies'	=> array(
+					'cat'	=> ['ACP_MESSAGES'],
+				],
+				'smilies'	=> [
 					'title'	=> 'ACP_SC_SMILIES',
 					'auth'	=> 'ext_sylver35/smiliescat && acl_a_icons',
-					'cat'	=> array('ACP_MESSAGES'),
-				),
-			),
-		);
+					'cat'	=> ['ACP_MESSAGES'],
+				],
+			],
+		];
 	}
 }

@@ -107,24 +107,20 @@ class admin_controller
 				break;
 			}
 
-			$this->template->assign_vars(array(
-				'IN_ACTION'			=> true,
-			));
+			$this->template->assign_var('IN_ACTION', true);
 		}
 		else
 		{
 			$this->extract_list_smilies($select, $start);
 
-			$this->template->assign_vars(array(
+			$this->template->assign_vars([
 				'LIST_CATEGORY'		=> $this->category->select_categories($select, true),
 				'U_SELECT_CAT'		=> $this->u_action . '&amp;select=' . $select,
 				'U_BACK'			=> ($select) ? $this->u_action : '',
-			));
+			]);
 		}
 
-		$this->template->assign_vars(array(
-			'CATEGORIE_SMILIES'		=> true,
-		));
+		$this->template->assign_var('CATEGORIE_SMILIES', true);
 	}
 
 	public function acp_categories_config()
@@ -138,7 +134,7 @@ class admin_controller
 
 		if ($action)
 		{
-			if (in_array($action, array('config_cat', 'add_cat', 'edit_cat')) && !check_form_key($form_key))
+			if (in_array($action, ['config_cat', 'add_cat', 'edit_cat']) && !check_form_key($form_key))
 			{
 				trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
 			}
@@ -175,31 +171,29 @@ class admin_controller
 					}
 					else
 					{
-						confirm_box(false, $this->language->lang('CONFIRM_OPERATION'), build_hidden_fields(array(
+						confirm_box(false, $this->language->lang('CONFIRM_OPERATION'), build_hidden_fields([
 							'mode'		=> $mode,
 							'id'		=> $id,
 							'action'	=> $action,
-						)));
+						]));
 					}
 				break;
 				
 			}
 
-			$this->template->assign_vars(array(
-				'IN_ACTION'		=> true,
-			));
+			$this->template->assign_var('IN_ACTION', true);
 		}
 		else
 		{
 			$this->category->adm_list_cat($this->u_action);
 		}
 
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'CATEGORIE_CONFIG'		=> true,
 			'SMILIES_PER_PAGE_CAT'	=> $this->config['smilies_per_page_cat'],
 			'U_ACTION_CONFIG'		=> $this->u_action . '&amp;action=config_cat',
 			'U_ADD'					=> $this->u_action . '&amp;action=add',
-		));
+		]);
 	}
 
 	private function modify_smiley($id, $cat_id, $ex_cat)
@@ -231,27 +225,27 @@ class admin_controller
 
 		if ($select === 0)
 		{
-			$sql = $this->db->sql_build_query('SELECT', array(
+			$sql = $this->db->sql_build_query('SELECT', [
 				'SELECT'	=> '*',
-				'FROM'		=> array(SMILIES_TABLE => ''),
+				'FROM'		=>[SMILIES_TABLE => ''],
 				'WHERE'		=> 'category = 0',
 				'ORDER_BY'	=> 'smiley_order ASC',
-			));
+			]);
 		}
 		else
 		{
-			$sql = $this->db->sql_build_query('SELECT', array(
+			$sql = $this->db->sql_build_query('SELECT', [
 				'SELECT'	=> 's.*, c.*',
-				'FROM'		=> array(SMILIES_TABLE => 's'),
-				'LEFT_JOIN'	=> array(
-					array(
-						'FROM'	=> array($this->smilies_category_table => 'c'),
+				'FROM'		=> [SMILIES_TABLE => 's'],
+				'LEFT_JOIN'	=> [
+					[
+						'FROM'	=> [$this->smilies_category_table => 'c'],
 						'ON'	=> "cat_id = category AND cat_lang = '$lang'",
-					),
-				),
+					],
+				],
 				'WHERE'		=> ($select == -1) ? "code <> ''" : "cat_id = $select AND code <> ''",
 				'ORDER_BY'	=> 'cat_order ASC, smiley_order ASC',
-			));
+			]);
 		}
 		$result = $this->db->sql_query_limit($sql, (int) $this->config['smilies_per_page_cat'], $start);
 		while ($row = $this->db->sql_fetchrow($result))
@@ -259,7 +253,7 @@ class admin_controller
 			$row['category'] = isset($row['category']) ? $row['category'] : 0;
 			$row['cat_name'] = ($row['category']) ? $row['cat_name'] : $this->language->lang('SC_CATEGORY_DEFAUT');
 
-			$this->template->assign_block_vars('items', array(
+			$this->template->assign_block_vars('items', [
 				'SPACER_CAT'	=> ($cat !== (int) $row['category']) ? $this->language->lang('SC_CATEGORY_IN', $row['cat_name']) : '',
 				'IMG_SRC'		=> $row['smiley_url'],
 				'WIDTH'			=> $row['smiley_width'],
@@ -268,7 +262,7 @@ class admin_controller
 				'EMOTION'		=> $row['emotion'],
 				'CATEGORY'		=> $row['cat_name'],
 				'U_EDIT'		=> $this->u_action . '&amp;action=edit&amp;id=' . $row['smiley_id'] . '&amp;start=' . $start,
-			));
+			]);
 			$i++;
 
 			// Keep this value in memory
@@ -276,10 +270,10 @@ class admin_controller
 		}
 		$this->db->sql_freeresult($result);
 
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'NB_SMILIES'	=> $this->language->lang('SC_SMILIES', ($smilies_count > 1) ? 2 : 1, $smilies_count),
 			'U_SMILIES'		=> $this->root_path . $this->config['smilies_path'] . '/',
-		));
+		]);
 
 		$this->pagination->generate_template_pagination($this->u_action . '&amp;select=' . $select, 'pagination', 'start', $smilies_count, (int) $this->config['smilies_per_page_cat'], $start);
 	}
@@ -318,16 +312,16 @@ class admin_controller
 		$sql_update = 'UPDATE ' . SMILIES_TABLE . ' SET category = 0 WHERE category = ' . $id;
 		$this->db->sql_query($sql_update);
 
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_DELETE_CAT', time(), array($title));
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_DELETE_CAT', time(), [$title]);
 		trigger_error($this->language->lang('SC_DELETE_SUCCESS') . adm_back_link($this->u_action));
 	}
 
 	private function add_category()
 	{
-		$title = $this->request->variable('name_' . $this->user->lang_name, '', true);
+		$title = (string) $this->request->variable('name_' . $this->user->lang_name, '', true);
 		$cat_order = (int) $this->request->variable('order', 0);
 		$cat_id = (int) $this->category->get_max_id() + 1;
-		$sql_in = array();
+		$sql_in = [];
 		$i = 0;
 
 		$sql = 'SELECT lang_id, lang_iso
@@ -345,13 +339,13 @@ class admin_controller
 			}
 			else
 			{
-				$sql_in[$i] = array(
+				$sql_in[$i] = [
 					'cat_id'		=> $cat_id,
 					'cat_order'		=> $cat_order,
 					'cat_lang'		=> $lang,
 					'cat_name'		=> $this->category->capitalize($name),
 					'cat_title'		=> $this->category->capitalize($title),
-				);
+				];
 			}
 			$i++;
 		}
@@ -366,7 +360,7 @@ class admin_controller
 			$this->config->set('smilies_category_nb', $cat_id);
 		}
 
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_ADD_CAT', time(), array($title));
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_ADD_CAT', time(), [$title]);
 		trigger_error($this->language->lang('SC_CREATE_SUCCESS') . adm_back_link($this->u_action));
 	}
 
@@ -402,19 +396,19 @@ class admin_controller
 				}
 				else if ($sort === 'create')
 				{
-					$sql_in = array(
+					$sql_in = [
 						'cat_id'		=> $id,
 						'cat_order'		=> $order,
 						'cat_lang'		=> $lang,
 						'cat_name'		=> $name,
 						'cat_title'		=> $title,
-					);
+					];
 					$this->db->sql_query('INSERT INTO ' . $this->smilies_category_table . $this->db->sql_build_array('INSERT', $sql_in));
 				}
 			}
 		}
 
-		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_EDIT_CAT', time(), array($title));
+		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_EDIT_CAT', time(), [$title]);
 		trigger_error($this->language->lang('SC_EDIT_SUCCESS') . adm_back_link($this->u_action));
 	}
 

@@ -37,12 +37,12 @@ class listener implements EventSubscriberInterface
 
 	static public function getSubscribedEvents()
 	{
-		return array(
+		return [
 			'core.user_setup'				=> 'load_language_on_setup',
 			'core.page_header'				=> 'add_page_header',
 			'breizhshoutbox.smilies'		=> 'shoutbox_smilies',
 			'breizhshoutbox.smilies_popup'	=> 'shoutbox_smilies_popup',
-		);
+		];
 	}
 
 	/**
@@ -56,18 +56,16 @@ class listener implements EventSubscriberInterface
 	public function load_language_on_setup($event)
 	{
 		$lang_set_ext = $event['lang_set_ext'];
-		$lang_set_ext[] = array(
+		$lang_set_ext[] = [
 			'ext_name' => 'sylver35/smiliescat',
-			'lang_set' => array('smilies_category'),
-		);
+			'lang_set' => ['smilies_category'],
+		];
 		$event['lang_set_ext'] = $lang_set_ext;
 	}
 
 	public function add_page_header()
 	{
-		$this->template->assign_vars(array(
-			'U_CATEGORY_POPUP'		=> $this->helper->route('sylver35_smiliescat_smilies_pop'),
-		));
+		$this->template->assign_var('U_CATEGORY_POPUP', $this->helper->route('sylver35_smiliescat_smilies_pop'));
 	}
 
 	/**

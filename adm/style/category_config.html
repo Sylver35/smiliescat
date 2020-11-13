@@ -1,5 +1,5 @@
 {% INCLUDE 'overall_header.html' %}
-
+{% INCLUDECSS '@sylver35_smiliescat/smiliescat.css' %}
 <a name="maincontent"></a>
 
 {% if U_BACK %}
@@ -167,5 +167,12 @@
 {% endif %}
 
 <p style="text-align: center;"><em>{{ CATEGORY_VERSION }}</em></p>
+
+<div id="succes-div">
+   <span>{{ lang('SC_MOVE_SUCCESS') }}</span>
+</div>
+<div id="error-div">
+   <span>{{ lang('SC_MOVE_ERROR') }}</span>
+</div>
 
 {% INCLUDE 'overall_footer.html' %}

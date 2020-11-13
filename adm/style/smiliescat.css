@@ -1,0 +1,48 @@
+
+#succes-div {
+	top: 45%;
+	left: 45%;
+	position: fixed;
+	z-index: 100;
+	display: none;
+	opacity: 0.9;
+    background-color: #fff;
+    border: 2px solid #1c1b1b;
+    border-radius: 7px;
+	padding: 5px;
+    overflow: hidden;
+	font-size: 0.8em;
+}
+
+#succes-div span {
+	background: url("./img/ok.png") 0 40% no-repeat;
+	padding-left: 26px;
+	vertical-align: bottom;
+	font-weight: bold;
+	font-size: 1.3em;
+	color: #60ae4a;
+}
+
+#error-div {
+	top: 45%;
+	left: 45%;
+	position: fixed;
+	z-index: 100;
+	display: none;
+	opacity: 0.9;
+    background-color: #fff;
+    border: 2px solid #1c1b1b;
+    border-radius: 7px;
+	padding: 5px;
+    overflow: hidden;
+	font-size: 0.8em;
+}
+
+#error-div span {
+	background: url("./img/no.png") 0 40% no-repeat;
+	padding-left: 26px;
+	vertical-align: bottom;
+	font-weight: bold;
+	font-size: 1.3em;
+	color: #c40909;
+}

@@ -52,6 +52,4 @@ services:
             - '@user'
             - '@language'
             - '@pagination'
-            - '%core.root_path%'
-            - '%core.php_ext%'
             - '%sylver35.smiliescat.tables.smilies_category%'

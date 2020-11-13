@@ -62,11 +62,11 @@ class main_module
 			/* No break here */
 		}
 
-		$template->assign_vars(array(
+		$template->assign_vars([
 			'U_ACTION'			=> $this->u_action,
 			'TITLE'				=> $language->lang($this->page_title),
 			'TITLE_EXPLAIN'		=> $language->lang($this->page_title . '_EXPLAIN'),
 			'CATEGORY_VERSION'	=> $language->lang('SC_VERSION_COPY', $meta['homepage'], $meta['version']),
-		));
+		]);
 	}
 }
