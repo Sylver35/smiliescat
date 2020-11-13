@@ -185,7 +185,7 @@ class admin_controller
 				
 			}
 
-			$this->template->assign_vars(
+			$this->template->assign_vars([
 				'IN_ACTION'	=> true,
 			]);
 		}
