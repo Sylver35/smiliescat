@@ -93,7 +93,7 @@ class admin_controller
 			switch ($action)
 			{
 				case 'edit':
-					$this->category->adm_edit_smiley($id, $this->u_action, $start);
+					$this->adm_edit_smiley($id, $start);
 				break;
 
 				case 'modify':
@@ -153,7 +153,7 @@ class admin_controller
 				break;
 
 				case 'add':
-					$this->category->adm_add_cat($this->u_action);
+					$this->adm_add_cat();
 				break;
 
 				case 'add_cat':
@@ -161,7 +161,7 @@ class admin_controller
 				break;
 
 				case 'edit':
-					$this->category->adm_edit_cat($id, $this->u_action);
+					$this->adm_edit_cat($id);
 				break;
 
 				case 'edit_cat':
@@ -416,6 +416,138 @@ class admin_controller
 
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_EDIT_CAT', time(), [$title]);
 		trigger_error($this->language->lang('SC_EDIT_SUCCESS') . adm_back_link($this->u_action));
+	}
+
+	private function adm_add_cat()
+	{
+		$max = $this->category->get_max_order();
+		$sql = 'SELECT lang_local_name, lang_iso
+			FROM ' . LANG_TABLE . '
+				ORDER BY lang_id ASC';
+		$result = $this->db->sql_query($sql);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$this->template->assign_block_vars('categories', [
+				'CAT_LANG'		=> $row['lang_local_name'],
+				'CAT_ISO'		=> $row['lang_iso'],
+				'CAT_ORDER'		=> $max + 1,
+			]);
+		}
+		$this->db->sql_freeresult($result);
+
+		$this->template->assign_vars([
+			'IN_CAT_ACTION'		=> true,
+			'IN_ADD_ACTION'		=> true,
+			'CAT_ORDER'			=> $max + 1,
+			'U_BACK'			=> $this->u_action,
+			'U_ADD_CAT'			=> $this->u_action . '&amp;action=add_cat',
+		]);
+	}
+
+	private function adm_edit_cat($id)
+	{
+		// Get total lang id...
+		$sql = 'SELECT COUNT(lang_id) as total
+			FROM ' . LANG_TABLE;
+		$result = $this->db->sql_query($sql);
+		$total = (int) $this->db->sql_fetchfield('total', $result);
+		$this->db->sql_freeresult($result);
+
+		$title = '';
+		$i = $cat_order = 0;
+		$list_id = [];
+		$sql = $this->db->sql_build_query('SELECT', [
+			'SELECT'	=> 'l.*, c.*',
+			'FROM'		=> [LANG_TABLE => 'l'],
+			'LEFT_JOIN'	=> [
+				[
+					'FROM'	=> [$this->smilies_category_table => 'c'],
+					'ON'	=> 'c.cat_lang = l.lang_iso',
+				],
+			],
+			'WHERE'		=> 'cat_id = ' . $id,
+			'ORDER_BY'	=> 'lang_id ASC',
+		]);
+		$result = $this->db->sql_query($sql);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$this->template->assign_block_vars('category_lang', [
+				'CAT_LANG'			=> $row['lang_local_name'],
+				'CAT_ISO'			=> $row['lang_iso'],
+				'CAT_ORDER'			=> $row['cat_order'],
+				'CAT_ID'			=> $row['cat_id'],
+				'CAT_TRANSLATE'		=> $row['cat_name'],
+				'CAT_SORT'			=> 'edit',
+			]);
+			$i++;
+			$list_id[$i] = $row['lang_id'];
+			$cat_order = $row['cat_order'];
+			$title = $row['cat_title'];
+		}
+		$this->db->sql_freeresult($result);
+
+		// Add rows for empty langs in this category
+		if ($i !== $total)
+		{
+			$sql = $this->db->sql_build_query('SELECT', [
+				'SELECT'	=> '*',
+				'FROM'		=> [LANG_TABLE => 'l'],
+				'WHERE'		=> $this->db->sql_in_set('lang_id', $list_id, true, true),
+			]);
+			$result = $this->db->sql_query($sql);
+			while ($row = $this->db->sql_fetchrow($result))
+			{
+				$this->template->assign_block_vars('category_lang', [
+					'CAT_LANG'			=> $row['lang_local_name'],
+					'CAT_ISO'			=> $row['lang_iso'],
+					'CAT_ORDER'			=> $cat_order,
+					'CAT_ID'			=> $id,
+					'CAT_TRANSLATE'		=> '',
+					'CAT_SORT'			=> 'create',
+				]);
+			}
+			$this->db->sql_freeresult($result);
+		}
+
+		$this->template->assign_vars([
+			'IN_CAT_ACTION'	=> true,
+			'CAT_ORDER'		=> $cat_order,
+			'CAT_TITLE'		=> $title,
+			'U_BACK'		=> $this->u_action,
+			'U_EDIT_CAT'	=> $this->u_action . '&amp;action=edit_cat&amp;id=' . $id,
+		]);
+	}
+
+	private function adm_edit_smiley($id, $start)
+	{
+		$lang = $this->user->lang_name;
+		$sql = $this->db->sql_build_query('SELECT', [
+			'SELECT'	=> 's.*, c.*',
+			'FROM'		=> [SMILIES_TABLE => 's'],
+			'LEFT_JOIN'	=> [
+				[
+					'FROM'	=> [$this->smilies_category_table => 'c'],
+					'ON'	=> "cat_id = category AND cat_lang = '$lang'",
+				],
+			],
+			'WHERE'	=> 'smiley_id = ' . (int) $id,
+		]);
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+
+		$this->template->assign_vars([
+			'WIDTH'				=> $row['smiley_width'],
+			'HEIGHT'			=> $row['smiley_height'],
+			'CODE'				=> $row['code'],
+			'EMOTION'			=> $row['emotion'],
+			'CATEGORY'			=> $row['cat_name'],
+			'EX_CAT'			=> (int) $row['cat_id'],
+			'SELECT_CATEGORY'	=> $this->category->select_categories($row['cat_id'], false),
+			'IMG_SRC'			=> $this->root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
+			'U_MODIFY'			=> $this->u_action . '&amp;action=modify&amp;id=' . $row['smiley_id'] . '&amp;start=' . $start,
+			'U_BACK'			=> $this->u_action,
+		]);
+		$this->db->sql_freeresult($result);
 	}
 
 	/**
