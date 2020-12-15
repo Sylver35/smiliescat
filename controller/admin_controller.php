@@ -464,7 +464,7 @@ class admin_controller
 
 		$title = '';
 		$list_id = [];
-		$i = $cat_order = 0;
+		$i = $cat_order = $cat_nb = 0;
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> 'l.*, c.*',
 			'FROM'		=> [LANG_TABLE => 'l'],
