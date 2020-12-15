@@ -63,39 +63,39 @@
 				<td class="row3" colspan="7" style="text-align: center;color: red;"><strong>{{ lang('SC_CATEGORY_ANY_CREATE') }}</strong></td>
 			</tr>
 		{% else %}
-		{% for categorie in categories %}
-		{% if categorie.LANG_EMPTY %}
+		{% for category in categories %}
+		{% if category.LANG_EMPTY %}
 			<tr>
-				<td class="row3" colspan="7" style="text-align: center;color: red;"><strong>{{ lang('SC_LANGUAGE_EMPTY') }} {{ categorie.CAT_LANG }} - {{ categorie.CAT_ISO }}</strong></td>
+				<td class="row3" colspan="7" style="text-align: center;color: red;"><strong>{{ lang('SC_LANGUAGE_EMPTY') }} {{ category.CAT_LANG }} - {{ category.CAT_ISO }}</strong></td>
 			</tr>
 		{% else %}
-		{% if categorie.ROW %}
+		{% if category.ROW %}
 			<tr>
-				<td class="row3" style="text-align: center;"><strong>{{ categorie.CAT_ID }}</strong></td>
-				<td class="row3" style="text-align: center;"><strong>{{ categorie.CAT_ORDER }}</strong></td>
-				<td class="row3" style="text-align: center;" colspan="3"><strong>{{ categorie.SPACER_CAT }}</strong></td>
-				<td class="row3" style="text-align: center;"><strong>{{ categorie.CAT_NB }}</strong></td>
+				<td class="row3" style="text-align: center;"><strong>{{ category.CAT_ID }}</strong></td>
+				<td class="row3" style="text-align: center;"><strong>{{ category.CAT_ORDER }}</strong></td>
+				<td class="row3" style="text-align: center;" colspan="3"><strong>{{ category.SPACER_CAT }}</strong></td>
+				<td class="row3" style="text-align: center;"><strong>{{ category.CAT_NB }}</strong></td>
 				<td class="row3 actions" style="text-align: center;">
-				{% if categorie.CAT_ORDER eq 1 %}
+				{% if category.CAT_ORDER eq 1 %}
 					<span class="up-disabled">{{ ICON_MOVE_UP_DISABLED }}</span>
 				{% else %}
-					<span class="up"><a style="cursor: pointer;" onclick="moveCats('move_up',{{ categorie.CAT_ID }})">{{ ICON_MOVE_UP }}</a></span>
+					<span class="up"><a style="cursor: pointer;" onclick="moveCats('move_up',{{ category.CAT_ID }})">{{ ICON_MOVE_UP }}</a></span>
 				{% endif %}
-				{% if categorie.ROW_MAX %}
+				{% if category.ROW_MAX %}
 					<span class="down-disabled">{{ ICON_MOVE_DOWN_DISABLED }}</span>
 				{% else %}
-					<span class="down"><a style="cursor: pointer;" onclick="moveCats('move_down',{{ categorie.CAT_ID }})">{{ ICON_MOVE_DOWN }}</a></span>
+					<span class="down"><a style="cursor: pointer;" onclick="moveCats('move_down',{{ category.CAT_ID }})">{{ ICON_MOVE_DOWN }}</a></span>
 				{% endif %}
-					<a href="{{ categorie.U_EDIT }}">{{ ICON_EDIT }}</a>
-					<a href="{{ categorie.U_DELETE }}">{{ ICON_DELETE }}</a>
+					<a href="{{ category.U_EDIT }}">{{ ICON_EDIT }}</a>
+					<a href="{{ category.U_DELETE }}">{{ ICON_DELETE }}</a>
 			</tr>
 		{% endif %}
 			<tr>
 				<td style="text-align: center;background-color: #F9F9F9;"></td>
 				<td style="text-align: center;background-color: #F9F9F9;"></td>
-				<td style="text-align: center;"><strong>{{ categorie.CAT_TRANSLATE }}</strong></td>
-				<td style="text-align: center;">{{ categorie.CAT_LANG }}</td>
-				<td style="text-align: center;">{{ categorie.CAT_ISO }}</td>
+				<td style="text-align: center;"><strong>{{ category.CAT_TRANSLATE }}</strong></td>
+				<td style="text-align: center;">{{ category.CAT_LANG }}</td>
+				<td style="text-align: center;">{{ category.CAT_ISO }}</td>
 				<td style="text-align: center;background-color: #F9F9F9;"></td>
 			</tr>
 		{% endif %}
@@ -151,7 +151,10 @@
 				<td style="text-align: center;">{{ CAT_ORDER }}</td>
 				<td style="text-align: center;"><input class="text post" type="text" name="name_{{ category.CAT_ISO }}" value="{{ category.CAT_TRANSLATE }}" size="20" maxlength="50" /></td>
 				<td style="text-align: center;">{{ category.CAT_LANG }}</td>
-				<td style="text-align: center;"><strong>{{ category.CAT_ISO }}</strong><input type="hidden" name="lang_{{ category.CAT_ISO }}" value="{{ category.CAT_ISO }}"></td>
+				<td style="text-align: center;">
+					<strong>{{ category.CAT_ISO }}</strong>
+					<input type="hidden" name="lang_{{ category.CAT_ISO }}" value="{{ category.CAT_ISO }}">
+				</td>
 			</tr>
 			{% endfor %}
 		</tbody>
@@ -159,6 +162,7 @@
 	<p class="submit-buttons">
 		<span id="info" style="display: none;color: red;"></span><br />
 		<input type="hidden" name="order" value="{{ CAT_ORDER }}">
+		<input type="hidden" name="cat_nb" value="{{ CAT_NB }}">
 		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" title="{{ lang('SUBMIT') }}" />
 	</p>
 	{{ S_FORM_TOKEN }}

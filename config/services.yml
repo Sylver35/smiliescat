@@ -6,6 +6,7 @@ services:
         class: sylver35\smiliescat\event\listener
         arguments:
             - '@sylver35.smiliescat.category'
+            - '@config'
             - '@controller.helper'
             - '@template'
         tags:

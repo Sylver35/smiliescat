@@ -48,7 +48,6 @@ $lang = array_merge($lang, array(
 	'SC_CATEGORY_ID'			=> 'ID',
 	'SC_CATEGORY_IN'			=> 'Catégorie : %1$s',
 	'SC_CATEGORY_NAME'			=> 'Nom de la catégorie',
-	'SC_CATEGORY_ORDER'			=> 'Ordre',
 	'SC_CATEGORY_ORDER'			=> 'Ordre d’affichage',
 	'SC_CATEGORY_ORDER_SELECT'	=> 'Ordre d’affichage de la catégorie : ',
 	'SC_CATEGORY_ANY'			=> 'Toutes les catégories',

@@ -11,6 +11,7 @@ namespace sylver35\smiliescat\event;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use sylver35\smiliescat\core\category;
+use phpbb\config\config;
 use phpbb\controller\helper;
 use phpbb\template\template;
 
@@ -18,6 +19,9 @@ class listener implements EventSubscriberInterface
 {
 	/* @var \sylver35\smiliescat\core\category */
 	protected $category;
+
+	/** @var \phpbb\config\config */
+	protected $config;
 
 	/* @var \phpbb\controller\helper */
 	protected $helper;
@@ -28,9 +32,10 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Constructor
 	 */
-	public function __construct(category $category, helper $helper, template $template)
+	public function __construct(category $category, config $config, helper $helper, template $template)
 	{
 		$this->category = $category;
+		$this->config = $config;
 		$this->helper = $helper;
 		$this->template = $template;
 	}
@@ -65,7 +70,7 @@ class listener implements EventSubscriberInterface
 
 	public function add_page_header()
 	{
-		$this->template->assign_var('U_CATEGORY_POPUP', $this->helper->route('sylver35_smiliescat_smilies_pop'));
+		$this->template->assign_var('U_CATEGORY_POPUP', $this->helper->route('sylver35_smiliescat_smilies_pop', ['select' => $this->config['smilies_category_nb']]));
 	}
 
 	/**

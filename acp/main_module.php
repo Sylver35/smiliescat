@@ -39,27 +39,30 @@ class main_module
 		$admin_controller = $phpbb_container->get('sylver35.smiliescat.admin.controller');
 		/** @type \sylver35\smiliescat\core\category $category */
 		$category = $phpbb_container->get('sylver35.smiliescat.category');
+		/** @type \phpbb\request\request $request Request object */
+		$request = $phpbb_container->get('request');
 		// Make the $u_action url available in the admin controller
 		$admin_controller->set_page_url($this->u_action);
+		$action = (string) $request->variable('action', '');
+		$on_id = (int) $request->variable('id', -1);
 
 		$language->add_lang('smilies_category', 'sylver35/smiliescat');
-		$this->tpl_name = 'category_' . $mode;
+		$this->tpl_name = 'category_' . strtolower($mode);
 		$this->page_title = 'ACP_SC_' . strtoupper($mode);
 		$meta = $category->get_version();
 
 		switch ($mode)
 		{
 			case 'config':
-				$admin_controller->acp_categories_config();
+				$admin_controller->acp_categories_config($on_id, $action, $mode);
 			break;
 
 			case 'smilies':
-				$admin_controller->acp_smilies_category();
+				$admin_controller->acp_smilies_category($on_id, $action);
 			break;
 
 			default:
 				trigger_error('NO_MODE', E_USER_ERROR);
-			/* No break here */
 		}
 
 		$template->assign_vars([

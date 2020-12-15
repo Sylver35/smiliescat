@@ -1,6 +1,6 @@
 sylver35_smiliescat_smilies_pop:
     path: /smilies_category
-    defaults: { _controller: sylver35.smiliescat.controller:popup_smilies_category, select: 0, start: 0 }
+    defaults: { _controller: sylver35.smiliescat.controller:popup_smilies_category }
     requirements:
         select: \d+
         start: \d+

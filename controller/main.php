@@ -81,7 +81,6 @@ class main
 		$count = (int) $this->category->smilies_count($cat);
 		$title = $this->category->extract_list_categories($cat);
 		$data = $this->category->get_version();
-		$url = $this->helper->route('sylver35_smiliescat_smilies_pop');
 
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> '*',
@@ -97,17 +96,16 @@ class main
 				'SMILEY_EMOTION'	=> $row['emotion'],
 				'SMILEY_WIDTH'		=> $row['smiley_width'],
 				'SMILEY_HEIGHT'		=> $row['smiley_height'],
-				'SMILEY_SRC'		=> generate_board_url() . '/' . $this->config['smilies_path'] . '/' . $row['smiley_url'],
+				'SMILEY_SRC'		=> $row['smiley_url'],
 			]);
 		}
 		$this->db->sql_freeresult($result);
 
 		$start = $this->pagination->validate_start($start, (int) $this->config['smilies_per_page_cat'], $count);
-		$this->pagination->generate_template_pagination("{$url}?select={$cat}", 'pagination', 'start', $count, (int) $this->config['smilies_per_page_cat'], $start);
+		$this->pagination->generate_template_pagination($this->helper->route('sylver35_smiliescat_smilies_pop', ['select' => $cat]), 'pagination', 'start', $count, (int) $this->config['smilies_per_page_cat'], $start);
 
 		$this->template->assign_vars([
-			'U_SELECT_CAT'		=> $url,
-			'LIST_CATEGORY'		=> $this->category->select_categories($cat, false, true),
+			'U_SMILIES_PATH'	=> generate_board_url() . '/' . $this->config['smilies_path'] . '/',
 			'POPUP_TITLE'		=> $this->language->lang('SC_CATEGORY_IN', $title),
 			'SC_VERSION'		=> $this->language->lang('SC_VERSION_COPY', $data['homepage'], $data['version']),
 		]);
@@ -128,7 +126,7 @@ class main
 		$id = (int) $this->request->variable('id', 0);
 		$action = (string) $this->request->variable('action', '');
 
-		$this->category->move_cat($action, $id);
+		$this->category->move_cat($id, $action);
 		$max = $this->category->get_max_order();
 
 		$sql = $this->db->sql_build_query('SELECT', [
@@ -137,14 +135,15 @@ class main
 			'LEFT_JOIN'	=> [
 				[
 					'FROM'	=> [$this->smilies_category_table => 'c'],
-					'ON'	=> 'cat_lang = lang_iso',
+					'ON'	=> 'c.cat_lang = l.lang_iso',
 				],
 			],
-			'ORDER_BY'	=> 'cat_order ASC, cat_lang_id ASC',
+			'ORDER_BY'	=> 'c.cat_order ASC, c.cat_lang_id ASC',
 		]);
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
+			// Array to be send to jQuery
 			$list_cat[$i] = [
 				'catNr'			=> $i + 1,
 				'langEmpty'		=> !$row['cat_id'] && !$row['cat_order'] && !$row['cat_name'],

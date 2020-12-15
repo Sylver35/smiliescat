@@ -140,7 +140,7 @@ class category
 
 	public function capitalize($var)
 	{
-		return $this->db->sql_escape(ucfirst(strtolower(trim($var))));
+		return ucfirst(strtolower(trim($var)));
 	}
 
 	public function get_max_order()
@@ -174,10 +174,22 @@ class category
 			FROM ' . $this->smilies_category_table . '
 			ORDER BY cat_order ASC';
 		$result = $this->db->sql_query_limit($sql, 1);
-		$mini = (int) $this->db->sql_fetchfield('cat_id');
+		$first = (int) $this->db->sql_fetchfield('cat_id');
 		$this->db->sql_freeresult($result);
 
-		return $mini;
+		return $first;
+	}
+
+	public function get_cat_nb($id)
+	{
+		$sql = 'SELECT cat_nb
+			FROM ' . $this->smilies_category_table . '
+				WHERE cat_id = ' . (int) $id;
+		$result = $this->db->sql_query_limit($sql, 1);
+		$cat_nb = (int) $this->db->sql_fetchfield('cat_nb', $result);
+		$this->db->sql_freeresult($result);
+
+		return $cat_nb;
 	}
 
 	public function extract_list_categories($cat)
@@ -188,44 +200,41 @@ class category
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> '*',
 			'FROM'		=> [$this->smilies_category_table => ''],
-			'WHERE'		=> "cat_lang = '$lang'",
+			'WHERE'		=> "cat_nb <> 0 AND cat_lang = '$lang'",
 			'ORDER_BY'	=> 'cat_order ASC',
 		]);
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			// Choose only non-empty categories
-			if ($row['cat_nb'])
-			{
-				$actual_cat = (int) $row['cat_id'] === $cat;
-				$this->template->assign_block_vars('categories', [
-					'CLASS'			=> $actual_cat ? 'cat-active' : 'cat-inactive',
-					'SEPARATE'		=> ($i > 0) ? ' - ' : '',
-					'CAT_ID'		=> $row['cat_id'],
-					'CAT_ORDER'		=> $row['cat_order'],
-					'CAT_NAME'		=> $row['cat_name'] ? $row['cat_name'] : $row['cat_title'],
-					'CAT_NB'		=> $row['cat_nb'],
-				]);
-				$i++;
+			$actual_cat = (int) $row['cat_id'] === $cat;
+			$this->template->assign_block_vars('categories', [
+				'CLASS'			=> $actual_cat ? 'cat-active' : 'cat-inactive',
+				'SEPARATE'		=> ($i > 0) ? ' - ' : '',
+				'CAT_NAME'		=> $row['cat_name'] ? $row['cat_name'] : $row['cat_title'],
+				'CAT_ORDER'		=> $row['cat_order'],
+				'CAT_ID'		=> $row['cat_id'],
+				'CAT_NB'		=> $row['cat_nb'],
+				'U_CAT'			=> $this->helper->route('sylver35_smiliescat_smilies_pop', ['select' => $row['cat_id']]),
+			]);
+			$i++;
 
-				// Keep these values in memory
-				$title = $actual_cat ? $row['cat_name'] : $title;
-				$cat_order = $row['cat_order'];
-			}
+			// Keep these values in memory
+			$title = $actual_cat ? $row['cat_name'] : $title;
+			$cat_order = $row['cat_order'];
 		}
 		$this->db->sql_freeresult($result);
 
 		// Add the Unclassified category if not empty
-		$nb = $this->smilies_count(0);
-		if ($nb)
+		if ($nb = $this->smilies_count(0))
 		{
 			$this->template->assign_block_vars('categories', [
 				'CLASS'			=> ($cat === 0) ? 'cat-active' : 'cat-inactive',
 				'SEPARATE'		=> ($i > 0) ? ' - ' : '',
-				'CAT_ID'		=> 0,
-				'CAT_ORDER'		=> $cat_order + 1,
 				'CAT_NAME'		=> $this->language->lang('SC_CATEGORY_DEFAUT'),
+				'CAT_ORDER'		=> $cat_order + 1,
+				'CAT_ID'		=> 0,
 				'CAT_NB'		=> $nb,
+				'U_CAT'			=> $this->helper->route('sylver35_smiliescat_smilies_pop', ['select' => 0]),
 			]);
 		}
 
@@ -262,8 +271,7 @@ class category
 		$this->db->sql_freeresult($result);
 
 		// Add the Unclassified category if not empty
-		$nb = $this->smilies_count(0, true);
-		if ($nb)
+		if ($nb = $this->smilies_count(0, true))
 		{
 			$list_cat[$i] = [
 				'cat_id'		=> 0,
@@ -321,6 +329,7 @@ class category
 				];
 				$i++;
 			}
+			$this->db->sql_freeresult($result);
 
 			$event['content'] = array_merge($event['content'], [
 				'in_cat'		=> true,
@@ -414,13 +423,15 @@ class category
 		$first = $this->get_first_order();
 		if ($current_order === 1 || $switch_order_id === 1)
 		{
-			$this->config->set('smilies_category_nb', $first);
+			if ($this->get_cat_nb($first) > 0)
+			{
+				$this->config->set('smilies_category_nb', $first);
+			}
 		}
 	}
 
-	public function move_cat($action, $id)
+	public function move_cat($id, $action)
 	{
-		$id = (int) $id;
 		// Get current order id and title...
 		$sql = 'SELECT cat_order, cat_title
 			FROM ' . $this->smilies_category_table . '

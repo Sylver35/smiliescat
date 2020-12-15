@@ -8,26 +8,12 @@
 
 <h2 class="category-title">{{ POPUP_TITLE }}</h2>
 
-<form id="smilies_category" method="post" action="{{ U_SELECT_CAT }}">
-<div>
-	<strong>{{ lang('SC_CATEGORY_SELECT') }} : </strong>
-	<select id="select" name="select" onchange="if(this.options[this.selectedIndex].value != '')this.form.submit();">{{ LIST_CATEGORY }}</select>&nbsp;
-	<input class="button2" type="submit" value="{{ lang('GO') }}">
-	{% if pagination|length %}
-	<div class="pagination">
-		{% INCLUDE 'pagination.html' %}
-	</div>
-	{% endif %}
-</div>
-</form>
-<br />
-
 <div class="panel">
 	<div class="inner">
 	{% if smilies|length %}
 	{% for smiley in smilies %}
 		<a class="pointer" onclick="insert_text('{{ smiley.SMILEY_CODE }}',true,true);return false;">
-			<img src="{{ smiley.SMILEY_SRC }}" alt="{{ smiley.SMILEY_CODE }}" title="{{ smiley.SMILEY_EMOTION }}" width="{{ smiley.SMILEY_WIDTH }}" height="{{ smiley.SMILEY_HEIGHT }}" />
+			<img src="{{ U_SMILIES_PATH }}{{ smiley.SMILEY_SRC }}" alt="{{ smiley.SMILEY_CODE }}" title="{{ smiley.SMILEY_EMOTION }}" width="{{ smiley.SMILEY_WIDTH }}" height="{{ smiley.SMILEY_HEIGHT }}" />
 		</a>
 	{% endfor %}
 	{% else %}
@@ -35,19 +21,24 @@
 	{% endif %}
 	</div>
 </div>
-<br />
+<div class="action-bar bar-top litle-pagin">
+	{% if pagination|length %}
+	<div class="pagination">
+		{% INCLUDE 'pagination.html' %}
+	</div>
+	{% else %}
+	<br />
+	{% endif %}
+</div>
 
-<form id="categories" method="post" action="{{ U_SELECT_CAT }}">
 <div class="panel">
 	<div class="inner">
-	<input id="hidden-select" type="hidden" name="select" value="">
 	<h3>{{ lang('ACP_SC_SMILIES') }}</h3>
 	{% for category in categories %}
-		{{ category.SEPARATE }}<a class="{{ category.CLASS }}" id="pointer-{{ category.CAT_ID }}" title="{{ category.CAT_NAME }}">{{ category.CAT_NAME }}</a> ({{ category.CAT_NB }})
+		{{ category.SEPARATE }}<a href="{{ category.U_CAT }}" class="{{ category.CLASS }}" id="pointer-{{ category.CAT_ID }}" title="{{ category.CAT_NAME }}">{{ category.CAT_NAME }}</a> ({{ category.CAT_NB }})
 	{% endfor %}
 	</div>
 </div>
-</form>
 
 <span class="close"><a class="pointer" title="{{ lang('CLOSE_WINDOW') }}" onclick="window.close();return false;">{{ lang('CLOSE_WINDOW') }}</a></span>
 
