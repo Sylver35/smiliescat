@@ -2,7 +2,7 @@
 /**
 *
 * @package		Breizh Smilies Categories Extension
-* @copyright	(c) 2020 Sylver35  https://breizhcode.com
+* @copyright	(c) 2020-2021 Sylver35  https://breizhcode.com
 * @license		http://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */
@@ -323,11 +323,10 @@ class admin_controller
 
 	private function add_category()
 	{
+		$sql_ary = [];
 		$title = (string) $this->request->variable('name_' . $this->user->lang_name, '', true);
 		$cat_order = (int) $this->request->variable('order', 0);
 		$cat_id = (int) $this->category->get_max_id() + 1;
-		$sql_ary = [];
-		$i = 0;
 
 		$sql = 'SELECT lang_id, lang_iso
 			FROM ' . LANG_TABLE . "
@@ -344,7 +343,7 @@ class admin_controller
 			}
 			else
 			{
-				$sql_ary[$i] = [
+				$sql_ary[] = [
 					'cat_id'		=> $cat_id,
 					'cat_order'		=> $cat_order,
 					'cat_lang'		=> $lang,
@@ -353,7 +352,6 @@ class admin_controller
 					'cat_nb'		=> 0,
 				];
 			}
-			$i++;
 		}
 		$this->db->sql_freeresult($result);
 

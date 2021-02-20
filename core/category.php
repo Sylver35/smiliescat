@@ -2,7 +2,7 @@
 /**
 *
 * @package		Breizh Smilies Categories Extension
-* @copyright	(c) 2020 Sylver35  https://breizhcode.com
+* @copyright	(c) 2020-2021 Sylver35  https://breizhcode.com
 * @license		http://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */
@@ -309,14 +309,14 @@ class category
 				$this->db->sql_freeresult($result);
 			}
 
-			$sql = $this->db->sql_build_query('SELECT', [
+			$sql = [
 				'SELECT'	=> 'smiley_url, MIN(smiley_id) AS smiley_id, MIN(code) AS code, MIN(smiley_order) AS min_smiley_order, MIN(smiley_width) AS smiley_width, MIN(smiley_height) AS smiley_height, MIN(emotion) AS emotion',
 				'FROM'		=> [SMILIES_TABLE => ''],
 				'WHERE'		=> 'category = ' . $cat,
 				'GROUP_BY'	=> 'smiley_url',
 				'ORDER_BY'	=> 'min_smiley_order ASC',
-			]);
-			$result = $this->db->sql_query($sql);
+			];
+			$result = $this->db->sql_query($this->db->sql_build_query('SELECT', $sql));
 			while ($row = $this->db->sql_fetchrow($result))
 			{
 				$smilies[$i] = [
