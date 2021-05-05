@@ -54,3 +54,6 @@ services:
             - '@language'
             - '@pagination'
             - '%sylver35.smiliescat.tables.smilies_category%'
+
+    _defaults:
+        public: true

@@ -198,8 +198,7 @@ class admin_controller
 
 	private function modify_smiley($id, $cat_id, $ex_cat)
 	{
-		$sql = 'UPDATE ' . SMILIES_TABLE . ' SET category = ' . $cat_id . ' WHERE smiley_id = ' . $id;
-		$this->db->sql_query($sql);
+		$this->db->sql_query('UPDATE ' . SMILIES_TABLE . ' SET category = ' . $cat_id . ' WHERE smiley_id = ' . $id);
 
 		// Increment nb value if wanted
 		if ($cat_id)
@@ -211,15 +210,13 @@ class admin_controller
 					$this->config->set('smilies_category_nb', $cat_id);
 				}
 			}
-			$sql_increment = 'UPDATE ' . $this->smilies_category_table . ' SET cat_nb = cat_nb + 1 WHERE cat_id = ' . $cat_id;
-			$this->db->sql_query($sql_increment);
+			$this->db->sql_query('UPDATE ' . $this->smilies_category_table . ' SET cat_nb = cat_nb + 1 WHERE cat_id = ' . $cat_id);
 		}
 
 		// Decrement nb value if wanted
 		if ($ex_cat)
 		{
-			$sql_decrement = 'UPDATE ' . $this->smilies_category_table . ' SET cat_nb = cat_nb - 1 WHERE cat_id = ' . $ex_cat;
-			$this->db->sql_query($sql_decrement);
+			$this->db->sql_query('UPDATE ' . $this->smilies_category_table . ' SET cat_nb = cat_nb - 1 WHERE cat_id = ' . $ex_cat);
 		}
 	}
 
@@ -295,8 +292,7 @@ class admin_controller
 		$order = $row['cat_order'];
 		$this->db->sql_freeresult($result);
 
-		$sql_delete = 'DELETE FROM ' . $this->smilies_category_table . ' WHERE cat_id = ' . $id;
-		$this->db->sql_query($sql_delete);
+		$this->db->sql_query('DELETE FROM ' . $this->smilies_category_table . ' WHERE cat_id = ' . $id);
 
 		// Decrement orders if needed
 		$sql_decrement = 'SELECT cat_id, cat_order
@@ -306,16 +302,12 @@ class admin_controller
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$new_order = (int) $row['cat_order'] - 1;
-			$sql_order = 'UPDATE ' . $this->smilies_category_table . '
-				SET cat_order = ' . $new_order . '
-					WHERE cat_id = ' . $row['cat_id'] . ' AND cat_order = ' . $row['cat_order'];
-			$this->db->sql_query($sql_order);
+			$this->db->sql_query('UPDATE ' . $this->smilies_category_table . ' SET cat_order = ' . $new_order . ' WHERE cat_id = ' . $row['cat_id'] . ' AND cat_order = ' . $row['cat_order']);
 		}
 		$this->db->sql_freeresult($result);
 
 		// Reset appropriate smilies category id
-		$sql_update = 'UPDATE ' . SMILIES_TABLE . ' SET category = 0 WHERE category = ' . $id;
-		$this->db->sql_query($sql_update);
+		$this->db->sql_query('UPDATE ' . SMILIES_TABLE . ' SET category = 0 WHERE category = ' . $id);
 
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_DELETE_CAT', time(), [$title]);
 		trigger_error($this->language->lang('SC_DELETE_SUCCESS') . adm_back_link($this->u_action));
@@ -377,6 +369,7 @@ class admin_controller
 
 	private function edit_category($id)
 	{
+		$sql_in = [];
 		$title = $this->category->capitalize($this->request->variable('name_' . $this->user->lang_name, '', true));
 		$order = (int) $this->request->variable('order', 0);
 		$cat_nb = (int) $this->request->variable('cat_nb', 0);
@@ -400,15 +393,11 @@ class admin_controller
 			{
 				if ($sort === 'edit')
 				{
-					$sql = 'UPDATE ' . $this->smilies_category_table . "
-						SET cat_name = '" . $this->db->sql_escape($name) . "', cat_title = '" . $this->db->sql_escape($title) . "', cat_nb = $cat_nb
-							WHERE cat_lang = '" . $this->db->sql_escape($lang) . "'
-							AND cat_id = $id";
-					$this->db->sql_query($sql);
+					$this->db->sql_query('UPDATE ' . $this->smilies_category_table . " SET cat_name = '" . $this->db->sql_escape($name) . "', cat_title = '" . $this->db->sql_escape($title) . "', cat_nb = $cat_nb WHERE cat_lang = '" . $this->db->sql_escape($lang) . "' AND cat_id = $id");
 				}
 				else if ($sort === 'create')
 				{
-					$sql_in = [
+					$sql_in[] = [
 						'cat_id'		=> $id,
 						'cat_order'		=> $order,
 						'cat_lang'		=> $lang,
@@ -416,10 +405,12 @@ class admin_controller
 						'cat_title'		=> $title,
 						'cat_nb'		=> $cat_nb,
 					];
-					$this->db->sql_query('INSERT INTO ' . $this->smilies_category_table . $this->db->sql_build_array('INSERT', $sql_in));
 				}
 			}
 		}
+		$this->db->sql_freeresult($result);
+
+		$this->db->sql_multi_insert($this->smilies_category_table, $sql_in);
 
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_EDIT_CAT', time(), [$title]);
 		trigger_error($this->language->lang('SC_EDIT_SUCCESS') . adm_back_link($this->u_action));
@@ -457,7 +448,7 @@ class admin_controller
 		$sql = 'SELECT COUNT(lang_id) as total
 			FROM ' . LANG_TABLE;
 		$result = $this->db->sql_query($sql);
-		$total = (int) $this->db->sql_fetchfield('total', $result);
+		$total = (int) $this->db->sql_fetchfield('total');
 		$this->db->sql_freeresult($result);
 
 		$title = '';

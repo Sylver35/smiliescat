@@ -149,7 +149,7 @@ class category
 		$sql = 'SELECT MAX(cat_order) AS maxi
 			FROM ' . $this->smilies_category_table;
 		$result = $this->db->sql_query($sql);
-		$max = (int) $this->db->sql_fetchfield('maxi', $result);
+		$max = (int) $this->db->sql_fetchfield('maxi');
 		$this->db->sql_freeresult($result);
 
 		return $max;
@@ -161,7 +161,7 @@ class category
 		$sql = 'SELECT MAX(cat_id) AS id_max
 			FROM ' . $this->smilies_category_table;
 		$result = $this->db->sql_query($sql);
-		$id_max = (int) $this->db->sql_fetchfield('id_max', $result);
+		$id_max = (int) $this->db->sql_fetchfield('id_max');
 		$this->db->sql_freeresult($result);
 
 		return $id_max;
@@ -185,8 +185,8 @@ class category
 		$sql = 'SELECT cat_nb
 			FROM ' . $this->smilies_category_table . '
 				WHERE cat_id = ' . (int) $id;
-		$result = $this->db->sql_query_limit($sql, 1);
-		$cat_nb = (int) $this->db->sql_fetchfield('cat_nb', $result);
+		$result = $this->db->sql_query($sq);
+		$cat_nb = (int) $this->db->sql_fetchfield('cat_nb');
 		$this->db->sql_freeresult($result);
 
 		return $cat_nb;
@@ -336,7 +336,7 @@ class category
 				'cat'			=> $cat,
 				'total'			=> $i,
 				'smilies'		=> $smilies,
-				'emptyRow'		=> (!$i) ? $this->language->lang('SC_SMILIES_EMPTY_CATEGORY') : '',
+				'emptyRow'		=> ($i === 0) ? $this->language->lang('SC_SMILIES_EMPTY_CATEGORY') : '',
 				'title'			=> $this->language->lang('SC_CATEGORY_IN', $cat_name),
 			]);
 		}
@@ -346,12 +346,12 @@ class category
 	{
 		$switch_order_id = 0;
 		$max_order = $this->get_max_order();
-		if ($current_order == 1 && $action == 'move_up')
+		if ($current_order === 1 && $action === 'move_up')
 		{
 			return $switch_order_id;
 		}
 
-		if (($current_order == $max_order) && ($action == 'move_down'))
+		if (($current_order === $max_order) && ($action === 'move_down'))
 		{
 			return $switch_order_id;
 		}
@@ -448,21 +448,13 @@ class category
 			return;
 		}
 
-		$sql = 'UPDATE ' . $this->smilies_category_table . "
-			SET cat_order = $current_order
-			WHERE cat_order = $switch_order_id
-				AND cat_id <> $id";
-		$this->db->sql_query($sql);
+		$this->db->sql_query('UPDATE ' . $this->smilies_category_table . " SET cat_order = $current_order WHERE cat_order = $switch_order_id AND cat_id <> $id");
 		$move_executed = (bool) $this->db->sql_affectedrows();
 
 		// Only update the other entry too if the previous entry got updated
 		if ($move_executed)
 		{
-			$sql = 'UPDATE ' . $this->smilies_category_table . "
-				SET cat_order = $switch_order_id
-				WHERE cat_order = $current_order
-					AND cat_id = $id";
-			$this->db->sql_query($sql);
+			$this->db->sql_query('UPDATE ' . $this->smilies_category_table . " SET cat_order = $switch_order_id WHERE cat_order = $current_order AND cat_id = $id");
 		}
 
 		$this->reset_first_cat($current_order, $switch_order_id);

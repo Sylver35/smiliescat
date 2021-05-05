@@ -2,7 +2,7 @@
 /**
 *
 * @package		Breizh Smilies Categories Extension
-* @copyright	(c) 2020 Breizh Code  https://breizhcode.com
+* @copyright	(c) 2020-2021 Breizh Code  https://breizhcode.com
 * @license		http://opensource.org/licenses/gpl-license.php GNU Public License
 * @translator	[French] Sylver35  https://breizhcode.com
 *

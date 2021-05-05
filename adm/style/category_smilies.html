@@ -1,4 +1,5 @@
 {% INCLUDE 'overall_header.html' %}
+{% INCLUDECSS '@sylver35_smiliescat/smiliescat.css' %}
 
 <a name="maincontent"></a>
 
@@ -16,21 +17,21 @@
 	<table class="table1 zebra-table" id="smilies">
 	<thead>
 	<tr>
-		<th style="text-align: center;" colspan="6">{{ lang('SMILIES_CONFIG') }}</th>
+		<th colspan="6">{{ lang('SMILIES_CONFIG') }}</th>
 	</tr>
 	<tr class="row3">
-		<td style="text-align: center;">{{ lang('SMILIES_IMAGE') }}</td>
-		<td style="text-align: center;">{{ lang('SMILIES_CODE') }}</td>
-		<td style="text-align: center;">{{ lang('EMOTION') }}</td>
-		<td style="text-align: center;">{{ lang('SC_CATEGORY_SELECT') }}</td>
+		<td>{{ lang('SMILIES_IMAGE') }}</td>
+		<td>{{ lang('SMILIES_CODE') }}</td>
+		<td>{{ lang('EMOTION') }}</td>
+		<td>{{ lang('SC_CATEGORY_SELECT') }}</td>
 	</tr>
 	</thead>
 	<tbody>
 		<tr>
-			<td style="text-align: center;"><img src="{{ IMG_SRC }}" alt="{{ CODE }}" title="{{ EMOTION }}" /></td>
-			<td style="text-align: center;">{{ CODE }}</td>
-			<td style="text-align: center;">{{ EMOTION }}</td>
-			<td style="text-align: center;"><select id="cat_id" name="cat_id">{{ SELECT_CATEGORY }}</select></td>
+			<td><img src="{{ IMG_SRC }}" alt="{{ CODE }}" title="{{ EMOTION }}" /></td>
+			<td>{{ CODE }}</td>
+			<td>{{ EMOTION }}</td>
+			<td><select id="cat_id" name="cat_id">{{ SELECT_CATEGORY }}</select></td>
 		</tr>
 	</tbody>
 	</table>
@@ -58,11 +59,11 @@
 	<table class="table1 zebra-table">
 	<thead>
 	<tr>
-		<th style="text-align: center;">{{ lang('ACP_SMILIES') }}</th>
-		<th style="text-align: center;">{{ lang('CODE') }}</th>
-		<th style="text-align: center;">{{ lang('EMOTION') }}</th>
-		<th style="text-align: center;">{{ lang('SC_CATEGORY') }}</th>
-		<th style="text-align: center;">{{ lang('OPTIONS') }}</th>
+		<th>{{ lang('ACP_SMILIES') }}</th>
+		<th>{{ lang('CODE') }}</th>
+		<th>{{ lang('EMOTION') }}</th>
+		<th>{{ lang('SC_CATEGORY') }}</th>
+		<th>{{ lang('OPTIONS') }}</th>
 	</tr>
 	</thead>
 	<tbody>
@@ -70,20 +71,20 @@
 	{% for item in items %}
 	{% if item.SPACER_CAT %}
 		<tr>
-			<td class="row3" colspan="5" style="text-align: center;"><b>{{ item.SPACER_CAT }}</b></td>
+			<td class="row3" colspan="5"><b>{{ item.SPACER_CAT }}</b></td>
 		</tr>
 	{% endif %}
 		<tr>
-			<td style="width: 60%; text-align: center;"><img src="{{ U_SMILIES }}{{ item.IMG_SRC }}" width="{{ item.WIDTH }}" height="{{ item.HEIGHT }}" alt="{{ item.CODE }}" title="{{ item.EMOTION }}" /></td>
-			<td style="text-align: center;">{{ item.CODE }}</td>
-			<td style="text-align: center;">{{ item.EMOTION }}</td>
-			<td style="text-align: center;">{{ item.CATEGORY }}</td>
-			<td class="actions" style="text-align: center;"><a href="{{ item.U_EDIT }}">{{ ICON_EDIT }}</a></td>
+			<td style="width: 60%;"><img src="{{ U_SMILIES }}{{ item.IMG_SRC }}" width="{{ item.WIDTH }}" height="{{ item.HEIGHT }}" alt="{{ item.CODE }}" title="{{ item.EMOTION }}" /></td>
+			<td>{{ item.CODE }}</td>
+			<td>{{ item.EMOTION }}</td>
+			<td>{{ item.CATEGORY }}</td>
+			<td class="actions"><a href="{{ item.U_EDIT }}">{{ ICON_EDIT }}</a></td>
 		</tr>
 	{% endfor %}
 	{% else %}
 		<tr>
-			<td class="row3" colspan="5" style="text-align: center;"><b>{{ lang('SC_SMILIES_EMPTY_CATEGORY') }}</b></td>
+			<td class="row3" colspan="5"><b>{{ lang('SC_SMILIES_EMPTY_CATEGORY') }}</b></td>
 		</tr>
 	{% endif %}
 	</tbody>
@@ -98,6 +99,6 @@
 	</form>
 {% endif %}
 
-<p style="text-align: center;"><em>{{ CATEGORY_VERSION }}</em></p>
+<p class="centered"><em>{{ CATEGORY_VERSION }}</em></p>
 
 {% INCLUDE 'overall_footer.html' %}

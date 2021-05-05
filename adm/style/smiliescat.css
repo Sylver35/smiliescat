@@ -46,3 +46,24 @@
 	font-size: 1.3em;
 	color: #c40909;
 }
+
+#info {
+	display: none;
+	color: red;
+}
+
+th, td, .centered {
+	text-align: center;
+}
+
+.empty {
+	background-color: #FFF;
+}
+
+.in-red {
+	color: red;
+}
+
+.pointer {
+	cursor: pointer;
+}
