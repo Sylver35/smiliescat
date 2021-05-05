@@ -185,7 +185,7 @@ class category
 		$sql = 'SELECT cat_nb
 			FROM ' . $this->smilies_category_table . '
 				WHERE cat_id = ' . (int) $id;
-		$result = $this->db->sql_query($sq);
+		$result = $this->db->sql_query($sql);
 		$cat_nb = (int) $this->db->sql_fetchfield('cat_nb');
 		$this->db->sql_freeresult($result);
 
