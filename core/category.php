@@ -1,11 +1,11 @@
 <?php
 /**
-*
-* @package		Breizh Smilies Categories Extension
-* @copyright	(c) 2020-2021 Sylver35  https://breizhcode.com
-* @license		http://opensource.org/licenses/gpl-license.php GNU Public License
-*
-*/
+ *
+ * @package		Breizh Smilies Categories Extension
+ * @copyright	(c) 2020-2021 Sylver35  https://breizhcode.com
+ * @license		http://opensource.org/licenses/gpl-license.php GNU Public License
+ *
+ */
 
 namespace sylver35\smiliescat\core;
 
@@ -295,19 +295,7 @@ class category
 			$i = 0;
 			$smilies = [];
 			$lang = $this->user->lang_name;
-			$cat_name = $this->language->lang('SC_CATEGORY_DEFAUT');
-
-			if ($cat > 0)
-			{
-				$sql = 'SELECT cat_name
-					FROM ' . $this->smilies_category_table . "
-						WHERE cat_lang = '$lang'
-						AND cat_id = $cat";
-				$result = $this->db->sql_query_limit($sql, 1);
-				$row = $this->db->sql_fetchrow($result);
-				$cat_name = $row['cat_name'];
-				$this->db->sql_freeresult($result);
-			}
+			$cat_name = $this->get_cat_name($cat);
 
 			$sql = [
 				'SELECT'	=> 'smiley_url, MIN(smiley_id) AS smiley_id, MIN(code) AS code, MIN(smiley_order) AS min_smiley_order, MIN(smiley_width) AS smiley_width, MIN(smiley_height) AS smiley_height, MIN(emotion) AS emotion',
@@ -340,6 +328,27 @@ class category
 				'title'			=> $this->language->lang('SC_CATEGORY_IN', $cat_name),
 			]);
 		}
+	}
+
+	private function get_cat_name($cat)
+	{
+		if ($cat > 0)
+		{
+			$sql = 'SELECT cat_name
+				FROM ' . $this->smilies_category_table . "
+					WHERE cat_lang = '$lang'
+					AND cat_id = $cat";
+			$result = $this->db->sql_query_limit($sql, 1);
+			$row = $this->db->sql_fetchrow($result);
+			$cat_name = $row['cat_name'];
+			$this->db->sql_freeresult($result);
+		}
+		else
+		{
+			$cat_name = $this->language->lang('SC_CATEGORY_DEFAUT');
+		}
+
+		return $cat_name;
 	}
 
 	public function set_order($action, $current_order)
