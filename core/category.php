@@ -294,7 +294,6 @@ class category
 		{
 			$i = 0;
 			$smilies = [];
-			$lang = $this->user->lang_name;
 			$cat_name = $this->get_cat_name($cat);
 
 			$sql = [
@@ -334,6 +333,7 @@ class category
 	{
 		if ($cat > 0)
 		{
+			$lang = $this->user->lang_name;
 			$sql = 'SELECT cat_name
 				FROM ' . $this->smilies_category_table . "
 					WHERE cat_lang = '$lang'
