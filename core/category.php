@@ -2,7 +2,7 @@
 /**
  *
  * @package		Breizh Smilies Categories Extension
- * @copyright	(c) 2020-2021 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2020-2022 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License
  *
  */
@@ -113,7 +113,8 @@ class category
 		$select = '<option disabled="disabled">' . $this->language->lang('SC_CATEGORY_SELECT') . '</option>';
 		if ($modify)
 		{
-			$select .= '<option value="-1"' . (($cat == -1) ? ' selected="selected"' : '') . '>' . $this->language->lang('SC_CATEGORY_ANY') . '</option>';
+			$selected = ((int) $cat === -1) ? ' selected="selected"' : '';
+			$select .= '<option value="-1"' . $selected . '>' . $this->language->lang('SC_CATEGORY_ANY') . '</option>';
 		}
 
 		$sql = 'SELECT *
@@ -127,7 +128,7 @@ class category
 			{
 				continue;
 			}
-			$selected = ($cat === (int) $row['cat_id']) ? ' selected="selected"' : '';
+			$selected = ((int) $cat === (int) $row['cat_id']) ? ' selected="selected"' : '';
 			$select .= '<option title="' . $row['cat_name'] . '" value="' . $row['cat_id'] . '"' . $selected . '> ' . $row['cat_name'] . '</option>';
 		}
 		$this->db->sql_freeresult($result);
@@ -290,7 +291,7 @@ class category
 	public function shoutbox_smilies_popup($event)
 	{
 		$cat = (int) $event['cat'];
-		if ($cat > -1)
+		if ($cat !== -1)
 		{
 			$i = 0;
 			$smilies = [];
