@@ -2,7 +2,7 @@
 /**
 *
 * @package		Breizh Smilies Categories Extension
-* @copyright	(c) 2020-2021 Sylver35  https://breizhcode.com
+* @copyright	(c) 2020-2022 Sylver35  https://breizhcode.com
 * @license		http://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */
@@ -91,7 +91,7 @@ class admin_controller
 			switch ($action)
 			{
 				case 'edit':
-					$this->adm_edit_smiley($id, $start);
+					$this->edit_smiley($id, $start);
 				break;
 
 				case 'modify':
@@ -114,7 +114,7 @@ class admin_controller
 			$this->extract_list_smilies($select, $start);
 
 			$this->template->assign_vars([
-				'LIST_CATEGORY'		=> $this->category->select_categories($select, true),
+				'LIST_CATEGORY'		=> $this->category->select_categories($select, true, true),
 				'U_SELECT_CAT'		=> $this->u_action . '&amp;select=' . $select,
 				'U_BACK'			=> ($select) ? $this->u_action : '',
 			]);
@@ -148,7 +148,7 @@ class admin_controller
 				break;
 
 				case 'add':
-					$this->adm_add_cat();
+					$this->add_cat();
 				break;
 
 				case 'add_cat':
@@ -156,17 +156,17 @@ class admin_controller
 				break;
 
 				case 'edit':
-					$this->adm_edit_cat($id);
+					$this->edit_cat((int) $id);
 				break;
 
 				case 'edit_cat':
-					$this->edit_category($id);
+					$this->edit_category((int) $id);
 				break;
 
 				case 'delete':
 					if (confirm_box(true))
 					{
-						$this->delete_cat($id);
+						$this->delete_cat((int) $id);
 					}
 					else
 					{
@@ -252,9 +252,7 @@ class admin_controller
 		$result = $this->db->sql_query_limit($sql, (int) $this->config['smilies_per_page_cat'], $start);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$row['category'] = isset($row['category']) ? $row['category'] : 0;
 			$row['cat_name'] = ($row['category']) ? $row['cat_name'] : $this->language->lang('SC_CATEGORY_DEFAUT');
-
 			$this->template->assign_block_vars('items', [
 				'SPACER_CAT'	=> ($cat !== (int) $row['category']) ? $this->language->lang('SC_CATEGORY_IN', $row['cat_name']) : '',
 				'IMG_SRC'		=> $row['smiley_url'],
@@ -282,14 +280,13 @@ class admin_controller
 
 	private function delete_cat($id)
 	{
-		$id = (int) $id;
 		$sql = 'SELECT cat_title, cat_order
 			FROM ' . $this->smilies_category_table . '
 				WHERE cat_id = ' . $id;
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 		$title = $row['cat_title'];
-		$order = $row['cat_order'];
+		$order = (int) $row['cat_order'];
 		$this->db->sql_freeresult($result);
 
 		$this->db->sql_query('DELETE FROM ' . $this->smilies_category_table . ' WHERE cat_id = ' . $id);
@@ -297,7 +294,7 @@ class admin_controller
 		// Decrement orders if needed
 		$sql_decrement = 'SELECT cat_id, cat_order
 			FROM ' . $this->smilies_category_table . '
-				WHERE cat_order > ' . (int) $order;
+				WHERE cat_order > ' . $order;
 		$result = $this->db->sql_query($sql_decrement);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
@@ -416,9 +413,9 @@ class admin_controller
 		trigger_error($this->language->lang('SC_EDIT_SUCCESS') . adm_back_link($this->u_action));
 	}
 
-	private function adm_add_cat()
+	private function add_cat()
 	{
-		$max = $this->category->get_max_order() + 1;
+		$max = (int) $this->category->get_max_order() + 1;
 		$sql = 'SELECT lang_local_name, lang_iso
 			FROM ' . LANG_TABLE . '
 				ORDER BY lang_id ASC';
@@ -442,7 +439,7 @@ class admin_controller
 		]);
 	}
 
-	private function adm_edit_cat($id)
+	private function edit_cat($id)
 	{
 		// Get total lang id...
 		$sql = 'SELECT COUNT(lang_id) as total
@@ -518,7 +515,7 @@ class admin_controller
 		]);
 	}
 
-	private function adm_edit_smiley($id, $start)
+	private function edit_smiley($id, $start)
 	{
 		$lang = $this->user->lang_name;
 		$sql = $this->db->sql_build_query('SELECT', [
@@ -541,8 +538,8 @@ class admin_controller
 			'CODE'				=> $row['code'],
 			'EMOTION'			=> $row['emotion'],
 			'CATEGORY'			=> $row['cat_name'],
-			'EX_CAT'			=> (int) $row['cat_id'],
-			'SELECT_CATEGORY'	=> $this->category->select_categories($row['cat_id'], false),
+			'EX_CAT'			=> $row['cat_id'],
+			'SELECT_CATEGORY'	=> $this->category->select_categories($row['cat_id'], false, false),
 			'IMG_SRC'			=> $this->root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
 			'U_MODIFY'			=> $this->u_action . '&amp;action=modify&amp;id=' . $row['smiley_id'] . '&amp;start=' . $start,
 			'U_BACK'			=> $this->u_action,
