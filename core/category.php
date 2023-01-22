@@ -393,7 +393,9 @@ class category
 		{
 			if (!$row)
 			{
-				$this->template->assign_var('EMPTY_ROW', true);
+				$this->template->assign_vars([
+					'EMPTY_ROW' =>	true,
+				]);
 			}
 			else
 			{

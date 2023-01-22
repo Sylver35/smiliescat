@@ -121,7 +121,9 @@ class admin_controller
 				break;
 			}
 
-			$this->template->assign_var('IN_ACTION', true);
+			$this->template->assign_vars([
+				'IN_ACTION' => true,
+			]);
 		}
 		else
 		{
