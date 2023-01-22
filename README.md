@@ -1,8 +1,8 @@
 # Breizh Smilies Categories Extension
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Sylver35/smiliescat/badges/quality-score.png?b=1.4.0)](https://scrutinizer-ci.com/g/Sylver35/smiliescat/?branch=1.4.0)
-[![Build Status](https://scrutinizer-ci.com/g/Sylver35/smiliescat/badges/build.png?b=1.4.0)](https://scrutinizer-ci.com/g/Sylver35/smiliescat/build-status/1.4.0)
-[![Code Intelligence Status](https://scrutinizer-ci.com/g/Sylver35/smiliescat/badges/code-intelligence.svg?b=1.4.0)](https://scrutinizer-ci.com/code-intelligence)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Sylver35/smiliescat/badges/quality-score.png?b=1.5.0)](https://scrutinizer-ci.com/g/Sylver35/smiliescat/?branch=1.5.0)
+[![Build Status](https://scrutinizer-ci.com/g/Sylver35/smiliescat/badges/build.png?b=1.5.0)](https://scrutinizer-ci.com/g/Sylver35/smiliescat/build-status/1.5.0)
+[![Code Intelligence Status](https://scrutinizer-ci.com/g/Sylver35/smiliescat/badges/code-intelligence.svg?b=1.5.0)](https://scrutinizer-ci.com/code-intelligence)
 
 ## Minimum Requirements
 * phpBB 3.3.9
@@ -30,4 +30,4 @@
 ## License
 [GNU General Public License v2](http://opensource.org/licenses/GPL-2.0)
 
-© 2020 - Sylver35
+© 2023 - Sylver35

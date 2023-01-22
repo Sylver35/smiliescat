@@ -2,7 +2,7 @@
 /**
 *
 * @package		Breizh Smilies Categories Extension
-* @copyright	(c) 2020-2022 Breizh Code  https://breizhcode.com
+* @copyright	(c) 2020-2023 Breizh Code  https://breizhcode.com
 * @license		http://opensource.org/licenses/gpl-license.php GNU Public License
 * @translator	[English] Sylver35  https://breizhcode.com
 *
@@ -39,9 +39,9 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'ACP_SC_SMILIES'			=> 'Smilies categories',
-	'ACP_SC_SMILIES_EXPLAIN'	=> 'On this page, you can assign the categories to smilies.<br />The smilies will be displayed in a popup classified in the assigned category.<br />Smilies with no assigned category will be in the automatic category titled “Unclassified”',
+	'ACP_SC_SMILIES_EXPLAIN'	=> 'On this page, you can assign the categories to smilies.<br>The smilies will be displayed in a popup classified in the assigned category.<br>Smilies with no assigned category will be in the automatic category titled “Unclassified”',
 	'ACP_SC_CONFIG'				=> 'Configuration of categories',
-	'ACP_SC_CONFIG_EXPLAIN'		=> 'On this page, you can manage the categories of smilies.<br />Add, edit, delete categories. Change the display order and define the translations in the activated languages.',
+	'ACP_SC_CONFIG_EXPLAIN'		=> 'On this page, you can manage the categories of smilies.<br>Add, edit, delete categories. Change the display order and define the translations in the activated languages.',
 	'SC_CATEGORY'				=> 'Category',
 	'SC_CATEGORY_LANG'			=> 'Language',
 	'SC_CATEGORY_DEFAUT'		=> 'Unclassified',
@@ -54,6 +54,7 @@ $lang = array_merge($lang, array(
 	'SC_CATEGORY_ANY_CREATE'	=> 'No category has been created',
 	'SC_CATEGORY_ADD'			=> 'Add category',
 	'SC_CATEGORY_EDIT'			=> 'Edit Category',
+	'SC_CATEGORY_EDIT_LIST'		=> 'Edit selection of smileys',
 	'SC_CATEGORY_SELECT'		=> 'Select a category',
 	'SC_LANGUAGE_EMPTY'			=> 'Warning: no category is translated into the language',
 	'SC_CREATE_SUCCESS'			=> 'The category has been created',

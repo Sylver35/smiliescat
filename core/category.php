@@ -2,7 +2,7 @@
 /**
  *
  * @package		Breizh Smilies Categories Extension
- * @copyright	(c) 2020-2022 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2020-2023 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License
  *
  */
@@ -393,9 +393,7 @@ class category
 		{
 			if (!$row)
 			{
-				$this->template->assign_vars([
-					'EMPTY_ROW'	=> true,
-				]);
+				$this->template->assign_var('EMPTY_ROW', true);
 			}
 			else
 			{

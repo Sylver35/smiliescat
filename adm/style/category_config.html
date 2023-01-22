@@ -27,7 +27,7 @@
 			{% for category in categories %}
 			<tr>
 				<td>{{ CAT_ORDER }}</td>
-				<td><input class="text post" type="text" name="name_{{ category.CAT_ISO }}" value="" size="20" maxlength="50" /></td>
+				<td><input class="text post" type="text" name="name_{{ category.CAT_ISO }}" value="" size="20" maxlength="50"></td>
 				<td>{{ category.CAT_LANG }}</td>
 				<td><strong>{{ category.CAT_ISO }}</strong><input type="hidden" name="lang_{{ category.CAT_ISO }}" value="{{ category.CAT_ISO }}"></td>
 			</tr>
@@ -35,9 +35,9 @@
 		</tbody>
 	</table>
 	<p class="submit-buttons">
-		<span id="info"></span><br />
+		<span id="info"></span><br>
 		<input type="hidden" name="order" value="{{ CAT_ORDER }}">
-		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" title="{{ lang('SUBMIT') }}" />
+		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" title="{{ lang('SUBMIT') }}">
 	</p>
 	{{ S_FORM_TOKEN }}
 	</fieldset>
@@ -105,7 +105,7 @@
 	</table>
 	<p class="quick">
 		<input type="hidden" id="action_url" value="{{ U_ACTION }}">
-		<input class="button2" name="add" type="submit" value="{{ lang('SC_CATEGORY_ADD') }}" />
+		<input class="button2" name="add" type="submit" value="{{ lang('SC_CATEGORY_ADD') }}">
 	</p>
 	{{ S_FORM_TOKEN }}
 	</fieldset>
@@ -116,15 +116,15 @@
 		<legend>{{ lang('SC_CONFIG_TITLE') }}</legend>
 			
 			<dl>
-				<dt><label for="smilies_per_page_cat">{{ lang('SC_CONFIG_PAGE') }}{{ lang('COLON') }}</label><br /><span>{{ lang('SC_CONFIG_EXPLAIN') }}</span></dt>
+				<dt><label for="smilies_per_page_cat">{{ lang('SC_CONFIG_PAGE') }}{{ lang('COLON') }}</label><br><span>{{ lang('SC_CONFIG_EXPLAIN') }}</span></dt>
 				<dd>
 					<input id="smilies_per_page_cat" type="number" max="99" name="smilies_per_page_cat" value="{{ SMILIES_PER_PAGE_CAT }}">
 				</dd>
 			</dl>
 			
 			<p class="submit-buttons">
-				<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}" />&nbsp;
-				<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}" />
+				<input class="button1" type="submit" id="submit" name="submit" value="{L_SUBMIT}">&nbsp;
+				<input class="button2" type="reset" id="reset" name="reset" value="{L_RESET}">
 			</p>
 		
 	</fieldset>
@@ -149,7 +149,7 @@
 			<tr>
 				<td>{{ category.CAT_ID }}<input type="hidden" name="sort_{{ category.CAT_ISO }}" value="{{ category.CAT_SORT }}"></td>
 				<td>{{ CAT_ORDER }}</td>
-				<td><input class="text post" type="text" name="name_{{ category.CAT_ISO }}" value="{{ category.CAT_TRANSLATE }}" size="20" maxlength="50" /></td>
+				<td><input class="text post" type="text" name="name_{{ category.CAT_ISO }}" value="{{ category.CAT_TRANSLATE }}" size="20" maxlength="50"></td>
 				<td>{{ category.CAT_LANG }}</td>
 				<td>
 					<strong>{{ category.CAT_ISO }}</strong>
@@ -160,10 +160,10 @@
 		</tbody>
 	</table>
 	<p class="submit-buttons">
-		<span id="info"></span><br />
+		<span id="info"></span><br>
 		<input type="hidden" name="order" value="{{ CAT_ORDER }}">
 		<input type="hidden" name="cat_nb" value="{{ CAT_NB }}">
-		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" title="{{ lang('SUBMIT') }}" />
+		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" title="{{ lang('SUBMIT') }}">
 	</p>
 	{{ S_FORM_TOKEN }}
 	</fieldset>

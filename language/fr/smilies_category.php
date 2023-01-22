@@ -2,7 +2,7 @@
 /**
 *
 * @package		Breizh Smilies Categories Extension
-* @copyright	(c) 2020-2022 Breizh Code  https://breizhcode.com
+* @copyright	(c) 2020-2023 Breizh Code  https://breizhcode.com
 * @license		http://opensource.org/licenses/gpl-license.php GNU Public License
 * @translator	[French] Sylver35  https://breizhcode.com
 *
@@ -39,9 +39,9 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'ACP_SC_SMILIES'			=> 'Catégories des smileys',
-	'ACP_SC_SMILIES_EXPLAIN'	=> 'Sur cette page, vous pouvez attribuer les catégories des smileys.<br />Les smileys seront affichés dans une popup classés dans la catégorie attribuée.<br />Les smileys n’ayant pas de catégorie attribuée seront dans la catégorie automatique intitulée “Non classés”',
+	'ACP_SC_SMILIES_EXPLAIN'	=> 'Sur cette page, vous pouvez attribuer les catégories des smileys.<br>Les smileys seront affichés dans une popup classés dans la catégorie attribuée.<br>Les smileys n’ayant pas de catégorie attribuée seront dans la catégorie automatique intitulée “Non classés”',
 	'ACP_SC_CONFIG'				=> 'Configuration des catégories',
-	'ACP_SC_CONFIG_EXPLAIN'		=> 'Sur cette page, vous pouvez gérer les catégories des smileys.<br />Ajouter, éditer, supprimer des catégories. Modifier l’ordre d’affichage et définir les traductions dans les langues activées.',
+	'ACP_SC_CONFIG_EXPLAIN'		=> 'Sur cette page, vous pouvez gérer les catégories des smileys.<br>Ajouter, éditer, supprimer des catégories. Modifier l’ordre d’affichage et définir les traductions dans les langues activées.',
 	'SC_CATEGORY'				=> 'Catégorie',
 	'SC_CATEGORY_LANG'			=> 'Langue',
 	'SC_CATEGORY_DEFAUT'		=> 'Non classés',
@@ -54,6 +54,7 @@ $lang = array_merge($lang, array(
 	'SC_CATEGORY_ANY_CREATE'	=> 'Aucune catégorie n’a été créée',
 	'SC_CATEGORY_ADD'			=> 'Ajouter une catégorie',
 	'SC_CATEGORY_EDIT'			=> 'Éditer la catégorie',
+	'SC_CATEGORY_EDIT_LIST'		=> 'Éditer la sélection de smileys',
 	'SC_CATEGORY_SELECT'		=> 'Sélectionner une catégorie',
 	'SC_LANGUAGE_EMPTY'			=> 'Attention : aucune catégorie n’est traduite dans la langue',
 	'SC_CREATE_SUCCESS'			=> 'La catégorie a bien été créée',

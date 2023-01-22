@@ -2,7 +2,7 @@
 /**
 *
 * @package		Breizh Smilies Categories Extension
-* @copyright	(c) 2020-2022 Sylver35  https://breizhcode.com
+* @copyright	(c) 2020-2023 Sylver35  https://breizhcode.com
 * @license		http://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */
@@ -83,6 +83,9 @@ class admin_controller
 		$this->language->add_lang('acp/posting');
 		$start = (int) $this->request->variable('start', 0);
 		$select = (int) $this->request->variable('select', -1);
+		$cat_id = (int) $this->request->variable('cat_id', 0);
+		$ex_cat = (int) $this->request->variable('ex_cat', 0);
+		$list = $this->request->variable('list', [0]);
 		$form_key = 'sylver35/smiliescat';
 		add_form_key($form_key);
 
@@ -94,20 +97,31 @@ class admin_controller
 					$this->edit_smiley($id, $start);
 				break;
 
+				case 'edit_multi':
+					$list = $this->request->variable('mark', [0]);
+					$this->edit_multi_smiley($list, $start);
+				break;
+
 				case 'modify':
 					if (!check_form_key($form_key))
 					{
 						trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
 					}
 
-					$this->modify_smiley($id, (int) $this->request->variable('cat_id', 0), (int) $this->request->variable('ex_cat', 0));
+					$this->modify_smiley($id, $cat_id, $ex_cat);
 					trigger_error($this->language->lang('SMILIES_EDITED', 1) . adm_back_link($this->u_action . '&amp;start=' . $start . '#acp_smilies_category'));
+				break;
+
+				case 'modify_list':
+					foreach ($list as $smiley)
+					{
+						$this->modify_smiley($smiley, $cat_id);
+					}
+					trigger_error($this->language->lang('SMILIES_EDITED', count($list)) . adm_back_link($this->u_action . '&amp;start=' . $start . '#acp_smilies_category'));
 				break;
 			}
 
-			$this->template->assign_vars([
-				'IN_ACTION'	=> true,
-			]);
+			$this->template->assign_var('IN_ACTION', true);
 		}
 		else
 		{
@@ -196,10 +210,25 @@ class admin_controller
 		]);
 	}
 
-	private function modify_smiley($id, $cat_id, $ex_cat)
+	private function modify_smiley($id, $cat_id, $ex_cat = -1)
 	{
+		if ($ex_cat == -1)
+		{
+			$sql = 'SELECT category
+				FROM ' . SMILIES_TABLE . '
+					WHERE smiley_id = ' . $id;
+			$result = $this->db->sql_query($sql);
+			$row = $this->db->sql_fetchrow($result);
+			$this->db->sql_freeresult($result);
+			$ex_cat = $row['category'];
+		}
+		
 		$this->db->sql_query('UPDATE ' . SMILIES_TABLE . ' SET category = ' . $cat_id . ' WHERE smiley_id = ' . $id);
+		$this->update_cat_smiley($cat_id, $ex_cat);
+	}
 
+	private function update_cat_smiley($cat_id, $ex_cat)
+	{
 		// Increment nb value if wanted
 		if ($cat_id)
 		{
@@ -258,6 +287,7 @@ class admin_controller
 				'IMG_SRC'		=> $row['smiley_url'],
 				'WIDTH'			=> $row['smiley_width'],
 				'HEIGHT'		=> $row['smiley_height'],
+				'ID'			=> $row['smiley_id'],
 				'CODE'			=> $row['code'],
 				'EMOTION'		=> $row['emotion'],
 				'CATEGORY'		=> $row['cat_name'],
@@ -273,6 +303,7 @@ class admin_controller
 		$this->template->assign_vars([
 			'NB_SMILIES'	=> $this->language->lang('SC_SMILIES', ($smilies_count > 1) ? 2 : 1, $smilies_count),
 			'U_SMILIES'		=> $this->root_path . $this->config['smilies_path'] . '/',
+			'U_MODIFY'		=> $this->u_action . '&amp;action=edit_multi&ampstart=' . $start,
 		]);
 
 		$this->pagination->generate_template_pagination($this->u_action . '&amp;select=' . $select, 'pagination', 'start', $smilies_count, (int) $this->config['smilies_per_page_cat'], $start);
@@ -543,8 +574,49 @@ class admin_controller
 			'IMG_SRC'			=> $this->root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
 			'U_MODIFY'			=> $this->u_action . '&amp;action=modify&amp;id=' . $row['smiley_id'] . '&amp;start=' . $start,
 			'U_BACK'			=> $this->u_action,
+			'S_IN_LIST'			=> false,
 		]);
 		$this->db->sql_freeresult($result);
+	}
+
+	private function edit_multi_smiley($list, $start)
+	{
+		$i = 0;
+		$lang = $this->user->lang_name;
+		$sql = $this->db->sql_build_query('SELECT', [
+			'SELECT'	=> 's.*, c.*',
+			'FROM'		=> [SMILIES_TABLE => 's'],
+			'LEFT_JOIN'	=> [
+				[
+					'FROM'	=> [$this->smilies_category_table => 'c'],
+					'ON'	=> "c.cat_id = s.category AND cat_lang = '$lang'",
+				],
+			],
+			'WHERE'		=> $this->db->sql_in_set('smiley_id', $list),
+			'ORDER_BY'	=> 'cat_order ASC, s.smiley_order ASC',
+		]);
+		$result = $this->db->sql_query($sql);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$row['cat_name'] = ($row['category']) ? $row['cat_name'] : $this->language->lang('SC_CATEGORY_DEFAUT');
+			$this->template->assign_block_vars('items', [
+				'IMG_SRC'		=>  $this->root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
+				'WIDTH'			=> $row['smiley_width'],
+				'HEIGHT'		=> $row['smiley_height'],
+				'ID'			=> $row['smiley_id'],
+				'CODE'			=> $row['code'],
+				'EMOTION'		=> $row['emotion'],
+				'CATEGORY'		=> $row['cat_name'],
+			]);
+			$i++;
+		}
+		$this->db->sql_freeresult($result);
+
+		$this->template->assign_vars([
+			'SELECT_CATEGORY'	=> $this->category->select_categories(-1),
+			'U_MODIFY'			=> $this->u_action . '&amp;action=modify_list&amp;start=' . $start,
+			'S_IN_LIST'			=> true,
+		]);
 	}
 
 	/**

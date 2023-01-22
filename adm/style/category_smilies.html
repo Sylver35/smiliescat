@@ -11,39 +11,60 @@
 
 <p>{{ TITLE_EXPLAIN }}</p>
 
-{% if IN_ACTION %}
 	<form id="acp_smilies_category" method="post" action="{{ U_MODIFY }}">
+{% if IN_ACTION %}
 	<fieldset class="tabulated">
 	<table class="table1 zebra-table" id="smilies">
 	<thead>
 	<tr>
-		<th colspan="6">{{ lang('SMILIES_CONFIG') }}</th>
+		<th colspan="5">{{ lang('SMILIES_CONFIG') }}</th>
 	</tr>
 	<tr class="row3">
 		<td>{{ lang('SMILIES_IMAGE') }}</td>
 		<td>{{ lang('SMILIES_CODE') }}</td>
 		<td>{{ lang('EMOTION') }}</td>
+		<td>{{ lang('SC_CATEGORY') }}</td>
+		{% if not S_IN_LIST %}
 		<td>{{ lang('SC_CATEGORY_SELECT') }}</td>
+		{% endif %}
 	</tr>
 	</thead>
 	<tbody>
+		{% if S_IN_LIST %}
+		{% for item in items %}
 		<tr>
-			<td><img src="{{ IMG_SRC }}" alt="{{ CODE }}" title="{{ EMOTION }}" /></td>
+			<td><img src="{{ item.IMG_SRC }}" alt="{{ item.CODE }}" title="{{ item.EMOTION }}"/></td>
+			<td>{{ item.CODE }}</td>
+			<td>{{ item.EMOTION }}</td>
+			<td>{{ item.CATEGORY }}<input type="hidden" name="list[]" value="{{ item.ID }}"></td>
+		</tr>
+		{% endfor %}
+		{% else %}
+		<tr>
+			<td><img src="{{ IMG_SRC }}" alt="{{ CODE }}" title="{{ EMOTION }}"/></td>
 			<td>{{ CODE }}</td>
 			<td>{{ EMOTION }}</td>
-			<td><select id="cat_id" name="cat_id">{{ SELECT_CATEGORY }}</select></td>
+			<td>{{ item.CATEGORY }}</td>
+			<td>
+				<select id="cat_id" name="cat_id">{{ SELECT_CATEGORY }}</select>
+			</td>
 		</tr>
+		{% endif %}
 	</tbody>
 	</table>
+	{% if S_IN_LIST %}
+	<p class="centered cat-select">
+		<strong>{{ lang('SC_CATEGORY_SELECT') }} : </strong><select id="cat_id" name="cat_id">{{ SELECT_CATEGORY }}</select>
+	</p>
+	{% endif %}
 	<p class="submit-buttons">
-		<input type="hidden" name="ex_cat" value="{{ EX_CAT }}">
-		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />
+		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}">
 	</p>
 	{{ S_FORM_TOKEN }}
 	</fieldset>
 	</form>
 {% else %}
-	<form id="acp_smilies_category" method="post" action="{{ U_SELECT_CAT }}">
+	<form id="acp_smilies_category" method="post" action="{{ U_MODIFY }}">
 	<fieldset class="tabulated">
 	<div class="pagination" style="float: left;">
 		<strong>{{ lang('SC_CATEGORY_SELECT') }} : </strong>
@@ -64,6 +85,7 @@
 		<th>{{ lang('EMOTION') }}</th>
 		<th>{{ lang('SC_CATEGORY') }}</th>
 		<th>{{ lang('OPTIONS') }}</th>
+		<th style="width: 50px;">{{ lang('MARK') }}</th>
 	</tr>
 	</thead>
 	<tbody>
@@ -71,15 +93,16 @@
 	{% for item in items %}
 	{% if item.SPACER_CAT %}
 		<tr>
-			<td class="row3" colspan="5"><b>{{ item.SPACER_CAT }}</b></td>
+			<td class="row3" colspan="6"><b>{{ item.SPACER_CAT }}</b></td>
 		</tr>
 	{% endif %}
 		<tr>
-			<td style="width: 60%;"><img src="{{ U_SMILIES }}{{ item.IMG_SRC }}" width="{{ item.WIDTH }}" height="{{ item.HEIGHT }}" alt="{{ item.CODE }}" title="{{ item.EMOTION }}" /></td>
+			<td style="width: 60%;"><img src="{{ U_SMILIES }}{{ item.IMG_SRC }}" width="{{ item.WIDTH }}" height="{{ item.HEIGHT }}" alt="{{ item.CODE }}" title="{{ item.EMOTION }}"></td>
 			<td>{{ item.CODE }}</td>
 			<td>{{ item.EMOTION }}</td>
 			<td>{{ item.CATEGORY }}</td>
 			<td class="actions"><a href="{{ item.U_EDIT }}">{{ ICON_EDIT }}</a></td>
+			<td style="text-align: center;"><input type="checkbox" class="radio" name="mark[]" value="{{ item.ID }}" /></td>
 		</tr>
 	{% endfor %}
 	{% else %}
@@ -89,6 +112,12 @@
 	{% endif %}
 	</tbody>
 	</table>
+	<fieldset class="quick">
+		{{ S_FORM_TOKEN }}
+		<p class="small"><a href="#" onclick="marklist('acp_smilies_category', 'mark', true); return false;">{{ lang('MARK_ALL') }}</a> &bull; <a href="#" onclick="marklist('acp_smilies_category', 'mark', false); return false;">{{ lang('UNMARK_ALL') }}</a></p>
+		<input class="button2" type="submit" name="editmarked" value="{{ lang('SC_CATEGORY_EDIT_LIST') }}" />
+	</fieldset>
+	<br/>
 	<div class="pagination">
 	{% if pagination|length %}
 		{% INCLUDE 'pagination.html' %}
@@ -96,8 +125,8 @@
 	</div>
 	{{ S_FORM_TOKEN }}
 	</fieldset>
-	</form>
 {% endif %}
+	</form>
 
 <p class="centered"><em>{{ CATEGORY_VERSION }}</em></p>
 

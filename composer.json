@@ -3,8 +3,8 @@
     "type": "phpbb-extension",
     "description": "This extension add categories for the smilies.",
     "homepage": "https://breizhcode.com",
-    "version": "1.4.0",
-    "time": "2022-12-11",
+    "version": "1.5.0",
+    "time": "2023-01-22",
     "keywords": [
         "phpbb",
         "extension",
@@ -40,7 +40,8 @@
         "version-check": {
             "host": "versions.breizhcode.com",
             "directory": "/smiliescat",
-            "filename": "/version_check.json"
+            "filename": "/version_check.json",
+            "ssl": true
         }
     }
 }

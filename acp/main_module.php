@@ -2,7 +2,7 @@
 /**
 *
 * @package		Breizh Smilies Categories Extension
-* @copyright	(c) 2020-2022 Sylver35  https://breizhcode.com
+* @copyright	(c) 2020-2023 Sylver35  https://breizhcode.com
 * @license		http://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */
@@ -19,6 +19,9 @@ class main_module
 
 	/** @var string */
 	public $page_title;
+	
+	/** @var string */
+	public $id;
 
 	/**
 	 * @param int		$id

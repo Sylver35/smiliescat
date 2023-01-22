@@ -67,3 +67,14 @@ th, td, .centered {
 .pointer {
 	cursor: pointer;
 }
+
+select {
+	font-size: 1em;
+	width: auto;
+	max-width: 100%;
+}
+
+p.cat-select {
+	margin: 10px;
+}
+
