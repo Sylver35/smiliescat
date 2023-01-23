@@ -69,7 +69,6 @@ services:
         class: sylver35\smiliescat\controller\main
         arguments:
             - '@sylver35.smiliescat.category'
-            - '@sylver35.smiliescat.smiley'
             - '@request'
             - '@config'
             - '@controller.helper'
