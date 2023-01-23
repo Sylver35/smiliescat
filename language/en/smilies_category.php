@@ -81,5 +81,5 @@ $lang = array_merge($lang, array(
 	'LOG_SC_MOVE_UP_CAT'		=> '<strong>Ascent of a smilies category </strong> » %s',
 	'LOG_SC_MOVE_DOWN_CAT'		=> '<strong>Descending a smilies category </strong> » %s',
 	'LOG_SC_DELETE_CAT'			=> '<strong>Deleting a smilies category </strong> » %s',
-	'SC_VERSION_COPY'			=> '<a href="%1$s" onclick="window.open(this.href);return false;">Breizh Smilies Categories v%2$s</a> © 2020 - Breizhcode - The Breizh Touch',
+	'SC_VERSION_COPY'			=> '<a href="%1$s" onclick="window.open(this.href);return false;">Breizh Smilies Categories v%2$s</a> © 2023 - Breizhcode - The Breizh Touch',
 ));
