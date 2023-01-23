@@ -10,15 +10,15 @@
 namespace sylver35\smiliescat\event;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use sylver35\smiliescat\core\category;
+use sylver35\smiliescat\core\diffusion;
 use phpbb\config\config;
 use phpbb\controller\helper;
 use phpbb\template\template;
 
 class listener implements EventSubscriberInterface
 {
-	/* @var \sylver35\smiliescat\core\category */
-	protected $category;
+	/* @var \sylver35\smiliescat\core\diffusion */
+	protected $diffusion;
 
 	/** @var \phpbb\config\config */
 	protected $config;
@@ -32,9 +32,9 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Constructor
 	 */
-	public function __construct(category $category, config $config, helper $helper, template $template)
+	public function __construct(diffusion $diffusion, config $config, helper $helper, template $template)
 	{
-		$this->category = $category;
+		$this->diffusion = $diffusion;
 		$this->config = $config;
 		$this->helper = $helper;
 		$this->template = $template;
@@ -45,8 +45,8 @@ class listener implements EventSubscriberInterface
 		return [
 			'core.user_setup'				=> 'load_language_on_setup',
 			'core.page_header'				=> 'add_page_header',
-			'breizhshoutbox.smilies'		=> 'shoutbox_smilies',
-			'breizhshoutbox.smilies_popup'	=> 'shoutbox_smilies_popup',
+			'breizhshoutbox.smilies'		=> 'smilies',
+			'breizhshoutbox.smilies_popup'	=> 'smilies_popup',
 		];
 	}
 
@@ -85,9 +85,9 @@ class listener implements EventSubscriberInterface
 	 * @return void
 	 * @access public
 	 */
-	public function shoutbox_smilies($event)
+	public function smilies($event)
 	{
-		$this->category->shoutbox_smilies($event);
+		$this->diffusion->smilies($event);
 	}
 
 	/**
@@ -96,9 +96,9 @@ class listener implements EventSubscriberInterface
 	 * @return void
 	 * @access public
 	 */
-	public function shoutbox_smilies_popup($event)
+	public function smilies_popup($event)
 	{
-		$this->category->shoutbox_smilies($event);
-		$this->category->shoutbox_smilies_popup($event);
+		$this->diffusion->smilies($event);
+		$this->diffusion->smilies_popup($event);
 	}
 }

@@ -5,16 +5,18 @@ services:
     sylver35.smiliescat.listener:
         class: sylver35\smiliescat\event\listener
         arguments:
-            - '@sylver35.smiliescat.category'
+            - '@sylver35.smiliescat.diffusion'
             - '@config'
             - '@controller.helper'
             - '@template'
         tags:
             - { name: event.listener }
+
     sylver35.smiliescat.admin.controller:
         class: sylver35\smiliescat\controller\admin_controller
         arguments:
             - '@sylver35.smiliescat.category'
+            - '@sylver35.smiliescat.smiley'
             - '@config'
             - '@dbal.conn'
             - '@pagination'
@@ -41,10 +43,33 @@ services:
             - '%sylver35.smiliescat.tables.smilies_category%'
             - '%core.root_path%'
 
+    sylver35.smiliescat.smiley:
+        class: sylver35\smiliescat\core\smiley
+        arguments:
+            - '@sylver35.smiliescat.category'
+            - '@dbal.conn'
+            - '@config'
+            - '@user'
+            - '@language'
+            - '@template'
+            - '@pagination'
+            - '%sylver35.smiliescat.tables.smilies_category%'
+            - '%core.root_path%'
+            
+    sylver35.smiliescat.diffusion:
+        class: sylver35\smiliescat\core\diffusion
+        arguments:
+            - '@sylver35.smiliescat.smiley'
+            - '@dbal.conn'
+            - '@user'
+            - '@language'
+            - '%sylver35.smiliescat.tables.smilies_category%'
+
     sylver35.smiliescat.controller:
         class: sylver35\smiliescat\controller\main
         arguments:
             - '@sylver35.smiliescat.category'
+            - '@sylver35.smiliescat.smiley'
             - '@request'
             - '@config'
             - '@controller.helper'
