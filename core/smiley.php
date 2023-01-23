@@ -206,7 +206,6 @@ class smiley
 		$this->template->assign_vars([
 			'NB_SMILIES'	=> $this->language->lang('SC_SMILIES', ($smilies_count > 1) ? 2 : 1, $smilies_count),
 			'U_SMILIES'		=> $this->root_path . $this->config['smilies_path'] . '/',
-			'U_MODIFY'		=> $u_action . '&amp;action=edit_multi&ampstart=' . $start,
 		]);
 
 		$this->pagination->generate_template_pagination($u_action . '&amp;select=' . $select, 'pagination', 'start', $smilies_count, (int) $this->config['smilies_per_page_cat'], $start);

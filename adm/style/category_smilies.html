@@ -11,8 +11,8 @@
 
 <p>{{ TITLE_EXPLAIN }}</p>
 
-	<form id="acp_smilies_category" method="post" action="{{ U_MODIFY }}">
 {% if IN_ACTION %}
+	<form id="acp_smilies_category" method="post" action="{{ U_MODIFY }}">
 	<fieldset class="tabulated">
 	<table class="table1 zebra-table" id="smilies">
 	<thead>
@@ -64,7 +64,7 @@
 	</fieldset>
 	</form>
 {% else %}
-	<form id="acp_smilies_category" method="post" action="{{ U_MODIFY }}">
+	<form id="select_category" method="post" action="{{ U_SELECT_CAT }}">
 	<fieldset class="tabulated">
 	<div class="pagination" style="float: left;">
 		<strong>{{ lang('SC_CATEGORY_SELECT') }} : </strong>
@@ -77,6 +77,10 @@
 		{% INCLUDE 'pagination.html' %}
 	{% endif %}
 	</div>
+	</fieldset>
+	</form>
+	<form id="acp_smilies_category" method="post" action="{{ U_MODIFY }}">
+	<fieldset class="tabulated">
 	<table class="table1 zebra-table">
 	<thead>
 	<tr>
