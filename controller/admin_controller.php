@@ -3,7 +3,7 @@
 *
 * @package		Breizh Smilies Categories Extension
 * @copyright	(c) 2020-2023 Sylver35  https://breizhcode.com
-* @license		http://opensource.org/licenses/gpl-license.php GNU Public License
+* @license		https://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */
 
@@ -137,6 +137,7 @@ class admin_controller
 			$this->template->assign_vars([
 				'LIST_CATEGORY'		=> $this->smiley->select_categories($select, true, true),
 				'U_SELECT_CAT'		=> $this->u_action . '&amp;select=' . $select,
+				'U_MODIFY_LIST'		=> $this->u_action . '&amp;action=edit_multi&amp;start=' . $start,
 				'U_BACK'			=> $this->u_action,
 			]);
 		}

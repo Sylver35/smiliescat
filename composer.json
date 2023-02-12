@@ -4,7 +4,7 @@
     "description": "This extension add categories for the smilies.",
     "homepage": "https://breizhcode.com",
     "version": "1.5.0",
-    "time": "2023-01-22",
+    "time": "2023-02-12",
     "keywords": [
         "phpbb",
         "extension",
@@ -30,17 +30,17 @@
     ],
     "require": {
         "php": ">=7.1.3",
-        "phpbb/phpbb": ">=3.3.9"
+        "phpbb/phpbb": ">=3.3.10"
     },
     "extra": {
-        "display-name": "Breizh Smilies Categories",
+        "display-name": "Breizh Smilies Categories ✅",
         "soft-require": {
-            "phpbb/phpbb": ">=3.3.9"
+            "phpbb/phpbb": ">=3.3.10"
         },
         "version-check": {
-            "host": "versions.breizhcode.com",
+            "host": "breizhversions.com",
             "directory": "/smiliescat",
-            "filename": "/version_check.json",
+            "filename": "version_check.json",
             "ssl": true
         }
     }
