@@ -17,6 +17,7 @@ services:
         arguments:
             - '@sylver35.smiliescat.category'
             - '@sylver35.smiliescat.smiley'
+            - '@sylver35.smiliescat.work'
             - '@config'
             - '@dbal.conn'
             - '@pagination'
@@ -55,7 +56,21 @@ services:
             - '@pagination'
             - '%sylver35.smiliescat.tables.smilies_category%'
             - '%core.root_path%'
-            
+
+    sylver35.smiliescat.work:
+        class: sylver35\smiliescat\core\work
+        arguments:
+            - '@sylver35.smiliescat.category'
+            - '@dbal.conn'
+            - '@config'
+            - '@user'
+            - '@language'
+            - '@template'
+            - '@log'
+            - '@request'
+            - '@controller.helper'
+            - '%sylver35.smiliescat.tables.smilies_category%'
+
     sylver35.smiliescat.diffusion:
         class: sylver35\smiliescat\core\diffusion
         arguments:
