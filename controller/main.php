@@ -131,11 +131,11 @@ class main
 	public function ajax_smilies()
 	{
 		$i = 0;
+		$list_smilies = [];
 		$cat = (int) $this->request->variable('cat', $this->config['smilies_category_nb']);
 		$start = (int) $this->request->variable('start', 0);
 		$pagin = (int) $this->config['smilies_per_page_cat'];
 		$count = (int) $this->category->smilies_count($cat);
-		$data = $this->category->get_version();
 
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> '*',
