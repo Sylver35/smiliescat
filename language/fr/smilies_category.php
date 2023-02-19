@@ -3,7 +3,7 @@
 *
 * @package		Breizh Smilies Categories Extension
 * @copyright	(c) 2020-2023 Breizh Code  https://breizhcode.com
-* @license		http://opensource.org/licenses/gpl-license.php GNU Public License
+* @license		https://opensource.org/licenses/gpl-license.php GNU Public License
 * @translator	[French] Sylver35  https://breizhcode.com
 *
 */
@@ -66,12 +66,14 @@ $lang = array_merge($lang, array(
 		1	=> '%2$s smiley',
 		2	=> '%2$s smileys',
 	],
+	'SC_SMILIES_PAGE'			=> 'Page N° ',
 	'SC_SMILIES_ANY_CATEGORY'	=> 'Aucun smiley n’a de catégorie attribuée',
 	'SC_SMILIES_EMPTY_CATEGORY'	=> 'Cette catégorie ne contient aucun smiley',
 	'SC_SMILIES_NO_CATEGORY'	=> 'Les smileys suivants n’ont pas de catégorie attribuée',
 	'SC_CATEGORY_ERROR'			=> 'Vous devez remplir tous les champs “Nom de la catégorie”',
 	'SC_CATEGORY_TITLE'			=> 'Plus de smileys en catégories',
 	'SC_SMILIES_TITLE'			=> 'Voir plus de smileys classés en catégories',
+	'SC_SMILIES_CLOSE'			=> 'Refermer le panneau',
 	'SC_CONFIG_TITLE'			=> 'Configuration',
 	'SC_CONFIG_PAGE'			=> 'Smileys par page',
 	'SC_CONFIG_EXPLAIN'			=> 'Indiquez ici le nombre de smileys par page affichés pour les catégories',

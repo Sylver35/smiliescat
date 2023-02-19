@@ -14,6 +14,7 @@ use sylver35\smiliescat\core\diffusion;
 use phpbb\config\config;
 use phpbb\controller\helper;
 use phpbb\template\template;
+use phpbb\language\language;
 
 class listener implements EventSubscriberInterface
 {
@@ -29,24 +30,33 @@ class listener implements EventSubscriberInterface
 	/** @var \phpbb\template\template */
 	protected $template;
 
+	/** @var \phpbb\language\language */
+	protected $language;
+
+	/** @var string phpBB root path */
+	protected $root_path;
+
 	/**
 	 * Constructor
 	 */
-	public function __construct(diffusion $diffusion, config $config, helper $helper, template $template)
+	public function __construct(diffusion $diffusion, config $config, helper $helper, template $template, language $language, $root_path)
 	{
 		$this->diffusion = $diffusion;
 		$this->config = $config;
 		$this->helper = $helper;
 		$this->template = $template;
+		$this->language = $language;
+		$this->root_path = $root_path;
 	}
 
 	static public function getSubscribedEvents()
 	{
 		return [
-			'core.user_setup'				=> 'load_language_on_setup',
-			'core.page_header'				=> 'add_page_header',
-			'breizhshoutbox.smilies'		=> 'smilies',
-			'breizhshoutbox.smilies_popup'	=> 'smilies_popup',
+			'core.user_setup'					=> 'load_language_on_setup',
+			'core.page_header'					=> 'add_page_header',
+			'core.posting_modify_template_vars'	=> 'add_categories',
+			'breizhshoutbox.smilies'			=> 'smilies',
+			'breizhshoutbox.smilies_popup'		=> 'smilies_popup',
 		];
 	}
 
@@ -80,6 +90,25 @@ class listener implements EventSubscriberInterface
 	}
 
 	/**
+	 * Add the Smilies Categories on posting form
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function add_categories($event)
+	{
+		if (in_array($event['mode'], ['post', 'reply', 'edit', 'quote']))
+		{
+			$this->template->assign_vars([
+				'U_CATEGORY_AJAX'	=> $this->helper->route('sylver35_smiliescat_ajax_smilies'),
+				'ID_FIRST_CAT'		=> $this->config['smilies_category_nb'],
+				'PER_PAGE'			=> $this->config['smilies_per_page_cat'],
+				'IN_CATEGORIES'		=> true,
+			]);
+		}
+	}
+
+	/**
 	 * @param array $event
 	 *
 	 * @return void
@@ -87,7 +116,10 @@ class listener implements EventSubscriberInterface
 	 */
 	public function smilies($event)
 	{
-		$this->diffusion->smilies($event);
+		$event['content'] = array_merge($event['content'], [
+			'title_cat'		=> $this->language->lang('ACP_SC_SMILIES'),
+			'categories'	=> $this->diffusion->list_cats(false),
+		]);
 	}
 
 	/**
@@ -98,7 +130,23 @@ class listener implements EventSubscriberInterface
 	 */
 	public function smilies_popup($event)
 	{
-		$this->diffusion->smilies($event);
-		$this->diffusion->smilies_popup($event);
+		$cat = (int) $event['cat'];
+		$event['content'] = array_merge($event['content'], [
+			'title_cat'		=> $this->language->lang('ACP_SC_SMILIES'),
+			'categories'	=> $this->diffusion->list_cats($cat),
+		]);
+
+		$list = $this->diffusion->smilies_popup($cat);
+		if ($list['in_cat'] !== false)
+		{
+			$event['content'] = array_merge($event['content'], [
+				'in_cat'		=> $list['in_cat'],
+				'total'			=> $list['total'],
+				'cat'			=> $list['cat'],
+				'smilies'		=> $list['smilies'],
+				'emptyRow'		=> $list['emptyRow'],
+				'title'			=> $list['title'],
+			]);
+		}
 	}
 }

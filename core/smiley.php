@@ -91,28 +91,6 @@ class smiley
 		return $max;
 	}
 
-	public function get_cat_name($cat)
-	{
-		if ($cat > 0)
-		{
-			$lang = $this->user->lang_name;
-			$sql = 'SELECT cat_name
-				FROM ' . $this->smilies_category_table . "
-					WHERE cat_lang = '$lang'
-					AND cat_id = $cat";
-			$result = $this->db->sql_query_limit($sql, 1);
-			$row = $this->db->sql_fetchrow($result);
-			$cat_name = $row['cat_name'];
-			$this->db->sql_freeresult($result);
-		}
-		else
-		{
-			$cat_name = $this->language->lang('SC_CATEGORY_DEFAUT');
-		}
-
-		return $cat_name;
-	}
-
 	public function modify_smiley($id, $cat_id, $ex_cat = -1)
 	{
 		if ($ex_cat == -1)
@@ -265,7 +243,7 @@ class smiley
 		{
 			$row['cat_name'] = ($row['category']) ? $row['cat_name'] : $this->language->lang('SC_CATEGORY_DEFAUT');
 			$this->template->assign_block_vars('items', [
-				'IMG_SRC'		=>  $this->root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
+				'IMG_SRC'		=> $this->root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
 				'WIDTH'			=> $row['smiley_width'],
 				'HEIGHT'		=> $row['smiley_height'],
 				'ID'			=> $row['smiley_id'],

@@ -165,7 +165,7 @@ class category
 	{
 		$title = '';
 		$cat_order = $i = 0;
-		$lang = $this->user->lang_name;
+		$lang = (string) $this->user->lang_name;
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> '*',
 			'FROM'		=> [$this->smilies_category_table => ''],

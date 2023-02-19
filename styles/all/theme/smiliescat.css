@@ -9,6 +9,11 @@ a.pointer {
 	cursor: pointer;
 }
 
+a.strong {
+	font-weight: bold;
+	cursor: pointer;
+}
+
 a.cat-active {
 	color: red;
 	font-size: 1.1em;
@@ -33,4 +38,21 @@ span.span-version {
 
 span.close {
 	margin-left: 20px;
+}
+
+span.pagin_red, a.pagin_red {
+	color: red;
+	font-size: 1.1em;
+	cursor: help;
+	font-weight: bold;
+}
+
+#smileys-cat {
+	width: 80%;
+	text-align: center;
+}
+
+#smileys-list, #cats-list {
+	text-align: center;
+	padding: 6px 0 6px 0;
 }

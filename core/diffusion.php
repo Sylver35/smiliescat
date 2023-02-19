@@ -46,11 +46,11 @@ class diffusion
 		$this->smilies_category_table = $smilies_category_table;
 	}
 
-	public function smilies($event)
+	public function list_cats($cat)
 	{
 		$i = $cat_order = 0;
 		$list_cat = [];
-		$lang = $this->user->lang_name;
+		$lang = (string) $this->user->lang_name;
 
 		$sql = 'SELECT * 
 			FROM ' . $this->smilies_category_table . "
@@ -65,8 +65,9 @@ class diffusion
 				$list_cat[$i] = [
 					'cat_id'		=> (int) $row['cat_id'],
 					'cat_order'		=> (int) $row['cat_order'],
-					'cat_name'		=> (string) $row['cat_name'],
 					'cat_nb'		=> (int) $row['cat_nb'],
+					'cat_name'		=> (string) $row['cat_name'],
+					'css'			=> ($row['cat_id'] == $cat) ? 'cat-active' : 'cat-inactive',
 				];
 				$i++;
 			}
@@ -81,30 +82,49 @@ class diffusion
 			$list_cat[$i] = [
 				'cat_id'		=> 0,
 				'cat_order'		=> $cat_order + 1,
-				'cat_name'		=> $this->language->lang('SC_CATEGORY_DEFAUT'),
 				'cat_nb'		=> $nb,
+				'cat_name'		=> $this->language->lang('SC_CATEGORY_DEFAUT'),
+				'css'			=> ($cat == 0) ? 'cat-active' : 'cat-inactive',
 			];
 		}
 
-		$event['content'] = array_merge($event['content'], [
-			'title_cat'		=> $this->language->lang('ACP_SC_SMILIES'),
-			'categories'	=> $list_cat,
-		]);
+		return $list_cat;
 	}
 
-	public function smilies_popup($event)
+	public function get_cat_name($cat)
 	{
-		$cat = (int) $event['cat'];
+		if ($cat > 0)
+		{
+			$lang = (string) $this->user->lang_name;
+			$sql = 'SELECT cat_name
+				FROM ' . $this->smilies_category_table . "
+					WHERE cat_lang = '$lang'
+					AND cat_id = $cat";
+			$result = $this->db->sql_query_limit($sql, 1);
+			$row = $this->db->sql_fetchrow($result);
+			$cat_name = $row['cat_name'];
+			$this->db->sql_freeresult($result);
+		}
+		else
+		{
+			$cat_name = $this->language->lang('SC_CATEGORY_DEFAUT');
+		}
+
+		return $cat_name;
+	}
+
+	public function smilies_popup($cat)
+	{
 		if ($cat !== -1)
 		{
 			$i = 0;
 			$smilies = [];
-			$cat_name = $this->smiley->get_cat_name($cat);
+			$cat_name = $this->get_cat_name($cat);
 
 			$sql = [
 				'SELECT'	=> 'smiley_url, MIN(smiley_id) AS smiley_id, MIN(code) AS code, MIN(smiley_order) AS min_smiley_order, MIN(smiley_width) AS smiley_width, MIN(smiley_height) AS smiley_height, MIN(emotion) AS emotion',
 				'FROM'		=> [SMILIES_TABLE => ''],
-				'WHERE'		=> 'category = ' . $cat,
+				'WHERE'		=> "category = $cat",
 				'GROUP_BY'	=> 'smiley_url',
 				'ORDER_BY'	=> 'min_smiley_order ASC',
 			];
@@ -123,14 +143,16 @@ class diffusion
 			}
 			$this->db->sql_freeresult($result);
 
-			$event['content'] = array_merge($event['content'], [
+			return [
 				'in_cat'		=> true,
-				'cat'			=> $cat,
 				'total'			=> $i,
+				'cat'			=> $cat,
 				'smilies'		=> $smilies,
 				'emptyRow'		=> ($i === 0) ? $this->language->lang('SC_SMILIES_EMPTY_CATEGORY') : '',
 				'title'			=> $this->language->lang('SC_CATEGORY_IN', $cat_name),
-			]);
+			];
 		}
+
+		return ['in_cat' => false];
 	}
 }

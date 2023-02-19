@@ -9,6 +9,8 @@ services:
             - '@config'
             - '@controller.helper'
             - '@template'
+            - '@language'
+            - '%core.root_path%'
         tags:
             - { name: event.listener }
 
@@ -84,6 +86,7 @@ services:
         class: sylver35\smiliescat\controller\main
         arguments:
             - '@sylver35.smiliescat.category'
+            - '@sylver35.smiliescat.diffusion'
             - '@request'
             - '@config'
             - '@controller.helper'

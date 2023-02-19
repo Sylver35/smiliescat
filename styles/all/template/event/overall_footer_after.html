@@ -1,9 +1,19 @@
-{% if S_SHOW_SMILEY_LINK and S_SMILIES_ALLOWED %}
+{% if S_SMILIES_ALLOWED %}
 <script>
-$(document).ready(function(){ 
+{% if IN_CATEGORIES %}
+var cats = {
+	first: {{ ID_FIRST_CAT }},
+	perPage: {{ PER_PAGE }},
+	displayAjax: '{{ U_CATEGORY_AJAX }}',
+	previous: '{{ lang("PREVIOUS")|escape("js") }}',
+	next: '{{ lang("NEXT")|escape("js") }}',
+	page: '{{ lang("SC_SMILIES_PAGE")|escape("js") }}',
+};
+{% endif %}
+$(document).ready(function(){
 	$('a[onclick^="popup(this.href, 750, 350, \'_phpbbsmilies\'); return false;\"]').attr('id', 'smilies_core');
 	if($('#smilies_core').length){
-		$('#smilies_core').attr({'href': '{{ U_CATEGORY_POPUP }}', 'title': "{{ lang('SC_SMILIES_TITLE') | escape('js') }}"});
+		$('#smilies_core').attr({'href': '{{ U_CATEGORY_POPUP }}', 'title': "{{ lang('SC_SMILIES_TITLE')|escape('js') }}"});
 	}
 });
 </script>

@@ -10,6 +10,7 @@
 namespace sylver35\smiliescat\controller;
 
 use sylver35\smiliescat\core\category;
+use sylver35\smiliescat\core\diffusion;
 use phpbb\request\request;
 use phpbb\config\config;
 use phpbb\controller\helper;
@@ -23,6 +24,9 @@ class main
 {
 	/* @var \sylver35\smiliescat\core\category */
 	protected $category;
+
+	/* @var \sylver35\smiliescat\core\diffusion */
+	protected $diffusion;
 
 	/** @var \phpbb\request\request */
 	protected $request;
@@ -57,9 +61,10 @@ class main
 	/**
 	 * Constructor
 	 */
-	public function __construct(category $category, request $request, config $config, helper $helper, db $db, template $template, user $user, language $language, pagination $pagination, $smilies_category_table)
+	public function __construct(category $category, diffusion $diffusion, request $request, config $config, helper $helper, db $db, template $template, user $user, language $language, pagination $pagination, $smilies_category_table)
 	{
 		$this->category = $category;
+		$this->diffusion = $diffusion;
 		$this->request = $request;
 		$this->config = $config;
 		$this->helper = $helper;
@@ -78,6 +83,7 @@ class main
 	{
 		$start = (int) $this->request->variable('start', 0);
 		$cat = (int) $this->request->variable('select', $this->config['smilies_category_nb']);
+		$pagin = (int) $this->config['smilies_per_page_cat'];
 		$count = (int) $this->category->smilies_count($cat);
 		$title = $this->category->extract_list_categories($cat);
 		$data = $this->category->get_version();
@@ -88,7 +94,7 @@ class main
 			'WHERE'		=> 'category = ' . $cat,
 			'ORDER_BY'	=> 'smiley_order ASC',
 		]);
-		$result = $this->db->sql_query_limit($sql, (int) $this->config['smilies_per_page_cat'], $start);
+		$result = $this->db->sql_query_limit($sql, $pagin, $start);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$this->template->assign_block_vars('smilies', [
@@ -101,8 +107,8 @@ class main
 		}
 		$this->db->sql_freeresult($result);
 
-		$start = $this->pagination->validate_start($start, (int) $this->config['smilies_per_page_cat'], $count);
-		$this->pagination->generate_template_pagination($this->helper->route('sylver35_smiliescat_smilies_pop', ['select' => $cat]), 'pagination', 'start', $count, (int) $this->config['smilies_per_page_cat'], $start);
+		$start = $this->pagination->validate_start($start, $pagin, $count);
+		$this->pagination->generate_template_pagination($this->helper->route('sylver35_smiliescat_smilies_pop', ['select' => $cat]), 'pagination', 'start', $count, $pagin, $start);
 
 		$this->template->assign_vars([
 			'U_SMILIES_PATH'	=> generate_board_url() . '/' . $this->config['smilies_path'] . '/',
@@ -119,6 +125,55 @@ class main
 		page_footer();
 	}
 
+	/**
+	 * @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
+	 */
+	public function ajax_smilies()
+	{
+		$i = 0;
+		$cat = (int) $this->request->variable('cat', $this->config['smilies_category_nb']);
+		$start = (int) $this->request->variable('start', 0);
+		$pagin = (int) $this->config['smilies_per_page_cat'];
+		$count = (int) $this->category->smilies_count($cat);
+		$data = $this->category->get_version();
+
+		$sql = $this->db->sql_build_query('SELECT', [
+			'SELECT'	=> '*',
+			'FROM'		=> [SMILIES_TABLE => ''],
+			'WHERE'		=> 'category = ' . $cat,
+			'ORDER_BY'	=> 'smiley_order ASC',
+		]);
+		$result = $this->db->sql_query_limit($sql, $pagin, $start);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$list_smilies[$i] = [
+				'code'		=> $row['code'],
+				'emotion'	=> $row['emotion'],
+				'width'		=> $row['smiley_width'],
+				'height'	=> $row['smiley_height'],
+				'src'		=> $row['smiley_url'],
+			];
+			$i++;
+		}
+		$this->db->sql_freeresult($result);
+
+		$categories = $this->diffusion->list_cats($cat);
+		$json_response = new \phpbb\json_response;
+		$json_response->send([
+			'total'			=> $i,
+			'title'			=> $this->diffusion->get_cat_name($cat),
+			'nb_cats'		=> count($categories),
+			'start'			=> $start,
+			'pagination'	=> $count,
+			'smilies_path'	=> generate_board_url() . '/' . $this->config['smilies_path'] . '/',
+			'list_smilies'	=> $list_smilies,
+			'categories'	=> $categories,
+		]);
+	}
+
+	/**
+	 * @return \Symfony\Component\HttpFoundation\Response A Symfony Response object
+	 */
 	public function ajax_list_cat()
 	{
 		$i = $cat = 0;
