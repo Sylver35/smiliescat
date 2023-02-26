@@ -93,17 +93,8 @@ class smiley
 
 	public function modify_smiley($id, $cat_id, $ex_cat = -1)
 	{
-		if ($ex_cat == -1)
-		{
-			$sql = 'SELECT category
-				FROM ' . SMILIES_TABLE . '
-					WHERE smiley_id = ' . $id;
-			$result = $this->db->sql_query($sql);
-			$row = $this->db->sql_fetchrow($result);
-			$this->db->sql_freeresult($result);
-			$ex_cat = $row['category'];
-		}
-		
+		$ex_cat = ($ex_cat == -1) ? $this->get_cat_id($id) : $ex_cat;
+
 		$this->db->sql_query('UPDATE ' . SMILIES_TABLE . ' SET category = ' . $cat_id . ' WHERE smiley_id = ' . $id);
 		$this->update_cat_smiley($cat_id, $ex_cat);
 	}
@@ -128,6 +119,18 @@ class smiley
 		{
 			$this->db->sql_query('UPDATE ' . $this->smilies_category_table . ' SET cat_nb = cat_nb - 1 WHERE cat_id = ' . $ex_cat);
 		}
+	}
+
+	private function get_cat_id($id)
+	{
+		$sql = 'SELECT category
+			FROM ' . SMILIES_TABLE . '
+				WHERE smiley_id = ' . $id;
+		$result = $this->db->sql_query($sql);
+		$cat = (int) $this->db->sql_fetchfield('category');
+		$this->db->sql_freeresult($result);
+
+		return $cat;
 	}
 
 	public function extract_list_smilies($select, $start, $u_action)
@@ -159,7 +162,7 @@ class smiley
 				'ORDER_BY'	=> 'cat_order ASC, smiley_order ASC',
 			]);
 		}
-		$result = $this->db->sql_query_limit($sql, (int) $this->config['smilies_per_page_cat'], $start);
+		$result = $this->db->sql_query_limit($sql, (int) $this->config['smilies_per_page_acp'], $start);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$row['cat_name'] = ($row['category']) ? $row['cat_name'] : $this->language->lang('SC_CATEGORY_DEFAUT');

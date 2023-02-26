@@ -40,10 +40,20 @@ span.close {
 	margin-left: 20px;
 }
 
+span.cat-title {
+	color: red;
+	font-size: 1.3em;
+	padding: 0 6px 0 6px;
+}
+
 span.pagin_red, a.pagin_red {
 	color: red;
 	font-size: 1.1em;
 	cursor: help;
+	font-weight: bold;
+}
+
+#cat-title > span {
 	font-weight: bold;
 }
 

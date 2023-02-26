@@ -103,6 +103,7 @@ class listener implements EventSubscriberInterface
 				'U_CATEGORY_AJAX'	=> $this->helper->route('sylver35_smiliescat_ajax_smilies'),
 				'ID_FIRST_CAT'		=> $this->config['smilies_category_nb'],
 				'PER_PAGE'			=> $this->config['smilies_per_page_cat'],
+				'U_SMILIES_PATH'	=> generate_board_url() . '/' . $this->config['smilies_path'] . '/',
 				'IN_CATEGORIES'		=> true,
 			]);
 		}
@@ -131,12 +132,13 @@ class listener implements EventSubscriberInterface
 	public function smilies_popup($event)
 	{
 		$cat = (int) $event['cat'];
+		$start = (int) $event['start'];
 		$event['content'] = array_merge($event['content'], [
 			'title_cat'		=> $this->language->lang('ACP_SC_SMILIES'),
 			'categories'	=> $this->diffusion->list_cats($cat),
 		]);
 
-		$list = $this->diffusion->smilies_popup($cat);
+		$list = $this->diffusion->smilies_popup($cat, $start);
 		if ($list['in_cat'] !== false)
 		{
 			$event['content'] = array_merge($event['content'], [
@@ -146,6 +148,8 @@ class listener implements EventSubscriberInterface
 				'smilies'		=> $list['smilies'],
 				'emptyRow'		=> $list['emptyRow'],
 				'title'			=> $list['title'],
+				'start'			=> $list['start'],
+				'pagination'	=> $list['pagination'],
 			]);
 		}
 	}

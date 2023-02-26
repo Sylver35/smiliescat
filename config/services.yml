@@ -78,6 +78,7 @@ services:
         arguments:
             - '@sylver35.smiliescat.smiley'
             - '@dbal.conn'
+            - '@config'
             - '@user'
             - '@language'
             - '%sylver35.smiliescat.tables.smilies_category%'

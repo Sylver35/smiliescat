@@ -169,6 +169,7 @@ class admin_controller
 			{
 				case 'config_cat':
 					$this->config->set('smilies_per_page_cat', (int) $this->request->variable('smilies_per_page_cat', 15));
+					$this->config->set('smilies_per_page_acp', (int) $this->request->variable('smilies_per_page_acp', 15));
 
 					$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_CONFIG', time());
 					trigger_error($this->language->lang('CONFIG_UPDATED') . adm_back_link($this->u_action));
@@ -218,6 +219,7 @@ class admin_controller
 		$this->template->assign_vars([
 			'CATEGORIE_CONFIG'		=> true,
 			'SMILIES_PER_PAGE_CAT'	=> $this->config['smilies_per_page_cat'],
+			'SMILIES_PER_PAGE_ACP'	=> $this->config['smilies_per_page_acp'],
 			'U_ACTION_CONFIG'		=> $this->u_action . '&amp;action=config_cat',
 			'U_ADD'					=> $this->u_action . '&amp;action=add',
 		]);

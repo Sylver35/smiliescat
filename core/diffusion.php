@@ -11,6 +11,7 @@ namespace sylver35\smiliescat\core;
 
 use sylver35\smiliescat\core\smiley;
 use phpbb\db\driver\driver_interface as db;
+use phpbb\config\config;
 use phpbb\user;
 use phpbb\language\language;
 
@@ -21,6 +22,9 @@ class diffusion
 
 	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
+
+	/** @var \phpbb\config\config */
+	protected $config;
 
 	/** @var \phpbb\user */
 	protected $user;
@@ -37,10 +41,11 @@ class diffusion
 	/**
 	 * Constructor
 	 */
-	public function __construct(smiley $smiley, db $db, user $user, language $language, $smilies_category_table)
+	public function __construct(smiley $smiley, db $db, config $config, user $user, language $language, $smilies_category_table)
 	{
 		$this->smiley = $smiley;
 		$this->db = $db;
+		$this->config = $config;
 		$this->user = $user;
 		$this->language = $language;
 		$this->smilies_category_table = $smilies_category_table;
@@ -113,13 +118,14 @@ class diffusion
 		return $cat_name;
 	}
 
-	public function smilies_popup($cat)
+	public function smilies_popup($cat, $start)
 	{
 		if ($cat !== -1)
 		{
 			$i = 0;
 			$smilies = [];
 			$cat_name = $this->get_cat_name($cat);
+			$pagin = (int) $this->config['shout_smilies_per_page'];
 
 			$sql = [
 				'SELECT'	=> 'smiley_url, MIN(smiley_id) AS smiley_id, MIN(code) AS code, MIN(smiley_order) AS min_smiley_order, MIN(smiley_width) AS smiley_width, MIN(smiley_height) AS smiley_height, MIN(emotion) AS emotion',
@@ -128,7 +134,7 @@ class diffusion
 				'GROUP_BY'	=> 'smiley_url',
 				'ORDER_BY'	=> 'min_smiley_order ASC',
 			];
-			$result = $this->db->sql_query($this->db->sql_build_query('SELECT', $sql));
+			$result = $this->db->sql_query_limit($this->db->sql_build_query('SELECT', $sql), $pagin, $start);
 			while ($row = $this->db->sql_fetchrow($result))
 			{
 				$smilies[$i] = [
@@ -149,7 +155,9 @@ class diffusion
 				'cat'			=> $cat,
 				'smilies'		=> $smilies,
 				'emptyRow'		=> ($i === 0) ? $this->language->lang('SC_SMILIES_EMPTY_CATEGORY') : '',
-				'title'			=> $this->language->lang('SC_CATEGORY_IN', $cat_name),
+				'title'			=> $this->language->lang('SC_CATEGORY_IN', '<span class="cat-title">' . $cat_name . '</span>'),
+				'start'			=> $start,
+				'pagination'	=> $this->smiley->smilies_count($cat),
 			];
 		}
 

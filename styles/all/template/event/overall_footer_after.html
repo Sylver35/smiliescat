@@ -4,16 +4,19 @@
 var cats = {
 	first: {{ ID_FIRST_CAT }},
 	perPage: {{ PER_PAGE }},
+	smiliesPath: '{{ U_SMILIES_PATH }}',
 	displayAjax: '{{ U_CATEGORY_AJAX }}',
 	previous: '{{ lang("PREVIOUS")|escape("js") }}',
 	next: '{{ lang("NEXT")|escape("js") }}',
 	page: '{{ lang("SC_SMILIES_PAGE")|escape("js") }}',
+	pageTitle: '{{ lang("SC_SMILIES_PAGE_TITLE")|escape("js") }}',
+	categorie: '{{ lang("SC_CATEGORY_IN")|escape("js") }}',
 };
 {% endif %}
 $(document).ready(function(){
 	$('a[onclick^="popup(this.href, 750, 350, \'_phpbbsmilies\'); return false;\"]').attr('id', 'smilies_core');
 	if($('#smilies_core').length){
-		$('#smilies_core').attr({'href': '{{ U_CATEGORY_POPUP }}', 'title': "{{ lang('SC_SMILIES_TITLE')|escape('js') }}"});
+		$('#smilies_core').attr({'href': '{{ U_CATEGORY_POPUP }}', 'title': "{{ lang('SC_SMILIES_TITLE')|escape('js') }}", 'class': 'tooltip'});
 	}
 });
 </script>
