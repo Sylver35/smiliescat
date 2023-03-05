@@ -109,6 +109,11 @@ class admin_controller
 
 				case 'edit_multi':
 					$list = $this->request->variable('mark', [0]);
+					if (empty($list))
+					{
+						trigger_error($this->language->lang('SC_SMILIES_EMPTY') . adm_back_link($this->u_action . '&amp;start=' . $start . '#acp_smilies_category'), E_USER_WARNING);
+					}
+
 					$this->smiley->edit_multi_smiley($list, $start, $this->u_action);
 				break;
 
