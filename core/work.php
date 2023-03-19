@@ -310,7 +310,6 @@ class work
 
 	public function adm_list_cat($u_action)
 	{
-		$title = '';
 		$i = 0;
 		$cat = 0;
 		$total = $this->category->category_exist();
