@@ -44,9 +44,10 @@
 			<td><img src="{{ IMG_SRC }}" alt="{{ CODE }}" title="{{ EMOTION }}"/></td>
 			<td>{{ CODE }}</td>
 			<td>{{ EMOTION }}</td>
-			<td>{{ item.CATEGORY }}</td>
+			<td>{{ CATEGORY }}</td>
 			<td>
 				<select id="cat_id" name="cat_id">{{ SELECT_CATEGORY }}</select>
+				<input type="hidden" id="ex_cat" name="ex_cat" value="{{ EX_CAT }}">
 			</td>
 		</tr>
 		{% endif %}

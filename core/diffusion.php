@@ -98,6 +98,7 @@ class diffusion
 
 	public function get_cat_name($cat)
 	{
+		$cat_name = $this->language->lang('SC_CATEGORY_DEFAUT');
 		if ($cat > 0)
 		{
 			$lang = (string) $this->user->lang_name;
@@ -109,10 +110,6 @@ class diffusion
 			$row = $this->db->sql_fetchrow($result);
 			$cat_name = $row['cat_name'];
 			$this->db->sql_freeresult($result);
-		}
-		else
-		{
-			$cat_name = $this->language->lang('SC_CATEGORY_DEFAUT');
 		}
 
 		return $cat_name;
@@ -131,7 +128,7 @@ class diffusion
 				'SELECT'	=> 'smiley_url, MIN(smiley_id) AS smiley_id, MIN(code) AS code, MIN(smiley_order) AS min_smiley_order, MIN(smiley_width) AS smiley_width, MIN(smiley_height) AS smiley_height, MIN(emotion) AS emotion',
 				'FROM'		=> [SMILIES_TABLE => ''],
 				'WHERE'		=> "category = $cat",
-				'GROUP_BY'	=> 'smiley_url',
+				//'GROUP_BY'	=> 'smiley_url',
 				'ORDER_BY'	=> 'min_smiley_order ASC',
 			];
 			$result = $this->db->sql_query_limit($this->db->sql_build_query('SELECT', $sql), $pagin, $start);

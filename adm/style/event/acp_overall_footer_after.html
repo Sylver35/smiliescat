@@ -45,30 +45,32 @@ function moveCats(action, id){
 			var tbodyRow = '', actionUrl = $('#action_url').val();
 			for(var i = 0; i < response.total; i++){
 				var data = response.datas[i];
-				if(data.langEmpty){
-					tbodyRow += '<tr><td class="row3" colspan="7" style="text-align: center;color: red;"><strong>{{ lang("SC_LANGUAGE_EMPTY")|escape("js") }} '+data.catLang+' - '+data.catIso+'</strong></td></tr>';
-				}else{
-					$('#succes-div').show();
-					setTimeout(function(){$('#succes-div').hide()},2000);
+				$('#succes-div').show();
+				setTimeout(function(){$('#succes-div').hide()},2000);
+				if(data.error === false){
+					continue;
+				}else if(data.error === true){
+					tbodyRow += '<tr><td class="row in-red" colspan="3">'+data.langEmpty+'</td></tr>';
+				}else if(data.error === undefined){
 					if(data.row){
-						tbodyRow += '<tr><td class="row3" style="text-align: center;"><strong>'+data.catId+'</strong></td>';
-						tbodyRow += '<td class="row3" style="text-align: center;"><strong>'+data.catOrder+'</strong></td>';
-						tbodyRow += '<td class="row3" style="text-align: center;" colspan="3"><strong>'+data.spacerCat+'</strong></td>';
-						tbodyRow += '<td class="row3" style="text-align: center;"><strong>'+data.catNb+'</strong></td><td class="row3 actions" style="text-align: center;">';
-						if(data.catOrder == 1){
-							tbodyRow += '<span class="up-disabled">{{ ICON_MOVE_UP_DISABLED }}</span> ';
-						}else{
-							tbodyRow += '<span class="up"><a style="cursor: pointer;" onclick="moveCats(\'move_up\','+data.catId+')">{{ ICON_MOVE_UP }}</a></span> ';
-						}
-						if(data.rowMax){
-							tbodyRow += '<span class="down-disabled">{{ ICON_MOVE_DOWN_DISABLED }}</span> ';
-						}else{
-							tbodyRow += '<span class="down"><a style="cursor: pointer;" onclick="moveCats(\'move_down\','+data.catId+')">{{ ICON_MOVE_DOWN }}</a></span> ';
+						if(data.titleCat){
+							tbodyRow += '<tr><td class="row3" style="text-align: center;" colspan="3"><strong>'+data.titleCat+'</strong></td>';
+							tbodyRow += '<td class="row3" style="text-align: center;"><strong>'+data.catNb+'</strong></td><td class="row3 actions" style="text-align: center;">';
+							if(data.catOrder == 1){
+								tbodyRow += '<span class="up-disabled">{{ ICON_MOVE_UP_DISABLED }}</span> ';
+							}else{
+								tbodyRow += '<span class="up"><a style="cursor: pointer;" onclick="moveCats(\'move_up\','+data.catId+')">{{ ICON_MOVE_UP }}</a></span> ';
+							}
+							if(data.rowMax){
+								tbodyRow += '<span class="down-disabled">{{ ICON_MOVE_DOWN_DISABLED }}</span> ';
+							}else{
+								tbodyRow += '<span class="down"><a style="cursor: pointer;" onclick="moveCats(\'move_down\','+data.catId+')">{{ ICON_MOVE_DOWN }}</a></span> ';
+							}
 						}
 						tbodyRow += '<a href="'+actionUrl+data.uEdit+'">{{ ICON_EDIT }}</a> <a href="'+actionUrl+data.uDelete+'">{{ ICON_DELETE }}</a></tr>';
 					}
-					tbodyRow += '<tr><td style="text-align: center;background-color: #F9F9F9;"></td><td style="text-align: center;background-color: #F9F9F9;"></td>';
-					tbodyRow += '<td style="text-align: center;"><strong>'+data.catTranslate+'</strong></td><td style="text-align: center;">'+data.catLang+'</td>';
+					tbodyRow += '<tr><td style="text-align: center;"><strong>'+data.catTranslate+'</strong></td>';
+					tbodyRow += '<td style="text-align: center;">'+data.catLang+'</td>';
 					tbodyRow += '<td style="text-align: center;">'+data.catIso+'</td><td style="text-align: center;background-color: #F9F9F9;"></td></tr>';
 				}
 			}

@@ -112,6 +112,116 @@ class category
 		return ucfirst(strtolower(trim($var)));
 	}
 
+	public function get_langs()
+	{
+		$return = [];
+		$sql = 'SELECT *
+			FROM ' . LANG_TABLE;
+		$result = $this->db->sql_query($sql);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$return[$row['lang_id']] = $row['lang_iso'];
+		}
+		$this->db->sql_freeresult($result);
+
+		return $return;
+	}
+
+	public function verify_cat_langs($langs, $cat, $i, $lang_cat, $ajax)
+	{
+		$return = [];
+		foreach ($langs as $id => $iso)
+		{
+			if (!isset($lang_cat[$cat][$id]))
+			{
+				$return[] = $iso;
+			}
+		}
+
+		if ($ajax === false)
+		{
+			$this->cat_to_template($i, $return);
+		}
+		else
+		{
+			return $this->cat_to_ajax($i, $return);
+		}
+	}
+
+	private function cat_to_template($i, $return)
+	{
+		if (($i !== 0) && !empty($return))
+		{
+			$this->template->assign_block_vars('categories', [
+				'ERROR'			=> true,
+				'LANG_EMPTY'	=> $this->language->lang('SC_LANGUAGE_EMPTY', (count($return) > 1) ? 2 : 1) . implode(', ', $return),
+			]);
+		}
+	}
+
+	private function cat_to_ajax($i, $return)
+	{
+		$values = [
+			'error'			=> false,
+			'lang_empty'	=> '',
+		];
+
+		if (($i !== 0) && !empty($return))
+		{
+			$values = [
+				'error'			=> true,
+				'lang_empty'	=> $this->language->lang('SC_LANGUAGE_EMPTY', (count($return) > 1) ? 2 : 1) . implode(', ', $return),
+			];
+		}
+
+		return $values;
+	}
+
+	public function category_exist()
+	{
+		$sql = 'SELECT COUNT(cat_id) AS total
+			FROM ' . $this->smilies_category_table . '
+			ORDER BY cat_order ASC';
+		$result = $this->db->sql_query_limit($sql, 1);
+		$total = (int) $this->db->sql_fetchfield('total');
+		$this->db->sql_freeresult($result);
+
+		return $total;
+	}
+
+	public function cat_name($cat)
+	{
+		$cat_name = $this->language->lang('SC_CATEGORY_DEFAUT');
+		if ($cat > 0)
+		{
+			$lang = (string) $this->user->lang_name;
+			$sql = 'SELECT cat_name
+				FROM ' . $this->smilies_category_table . "
+					WHERE cat_lang = '$lang'
+					AND cat_id = $cat";
+			$result = $this->db->sql_query_limit($sql, 1);
+			$row = $this->db->sql_fetchrow($result);
+			if (isset($row['cat_name']))
+			{
+				$cat_name = $row['cat_name'];
+				$this->db->sql_freeresult($result);
+			}
+			else
+			{
+				$sql = 'SELECT cat_name
+					FROM ' . $this->smilies_category_table . "
+						WHERE cat_lang = 'en'
+						AND cat_id = $cat";
+				$result = $this->db->sql_query_limit($sql, 1);
+				$row = $this->db->sql_fetchrow($result);
+				$cat_name = $row['cat_name'];
+				$this->db->sql_freeresult($result);
+			}
+		}
+
+		return $cat_name;
+	}
+
 	public function get_max_order()
 	{
 		// Get max order id...
@@ -149,6 +259,18 @@ class category
 		return $first;
 	}
 
+	public function get_cat_id($id)
+	{
+		$sql = 'SELECT category
+			FROM ' . SMILIES_TABLE . '
+				WHERE smiley_id = ' . $id;
+		$result = $this->db->sql_query($sql);
+		$cat = (int) $this->db->sql_fetchfield('category');
+		$this->db->sql_freeresult($result);
+
+		return $cat;
+	}
+
 	public function get_cat_nb($id)
 	{
 		$sql = 'SELECT cat_nb
@@ -179,7 +301,7 @@ class category
 			$this->template->assign_block_vars('categories', [
 				'CLASS'			=> $actual_cat ? 'cat-active' : 'cat-inactive',
 				'SEPARATE'		=> ($i > 0) ? ' - ' : '',
-				'CAT_NAME'		=> $row['cat_name'] ? $row['cat_name'] : $row['cat_title'],
+				'CAT_NAME'		=> $row['cat_name'] ?: $row['cat_title'],
 				'CAT_ORDER'		=> $row['cat_order'],
 				'CAT_ID'		=> $row['cat_id'],
 				'CAT_NB'		=> $row['cat_nb'],

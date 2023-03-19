@@ -19,7 +19,7 @@ class main_module
 
 	/** @var string */
 	public $page_title;
-	
+
 	/** @var string */
 	public $id;
 

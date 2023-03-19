@@ -132,6 +132,7 @@ class admin_controller
 					{
 						$this->smiley->modify_smiley($smiley, $cat_id);
 					}
+
 					trigger_error($this->language->lang('SMILIES_EDITED', count($list)) . adm_back_link($this->u_action . '&amp;start=' . $start . '#acp_smilies_category'));
 				break;
 			}

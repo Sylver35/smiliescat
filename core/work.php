@@ -310,51 +310,66 @@ class work
 
 	public function adm_list_cat($u_action)
 	{
-		$i = $cat = 0;
-		$max = $this->category->get_max_order();
-		$sql = $this->db->sql_build_query('SELECT', [
-			'SELECT'	=> 'l.lang_iso, l.lang_local_name, c.*',
-			'FROM'		=> [LANG_TABLE => 'l'],
-			'LEFT_JOIN'	=> [
-				[
-					'FROM'	=> [$this->smilies_category_table => 'c'],
-					'ON'	=> 'cat_lang = lang_iso',
-				],
-			],
-			'ORDER_BY'	=> 'cat_order ASC, cat_lang_id ASC',
-		]);
-		$result = $this->db->sql_query($sql);
-		while ($row = $this->db->sql_fetchrow($result))
+		$title = '';
+		$i = 0;
+		$cat = 0;
+		$total = $this->category->category_exist();
+		if ($total === 0)
 		{
-			if (!$row)
+			$this->template->assign_vars([
+				'EMPTY_ROW' =>	true,
+			]);
+		}
+		else
+		{
+			$lang_cat = [];
+			$langs = $this->category->get_langs();
+			$max = $this->category->get_max_order();
+			$sql = $this->db->sql_build_query('SELECT', [
+				'SELECT'	=> 'l.lang_id, l.lang_iso, l.lang_local_name, c.*',
+				'FROM'		=> [LANG_TABLE => 'l'],
+				'LEFT_JOIN'	=> [
+					[
+						'FROM'	=> [$this->smilies_category_table => 'c'],
+						'ON'	=> 'cat_lang = lang_iso',
+					],
+				],
+				'ORDER_BY'	=> 'cat_order ASC, cat_lang_id ASC',
+			]);
+			$result = $this->db->sql_query($sql);
+			while ($row = $this->db->sql_fetchrow($result))
 			{
-				$this->template->assign_vars([
-					'EMPTY_ROW' =>	true,
-				]);
-			}
-			else
-			{
+				$title = '';
+				if ((int) $row['cat_id'] !== $cat)
+				{
+					$title = $this->language->lang('SC_CATEGORY_IN', $this->category->cat_name($row['cat_id']));
+					$this->category->verify_cat_langs($langs, $cat, $i, $lang_cat, false);
+				}
+				$lang_cat[$row['cat_id']][$row['lang_id']] = $row['lang_iso'];
 				$this->template->assign_block_vars('categories', [
-					'CAT_NR'			=> $i + 1,
-					'LANG_EMPTY'		=> !$row['cat_id'] && !$row['cat_order'] && !$row['cat_name'],
-					'SPACER_CAT'		=> $this->language->lang('SC_CATEGORY_IN', $row['cat_title']),
+					'CAT_ORDER'			=> (int) $row['cat_order'],
+					'CAT_ID'			=> $row['cat_id'],
 					'CAT_LANG'			=> $row['lang_local_name'],
 					'CAT_ISO'			=> $row['lang_iso'],
-					'CAT_ID'			=> $row['cat_id'],
-					'CAT_ORDER'			=> $row['cat_order'],
 					'CAT_TRANSLATE'		=> $row['cat_name'],
 					'CAT_NB'			=> $row['cat_nb'],
-					'ROW'				=> (int) $row['cat_id'] !== $cat,
 					'ROW_MAX'			=> (int) $row['cat_order'] === $max,
+					'TITLE_CAT'			=> $title,
 					'U_EDIT'			=> $u_action . '&amp;action=edit&amp;id=' . $row['cat_id'],
 					'U_DELETE'			=> $u_action . '&amp;action=delete&amp;id=' . $row['cat_id'],
 				]);
 				$i++;
 				// Keep this value in memory
 				$cat = (int) $row['cat_id'];
+
+				if ((int) $row['cat_order'] === $max && ($i === $total))
+				{
+					$this->category->verify_cat_langs($langs, $cat, $i, $lang_cat, false);
+				}
+				
 			}
+			$this->db->sql_freeresult($result);
 		}
-		$this->db->sql_freeresult($result);
 
 		$this->template->assign_vars([
 			'IN_LIST_CAT'	=> true,

@@ -160,12 +160,12 @@ class main
 		$categories = $this->diffusion->list_cats($cat);
 		$json_response = new \phpbb\json_response;
 		$json_response->send([
-			'total'			=> $i,
 			'title'			=> $this->diffusion->get_cat_name($cat),
 			'nb_cats'		=> count($categories),
 			'start'			=> $start,
 			'pagination'	=> $count,
 			'smilies_path'	=> generate_board_url() . '/' . $this->config['smilies_path'] . '/',
+			'total'			=> $i,
 			'list_smilies'	=> $list_smilies,
 			'categories'	=> $categories,
 		]);
@@ -176,16 +176,18 @@ class main
 	 */
 	public function ajax_list_cat()
 	{
-		$i = $cat = 0;
-		$list_cat = [];
+		$i = $j = $cat = 0;
+		$lang_cat = $list_cat = [];
 		$id = (int) $this->request->variable('id', 0);
 		$action = (string) $this->request->variable('action', '');
 
 		$this->category->move_cat($id, $action);
 		$max = $this->category->get_max_order();
+		$langs = $this->category->get_langs();
+		$total = $this->category->category_exist();
 
 		$sql = $this->db->sql_build_query('SELECT', [
-			'SELECT'	=> 'l.lang_iso, l.lang_local_name, c.*',
+			'SELECT'	=> 'l.lang_id, l.lang_iso, l.lang_local_name, c.*',
 			'FROM'		=> [LANG_TABLE => 'l'],
 			'LEFT_JOIN'	=> [
 				[
@@ -198,11 +200,20 @@ class main
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			// Array to be send to jQuery
-			$list_cat[$i] = [
-				'catNr'			=> $i + 1,
-				'langEmpty'		=> !$row['cat_id'] && !$row['cat_order'] && !$row['cat_name'],
-				'spacerCat'		=> $this->language->lang('SC_CATEGORY_IN', $row['cat_title']),
+			$title = '';
+			if ((int) $row['cat_id'] !== $cat)
+			{
+				$return = $this->category->verify_cat_langs($langs, $cat, $i, $lang_cat, true);
+				$list_cat[$j] = [
+					'error'		=> $return['error'],
+					'langEmpty'	=> $return['lang_empty'],
+				];
+				$j++;
+				$title = $this->language->lang('SC_CATEGORY_IN', $this->category->cat_name($row['cat_id']));
+			}
+			$lang_cat[$row['cat_id']][$row['lang_id']] = $row['lang_iso'];
+			$list_cat[$j] = [
+				'titleCat'		=> $title,
 				'catLang'		=> $row['lang_local_name'],
 				'catIso'		=> $row['lang_iso'],
 				'catTranslate'	=> $row['cat_name'],
@@ -215,14 +226,26 @@ class main
 				'uDelete'		=> '&amp;action=delete&amp;id=' . $row['cat_id'],
 			];
 			$i++;
+			$j++;
 			// Keep this value in memory
 			$cat = (int) $row['cat_id'];
+
+			// Do this only for the last category
+			if ((int) $row['cat_order'] === $max && ($i === $total))
+			{
+				$return = $this->category->verify_cat_langs($langs, $cat, $i, $lang_cat, true);
+				$list_cat[$j] = [
+					'error'		=> $return['error'],
+					'langEmpty'	=> $return['lang_empty'],
+				];
+				$j++;
+			}
 		}
 		$this->db->sql_freeresult($result);
 
 		$json_response = new \phpbb\json_response;
 		$json_response->send([
-			'total'	=> $i,
+			'total'	=> $j,
 			'datas'	=> $list_cat,
 		]);
 	}

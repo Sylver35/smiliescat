@@ -93,7 +93,7 @@ class smiley
 
 	public function modify_smiley($id, $cat_id, $ex_cat = -1)
 	{
-		$ex_cat = ($ex_cat == -1) ? $this->get_cat_id($id) : $ex_cat;
+		$ex_cat = ($ex_cat == -1) ? $this->category->get_cat_id($id) : $ex_cat;
 
 		$this->db->sql_query('UPDATE ' . SMILIES_TABLE . ' SET category = ' . $cat_id . ' WHERE smiley_id = ' . $id);
 		$this->update_cat_smiley($cat_id, $ex_cat);
@@ -119,18 +119,6 @@ class smiley
 		{
 			$this->db->sql_query('UPDATE ' . $this->smilies_category_table . ' SET cat_nb = cat_nb - 1 WHERE cat_id = ' . $ex_cat);
 		}
-	}
-
-	private function get_cat_id($id)
-	{
-		$sql = 'SELECT category
-			FROM ' . SMILIES_TABLE . '
-				WHERE smiley_id = ' . $id;
-		$result = $this->db->sql_query($sql);
-		$cat = (int) $this->db->sql_fetchfield('category');
-		$this->db->sql_freeresult($result);
-
-		return $cat;
 	}
 
 	public function extract_list_smilies($select, $start, $u_action)
@@ -214,8 +202,8 @@ class smiley
 			'HEIGHT'			=> $row['smiley_height'],
 			'CODE'				=> $row['code'],
 			'EMOTION'			=> $row['emotion'],
-			'CATEGORY'			=> $row['cat_name'],
-			'EX_CAT'			=> $row['cat_id'],
+			'CATEGORY'			=> ($row['cat_id'] != 0) ? $row['cat_name'] : $this->language->lang('SC_CATEGORY_DEFAUT'),
+			'EX_CAT'			=> ($row['cat_id'] != 0) ? $row['cat_id'] : 0,
 			'SELECT_CATEGORY'	=> $this->select_categories($row['cat_id'], false, false),
 			'IMG_SRC'			=> $this->root_path . $this->config['smilies_path'] . '/' . $row['smiley_url'],
 			'U_MODIFY'			=> $u_action . '&amp;action=modify&amp;id=' . $row['smiley_id'] . '&amp;start=' . $start,
