@@ -76,7 +76,7 @@ services:
     sylver35.smiliescat.diffusion:
         class: sylver35\smiliescat\core\diffusion
         arguments:
-            - '@sylver35.smiliescat.smiley'
+            - '@sylver35.smiliescat.category'
             - '@dbal.conn'
             - '@config'
             - '@user'

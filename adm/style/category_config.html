@@ -1,6 +1,6 @@
 {% INCLUDE 'overall_header.html' %}
 {% INCLUDECSS '@sylver35_smiliescat/smiliescat.css' %}
-<a name="maincontent"></a>
+<a id="maincontent"></a>
 
 {% if U_BACK %}
 	<a href="{{ U_BACK }}" style="float: right;">&laquo; {{ lang('BACK') }}</a>
@@ -27,17 +27,17 @@
 			{% for category in categories %}
 			<tr>
 				<td>{{ CAT_ORDER }}</td>
-				<td><input class="text post" type="text" name="name_{{ category.CAT_ISO }}" value="" size="20" maxlength="50"></td>
+				<td><label><input class="text post" type="text" name="name_{{ category.CAT_ISO }}" value="" size="20" maxlength="50"></label></td>
 				<td>{{ category.CAT_LANG }}</td>
-				<td><strong>{{ category.CAT_ISO }}</strong><input type="hidden" name="lang_{{ category.CAT_ISO }}" value="{{ category.CAT_ISO }}"></td>
+				<td><strong>{{ category.CAT_ISO }}</strong><label><input type="hidden" name="lang_{{ category.CAT_ISO }}" value="{{ category.CAT_ISO }}"></label></td>
 			</tr>
 			{% endfor %}
 		</tbody>
 	</table>
 	<p class="submit-buttons">
 		<span id="info"></span><br>
-		<input type="hidden" name="order" value="{{ CAT_ORDER }}">
-		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" title="{{ lang('SUBMIT') }}">
+		<label><input type="hidden" name="order" value="{{ CAT_ORDER }}"></label>
+		<label for="submit"><input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" title="{{ lang('SUBMIT') }}"></label>
 	</p>
 	{{ S_FORM_TOKEN }}
 	</fieldset>
@@ -100,8 +100,8 @@
 	</table>
 	{{ toto }}
 	<p class="quick">
-		<input type="hidden" id="action_url" value="{{ U_ACTION }}">
-		<input class="button2" name="add" type="submit" value="{{ lang('SC_CATEGORY_ADD') }}">
+		<label for="action_url"><input type="hidden" id="action_url" value="{{ U_ACTION }}"></label>
+		<label><input class="button2" name="add" type="submit" value="{{ lang('SC_CATEGORY_ADD') }}"></label>
 	</p>
 	{{ S_FORM_TOKEN }}
 	</fieldset>
@@ -146,11 +146,11 @@
 		<tbody>
 			{% for category in category_lang %}
 			<tr>
-				<td><input class="text post" type="text" name="name_{{ category.CAT_ISO }}" value="{{ category.CAT_TRANSLATE }}" size="20" maxlength="50"></td>
+				<td><label><input class="text post" type="text" name="name_{{ category.CAT_ISO }}" value="{{ category.CAT_TRANSLATE }}" size="20" maxlength="50"></td>
 				<td>{{ category.CAT_LANG }}<input type="hidden" name="sort_{{ category.CAT_ISO }}" value="{{ category.CAT_SORT }}"></td>
 				<td>
 					<strong>{{ category.CAT_ISO }}</strong>
-					<input type="hidden" name="lang_{{ category.CAT_ISO }}" value="{{ category.CAT_ISO }}">
+					<label><input type="hidden" name="lang_{{ category.CAT_ISO }}" value="{{ category.CAT_ISO }}"></label>
 				</td>
 			</tr>
 			{% endfor %}

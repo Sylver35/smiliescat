@@ -65,20 +65,6 @@ class smiley
 		$this->root_path = $root_path;
 	}
 
-	public function smilies_count($cat, $compact = false)
-	{
-		$sql = $this->db->sql_build_query('SELECT', [
-			'SELECT'	=> (!$compact) ? 'COUNT(DISTINCT smiley_id) AS smilies_count' : 'COUNT(DISTINCT smiley_url) AS smilies_count',
-			'FROM'		=> [SMILIES_TABLE => ''],
-			'WHERE'		=> ($cat > -1) ? 'category = ' . (int) $cat : "code <> ''",
-		]);
-		$result = $this->db->sql_query($sql);
-		$nb = (int) $this->db->sql_fetchfield('smilies_count');
-		$this->db->sql_freeresult($result);
-
-		return $nb;
-	}
-
 	public function get_max_order()
 	{
 		// Get max order id...
@@ -104,12 +90,9 @@ class smiley
 		// Increment nb value if wanted
 		if ($cat_id)
 		{
-			if ($this->category->get_first_order() === $cat_id)
+			if (($this->category->get_first_order() === $cat_id) && ($this->category->get_cat_nb($cat_id) === 0))
 			{
-				if ($this->category->get_cat_nb($cat_id) === 0)
-				{
-					$this->config->set('smilies_category_nb', $cat_id);
-				}
+				$this->config->set('smilies_category_nb', $cat_id);
 			}
 			$this->db->sql_query('UPDATE ' . $this->smilies_category_table . ' SET cat_nb = cat_nb + 1 WHERE cat_id = ' . $cat_id);
 		}
@@ -123,7 +106,6 @@ class smiley
 
 	public function extract_list_smilies($select, $start, $u_action)
 	{
-		$i = 0;
 		$cat = -1;
 		$lang = $this->user->lang_name;
 		$smilies_count = (int) $this->category->smilies_count($select);
@@ -165,7 +147,6 @@ class smiley
 				'CATEGORY'		=> $row['cat_name'],
 				'U_EDIT'		=> $u_action . '&amp;action=edit&amp;id=' . $row['smiley_id'] . '&amp;start=' . $start,
 			]);
-			$i++;
 
 			// Keep this value in memory
 			$cat = (int) $row['category'];
@@ -215,7 +196,6 @@ class smiley
 
 	public function edit_multi_smiley($list, $start, $u_action)
 	{
-		$i = 0;
 		$lang = $this->user->lang_name;
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> 's.*, c.*',
@@ -242,7 +222,6 @@ class smiley
 				'EMOTION'		=> $row['emotion'],
 				'CATEGORY'		=> $row['cat_name'],
 			]);
-			$i++;
 		}
 		$this->db->sql_freeresult($result);
 

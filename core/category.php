@@ -334,16 +334,15 @@ class category
 
 	public function set_order($action, $current_order)
 	{
-		$switch_order_id = 0;
-		$max_order = $this->get_max_order();
 		if ($current_order === 1 && $action === 'move_up')
 		{
-			return $switch_order_id;
+			return 0;
 		}
 
+		$max_order = $this->get_max_order();
 		if (($current_order === $max_order) && ($action === 'move_down'))
 		{
-			return $switch_order_id;
+			return 0;
 		}
 
 		// on move_down, switch position with next order_id...

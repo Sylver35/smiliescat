@@ -235,7 +235,7 @@ class admin_controller
 	 * Set page url
 	 *
 	 * @param string $u_action Custom form action
-	 * @return null
+	 * @return void
 	 * @access public
 	 */
 	public function set_page_url($u_action)

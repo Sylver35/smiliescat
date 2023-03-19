@@ -172,30 +172,27 @@ class work
 		{
 			$iso = strtolower($row['lang_iso']);
 			$lang = (string) $this->request->variable("lang_$iso", '', true);
-			$sort = (string) $this->request->variable("sort_$iso", '');
+			$action = (string) $this->request->variable("sort_$iso", '');
 			$name = $this->category->capitalize($this->request->variable("name_$iso", '', true));
 
 			if ($name === '')
 			{
 				trigger_error($this->language->lang('SC_CATEGORY_ERROR') . adm_back_link($u_action . '&amp;action=edit&amp;id=' . $id), E_USER_WARNING);
 			}
-			else
+			else if ($action === 'edit')
 			{
-				if ($sort === 'edit')
-				{
-					$this->db->sql_query('UPDATE ' . $this->smilies_category_table . " SET cat_name = '" . $this->db->sql_escape($name) . "', cat_title = '" . $this->db->sql_escape($title) . "', cat_nb = $cat_nb WHERE cat_lang = '" . $this->db->sql_escape($lang) . "' AND cat_id = $id");
-				}
-				else if ($sort === 'create')
-				{
-					$sql_in[] = [
-						'cat_id'		=> $id,
-						'cat_order'		=> $order,
-						'cat_lang'		=> $lang,
-						'cat_name'		=> $name,
-						'cat_title'		=> $title,
-						'cat_nb'		=> $cat_nb,
-					];
-				}
+				$this->db->sql_query('UPDATE ' . $this->smilies_category_table . " SET cat_name = '" . $this->db->sql_escape($name) . "', cat_title = '" . $this->db->sql_escape($title) . "', cat_nb = $cat_nb WHERE cat_lang = '" . $this->db->sql_escape($lang) . "' AND cat_id = $id");
+			}
+			else if ($action === 'create')
+			{
+				$sql_in[] = [
+					'cat_id'		=> $id,
+					'cat_order'		=> $order,
+					'cat_lang'		=> $lang,
+					'cat_name'		=> $name,
+					'cat_title'		=> $title,
+					'cat_nb'		=> $cat_nb,
+				];
 			}
 		}
 		$this->db->sql_freeresult($result);

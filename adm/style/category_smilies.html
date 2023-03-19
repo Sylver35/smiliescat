@@ -1,7 +1,7 @@
 {% INCLUDE 'overall_header.html' %}
 {% INCLUDECSS '@sylver35_smiliescat/smiliescat.css' %}
 
-<a name="maincontent"></a>
+<a id="maincontent"></a>
 
 {% if U_BACK %}
 	<a href="{{ U_BACK }}" style="float: right;">&laquo; {{ lang('BACK') }}</a>
@@ -36,7 +36,7 @@
 			<td><img src="{{ item.IMG_SRC }}" alt="{{ item.CODE }}" title="{{ item.EMOTION }}"/></td>
 			<td>{{ item.CODE }}</td>
 			<td>{{ item.EMOTION }}</td>
-			<td>{{ item.CATEGORY }}<input type="hidden" name="list[]" value="{{ item.ID }}"></td>
+			<td>{{ item.CATEGORY }}<label><input type="hidden" name="list[]" value="{{ item.ID }}"></label></td>
 		</tr>
 		{% endfor %}
 		{% else %}
@@ -46,8 +46,8 @@
 			<td>{{ EMOTION }}</td>
 			<td>{{ CATEGORY }}</td>
 			<td>
-				<select id="cat_id" name="cat_id">{{ SELECT_CATEGORY }}</select>
-				<input type="hidden" id="ex_cat" name="ex_cat" value="{{ EX_CAT }}">
+				<label for="cat_id"><select id="cat_id" name="cat_id">{{ SELECT_CATEGORY }}</select></label>
+				<label for="ex_cat"><input type="hidden" id="ex_cat" name="ex_cat" value="{{ EX_CAT }}"></label>
 			</td>
 		</tr>
 		{% endif %}
@@ -55,11 +55,11 @@
 	</table>
 	{% if S_IN_LIST %}
 	<p class="centered cat-select">
-		<strong>{{ lang('SC_CATEGORY_SELECT') }} : </strong><select id="cat_id" name="cat_id">{{ SELECT_CATEGORY }}</select>
+		<strong>{{ lang('SC_CATEGORY_SELECT') }} : </strong><label for="cat_id"><select id="cat_id" name="cat_id">{{ SELECT_CATEGORY }}</select></label>
 	</p>
 	{% endif %}
 	<p class="submit-buttons">
-		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}">
+		<label for="submit"><input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}"></label>
 	</p>
 	{{ S_FORM_TOKEN }}
 	</fieldset>
@@ -69,8 +69,8 @@
 	<fieldset class="tabulated">
 	<div class="pagination" style="float: left;">
 		<strong>{{ lang('SC_CATEGORY_SELECT') }} : </strong>
-		<select id="select" name="select" onchange="if(this.options[this.selectedIndex].value != '')this.form.submit();">{{ LIST_CATEGORY }}</select>&nbsp;
-		<input class="button2" type="submit" value="{{ lang('GO') }}">
+		<label for="select"><select id="select" name="select" onchange="if(this.options[this.selectedIndex].value != '')this.form.submit();">{{ LIST_CATEGORY }}</select></label>&nbsp;
+		<label><input class="button2" type="submit" value="{{ lang('GO') }}"></label>
 	</div>
 	<div class="pagination" style="float: right;">
 	<strong>{{ NB_SMILIES }} &bull;</strong> 
@@ -107,7 +107,7 @@
 			<td>{{ item.EMOTION }}</td>
 			<td>{{ item.CATEGORY }}</td>
 			<td class="actions"><a href="{{ item.U_EDIT }}">{{ ICON_EDIT }}</a></td>
-			<td style="text-align: center;"><input type="checkbox" class="radio" name="mark[]" value="{{ item.ID }}" /></td>
+			<td style="text-align: center;"><label><input type="checkbox" class="radio" name="mark[]" value="{{ item.ID }}" /></label></td>
 		</tr>
 	{% endfor %}
 	{% else %}
@@ -120,7 +120,7 @@
 	<fieldset class="quick">
 		{{ S_FORM_TOKEN }}
 		<p class="small"><a href="#" onclick="marklist('acp_smilies_category', 'mark', true); return false;">{{ lang('MARK_ALL') }}</a> &bull; <a href="#" onclick="marklist('acp_smilies_category', 'mark', false); return false;">{{ lang('UNMARK_ALL') }}</a></p>
-		<input class="button2" type="submit" name="editmarked" value="{{ lang('SC_CATEGORY_EDIT_LIST') }}" />
+		<label><input class="button2" type="submit" name="editmarked" value="{{ lang('SC_CATEGORY_EDIT_LIST') }}" /><label>
 	</fieldset>
 	<br/>
 	<div class="pagination">

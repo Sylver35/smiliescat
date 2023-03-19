@@ -9,7 +9,7 @@
 
 namespace sylver35\smiliescat\core;
 
-use sylver35\smiliescat\core\smiley;
+use sylver35\smiliescat\core\category;
 use phpbb\db\driver\driver_interface as db;
 use phpbb\config\config;
 use phpbb\user;
@@ -17,8 +17,8 @@ use phpbb\language\language;
 
 class diffusion
 {
-	/* @var \sylver35\smiliescat\core\smiley */
-	protected $smiley;
+	/* @var \sylver35\smiliescat\core\category */
+	protected $category;
 
 	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
@@ -41,9 +41,9 @@ class diffusion
 	/**
 	 * Constructor
 	 */
-	public function __construct(smiley $smiley, db $db, config $config, user $user, language $language, $smilies_category_table)
+	public function __construct(category $category, db $db, config $config, user $user, language $language, $smilies_category_table)
 	{
-		$this->smiley = $smiley;
+		$this->category = $category;
 		$this->db = $db;
 		$this->config = $config;
 		$this->user = $user;
@@ -82,7 +82,7 @@ class diffusion
 		$this->db->sql_freeresult($result);
 
 		// Add the Unclassified category if not empty
-		if ($nb = $this->smiley->smilies_count(0, true))
+		if ($nb = $this->category->smilies_count(0, true))
 		{
 			$list_cat[$i] = [
 				'cat_id'		=> 0,
@@ -154,7 +154,7 @@ class diffusion
 				'emptyRow'		=> ($i === 0) ? $this->language->lang('SC_SMILIES_EMPTY_CATEGORY') : '',
 				'title'			=> $this->language->lang('SC_CATEGORY_IN', '<span class="cat-title">' . $cat_name . '</span>'),
 				'start'			=> $start,
-				'pagination'	=> $this->smiley->smilies_count($cat),
+				'pagination'	=> $this->category->smilies_count($cat),
 			];
 		}
 
