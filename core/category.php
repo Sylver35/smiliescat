@@ -180,9 +180,8 @@ class category
 	public function category_exist()
 	{
 		$sql = 'SELECT COUNT(cat_id) AS total
-			FROM ' . $this->smilies_category_table . '
-			ORDER BY cat_order ASC';
-		$result = $this->db->sql_query_limit($sql, 1);
+			FROM ' . $this->smilies_category_table;
+		$result = $this->db->sql_query($sql);
 		$total = (int) $this->db->sql_fetchfield('total');
 		$this->db->sql_freeresult($result);
 
