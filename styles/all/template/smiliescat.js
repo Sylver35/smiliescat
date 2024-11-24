@@ -48,7 +48,7 @@
 		var totalPages = Math.ceil(total / cats.perPage),onPage = Math.floor(onCount / cats.perPage) + 1;
 		if((totalPages > 1) && (total > cats.perPage)){
 			$('#smilies-pagin-div, #smilies-pagin').show();
-			var items = [(onPage !== 1) ? cats.cE('a','previous-'+onId,'pointer',cats.previous,cats.previous+' ',function(){cats.changePage((onPage - 2) * cats.perPage);},'button') : '',cats.cE('a','nb-1',(onPage === 1) ? 'pagin_red' : 'pointer','nb-1','1',(onPage !== 1) ? function(){cats.changePage(0);} : false,'button')];
+			var items = [(onPage !== 1) ? cats.cE('a','previous-'+onId,'pointer',cats.previousTitle,cats.previous+' ',function(){cats.changePage((onPage - 2) * cats.perPage);},'button') : '',cats.cE('a','nb-1',(onPage === 1) ? 'pagin_red' : 'pointer','nb-1','1',(onPage !== 1) ? function(){cats.changePage(0);} : false,'button')];
 			var startCnt = Math.min(Math.max(1, onPage - 4),totalPages - 5),endCnt = (totalPages > 5) ? Math.max(Math.min(totalPages,onPage + 4),6) : totalPages,startFor = (totalPages > 5) ? startCnt + 1 : 2,endFor = (totalPages > 5) ? endCnt - 1 : totalPages;
 			items.push((startCnt > 1 && totalPages > 5) ? ' ... ' : cats.cp());
 			for(var i = startFor; i < endCnt; i++){
@@ -56,7 +56,7 @@
 				items.push((i < endFor) ? cats.cp() : '');
 			}
 			items.push((totalPages > 5) ? ((endCnt < totalPages) ? ' ... ' : cats.cp()) : '');
-			items.push(cats.cE('a','nb-fin',(onPage === totalPages) ? 'pagin_red' : 'pointer',cats.page+totalPages,totalPages,(onPage !== totalPages) ? function(){cats.changePage((totalPages - 1) * cats.perPage);} : false,'button'),(onPage !== totalPages) ? cats.cE('a','next'+onId,'pointer',cats.next,' '+cats.next,function(){cats.changePage(onPage * cats.perPage);},'button') : cats.cE('a',false,false,false,false,false));
+			items.push(cats.cE('a','nb-fin',(onPage === totalPages) ? 'pagin_red' : 'pointer',cats.page+totalPages,totalPages,(onPage !== totalPages) ? function(){cats.changePage((totalPages - 1) * cats.perPage);} : false,'button'),(onPage !== totalPages) ? cats.cE('a','next'+onId,'pointer',cats.nextTitle,' '+cats.next,function(){cats.changePage(onPage * cats.perPage);},'button') : cats.cE('a',false,false,false,false,false));
 			$("#cat-title").append(' '+cats.pageTitle.replace('%1$s',onPage).replace('%2$s',endCnt));
 			$('#smilies-pagin').append(items);
 			$('a[name="button"]').attr('role', 'button');

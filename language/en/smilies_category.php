@@ -2,7 +2,7 @@
 /**
 *
 * @package		Breizh Smilies Categories Extension
-* @copyright	(c) 2020-2023 Breizh Code  https://breizhcode.com
+* @copyright	(c) 2020-2024 Breizh Code  https://breizhcode.com
 * @license		https://opensource.org/licenses/gpl-license.php GNU Public License
 * @translator	[English] Sylver35  https://breizhcode.com
 *
@@ -34,7 +34,7 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 //
 // Some characters you may want to copy&paste:
-// ’ « » “ ” …
+// ’ « » “ ” …
 //
 
 $lang = array_merge($lang, array(
@@ -65,6 +65,8 @@ $lang = array_merge($lang, array(
 	'SC_EDIT_SUCCESS'			=> 'The category has been edited',
 	'SC_MOVE_SUCCESS'			=> 'The category has been moved',
 	'SC_MOVE_ERROR'				=> 'An error has occurred',
+	'SC_NEXT'					=> '»',
+	'SC_PREVIOUS'				=> '«',
 	'SC_SMILIES'				=> [
 		1	=> '%2$s smilie',
 		2	=> '%2$s smilies',

@@ -5,8 +5,8 @@
 [![Code Intelligence Status](https://scrutinizer-ci.com/g/Sylver35/smiliescat/badges/code-intelligence.svg?b=1.6.0)](https://scrutinizer-ci.com/code-intelligence)
 
 ## Minimum Requirements
-* phpBB 3.3.10
-* PHP 7.1.3
+* phpBB 3.3.13
+* PHP 7.2
 
 ## Install
 1. Download the latest release.
@@ -30,4 +30,4 @@
 ## License
 [GNU General Public License v2](http://opensource.org/licenses/GPL-2.0)
 
-© 2023 - Sylver35
+© 2024 - Sylver35

@@ -2,7 +2,7 @@
 /**
  *
  * @package		Breizh Smilies Categories Extension
- * @copyright	(c) 2020-2023 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2020-2024 Sylver35  https://breizhcode.com
  * @license		https://opensource.org/licenses/gpl-license.php GNU Public License
  *
  */
@@ -200,10 +200,10 @@ class category
 					AND cat_id = $cat";
 			$result = $this->db->sql_query_limit($sql, 1);
 			$row = $this->db->sql_fetchrow($result);
+			$this->db->sql_freeresult($result);
 			if (isset($row['cat_name']))
 			{
 				$cat_name = $row['cat_name'];
-				$this->db->sql_freeresult($result);
 			}
 			else
 			{
