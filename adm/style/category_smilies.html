@@ -20,12 +20,12 @@
 		<th colspan="5">{{ lang('SMILIES_CONFIG') }}</th>
 	</tr>
 	<tr class="row3">
-		<td>{{ lang('SMILIES_IMAGE') }}</td>
-		<td>{{ lang('SMILIES_CODE') }}</td>
-		<td>{{ lang('EMOTION') }}</td>
-		<td>{{ lang('SC_CATEGORY') }}</td>
+		<td><strong>{{ lang('SMILIES_IMAGE') }}</strong></td>
+		<td><strong>{{ lang('SMILIES_CODE') }}</strong></td>
+		<td><strong>{{ lang('EMOTION') }}</strong></td>
+		<td><strong>{{ lang('SC_CATEGORY') }}</strong></td>
 		{% if not S_IN_LIST %}
-		<td>{{ lang('SC_CATEGORY_SELECT') }}</td>
+		<td><strong>{{ lang('SC_CATEGORY_SELECT') }}</strong></td>
 		{% endif %}
 	</tr>
 	</thead>
@@ -66,19 +66,19 @@
 	</form>
 {% else %}
 	<form id="select_category" method="post" action="{{ U_SELECT_CAT }}">
-	<fieldset class="tabulated">
-	<div class="pagination" style="float: left;">
-		<strong>{{ lang('SC_CATEGORY_SELECT') }} : </strong>
-		<label for="select"><select id="select" name="select" onchange="if(this.options[this.selectedIndex].value != '')this.form.submit();">{{ LIST_CATEGORY }}</select></label>&nbsp;
-		<label><input class="button2" type="submit" value="{{ lang('GO') }}"></label>
-	</div>
-	<div class="pagination" style="float: right;">
-	<strong>{{ NB_SMILIES }} &bull;</strong> 
-	{% if pagination|length %}
-		{% INCLUDE 'pagination.html' %}
-	{% endif %}
-	</div>
-	</fieldset>
+		<fieldset class="tabulated">
+			<div class="pagination" style="float: left;">
+				<strong>{{ lang('SC_CATEGORY_SELECT') }} : </strong>
+				<label for="select"><select id="select" name="select" onchange="if(this.options[this.selectedIndex].value != '')this.form.submit();">{{ LIST_CATEGORY }}</select></label>&nbsp;
+				<label><input class="button2" type="submit" value="{{ lang('GO') }}"></label>
+			</div>
+			<div class="pagination" style="float: right;">
+				<strong>{{ NB_SMILIES }} &bull;</strong> 
+				{% if pagination|length %}
+					{% INCLUDE 'pagination.html' %}
+				{% endif %}
+			</div>
+		</fieldset>
 	</form>
 	<form id="acp_smilies_category" method="post" action="{{ U_MODIFY_LIST }}">
 	<fieldset class="tabulated">

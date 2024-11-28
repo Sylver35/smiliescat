@@ -65,36 +65,20 @@ class smiley
 		$this->root_path = $root_path;
 	}
 
-	public function get_max_order()
+	public function modify_smiley($smiley, $new_cat, $ex_cat = -1)
 	{
-		// Get max order id...
-		$sql = 'SELECT MAX(cat_order) AS maxi
-			FROM ' . $this->smilies_category_table;
-		$result = $this->db->sql_query($sql);
-		$max = (int) $this->db->sql_fetchfield('maxi');
-		$this->db->sql_freeresult($result);
+		$ex_cat = ($ex_cat == -1) ? $this->category->get_cat_id($smiley) : $ex_cat;
 
-		return $max;
+		$this->db->sql_query('UPDATE ' . SMILIES_TABLE . ' SET category = ' . $new_cat . ' WHERE smiley_id = ' . $smiley);
+		$this->update_cat_smiley($new_cat, $ex_cat);
 	}
 
-	public function modify_smiley($id, $cat_id, $ex_cat = -1)
-	{
-		$ex_cat = ($ex_cat == -1) ? $this->category->get_cat_id($id) : $ex_cat;
-
-		$this->db->sql_query('UPDATE ' . SMILIES_TABLE . ' SET category = ' . $cat_id . ' WHERE smiley_id = ' . $id);
-		$this->update_cat_smiley($cat_id, $ex_cat);
-	}
-
-	private function update_cat_smiley($cat_id, $ex_cat)
+	private function update_cat_smiley($new_cat, $ex_cat)
 	{
 		// Increment nb value if wanted
-		if ($cat_id)
+		if ($new_cat)
 		{
-			if (($this->category->get_first_order() === $cat_id) && ($this->category->get_cat_nb($cat_id) === 0))
-			{
-				$this->config->set('smilies_category_nb', $cat_id);
-			}
-			$this->db->sql_query('UPDATE ' . $this->smilies_category_table . ' SET cat_nb = cat_nb + 1 WHERE cat_id = ' . $cat_id);
+			$this->db->sql_query('UPDATE ' . $this->smilies_category_table . ' SET cat_nb = cat_nb + 1 WHERE cat_id = ' . $new_cat);
 		}
 
 		// Decrement nb value if wanted
@@ -125,11 +109,11 @@ class smiley
 				'LEFT_JOIN'	=> [
 					[
 						'FROM'	=> [$this->smilies_category_table => 'c'],
-						'ON'	=> "cat_id = category AND cat_lang = '$lang'",
+						'ON'	=> "c.cat_id = s.category AND c.cat_lang = '$lang'",
 					],
 				],
-				'WHERE'		=> ($select === -1) ? "code <> ''" : "cat_id = $select AND code <> ''",
-				'ORDER_BY'	=> 'cat_order ASC, smiley_order ASC',
+				'WHERE'		=> ($select === -1) ? "s.code <> ''" : "c.cat_id = $select AND s.code <> ''",
+				'ORDER_BY'	=> 'c.cat_order ASC, s.smiley_order ASC',
 			]);
 		}
 		$result = $this->db->sql_query_limit($sql, (int) $this->config['smilies_per_page_acp'], $start);
@@ -161,7 +145,7 @@ class smiley
 		$this->pagination->generate_template_pagination($u_action . '&amp;select=' . $select, 'pagination', 'start', $smilies_count, (int) $this->config['smilies_per_page_cat'], $start);
 	}
 
-	public function edit_smiley($id, $start, $u_action)
+	public function edit_smiley($smiley, $start, $u_action)
 	{
 		$lang = $this->user->lang_name;
 		$sql = $this->db->sql_build_query('SELECT', [
@@ -173,7 +157,7 @@ class smiley
 					'ON'	=> "c.cat_id = s.category AND c.cat_lang = '$lang'",
 				],
 			],
-			'WHERE'	=> 's.smiley_id = ' . (int) $id,
+			'WHERE'	=> 's.smiley_id = ' . (int) $smiley,
 		]);
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
@@ -203,11 +187,11 @@ class smiley
 			'LEFT_JOIN'	=> [
 				[
 					'FROM'	=> [$this->smilies_category_table => 'c'],
-					'ON'	=> "c.cat_id = s.category AND cat_lang = '$lang'",
+					'ON'	=> "c.cat_id = s.category AND c.cat_lang = '$lang'",
 				],
 			],
 			'WHERE'		=> $this->db->sql_in_set('smiley_id', $list),
-			'ORDER_BY'	=> 'cat_order ASC, s.smiley_order ASC',
+			'ORDER_BY'	=> 'c.cat_order ASC, s.smiley_order ASC',
 		]);
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))

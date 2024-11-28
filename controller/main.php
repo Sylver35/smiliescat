@@ -82,9 +82,10 @@ class main
 	public function popup_smilies_category()
 	{
 		$start = (int) $this->request->variable('start', 0);
-		$cat = (int) $this->request->variable('select', $this->config['smilies_category_nb']);
 		$pagin = (int) $this->config['smilies_per_page_cat'];
-		$count = (int) $this->category->smilies_count($cat);
+		$first = $this->category->get_first_order();
+		$cat = (int) $this->request->variable('select', $first['first']);
+		$count = $this->category->smilies_count($cat);
 		$title = $this->category->extract_list_categories($cat);
 		$data = $this->category->get_version();
 
@@ -132,10 +133,11 @@ class main
 	{
 		$i = 0;
 		$list_smilies = [];
-		$cat = (int) $this->request->variable('cat', $this->config['smilies_category_nb']);
 		$start = (int) $this->request->variable('start', 0);
 		$pagin = (int) $this->config['smilies_per_page_cat'];
-		$count = (int) $this->category->smilies_count($cat);
+		$first = $this->category->get_first_order();
+		$cat = (int) $this->request->variable('cat', $first['first']);
+		$count = $this->category->smilies_count($cat);
 
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> '*',

@@ -86,7 +86,7 @@ class listener implements EventSubscriberInterface
 	 */
 	public function add_page_header()
 	{
-		$this->template->assign_var('U_CATEGORY_POPUP', $this->helper->route('sylver35_smiliescat_smilies_pop', ['select' => $this->config['smilies_category_nb']]));
+		$this->diffusion->url_to_page();
 	}
 
 	/**
@@ -97,16 +97,7 @@ class listener implements EventSubscriberInterface
 	 */
 	public function add_categories($event)
 	{
-		if (in_array($event['mode'], ['post', 'reply', 'edit', 'quote']))
-		{
-			$this->template->assign_vars([
-				'U_CATEGORY_AJAX'	=> $this->helper->route('sylver35_smiliescat_ajax_smilies'),
-				'ID_FIRST_CAT'		=> $this->config['smilies_category_nb'],
-				'PER_PAGE'			=> $this->config['smilies_per_page_cat'],
-				'U_SMILIES_PATH'	=> generate_board_url() . '/' . $this->config['smilies_path'] . '/',
-				'IN_CATEGORIES'		=> true,
-			]);
-		}
+		$this->diffusion->cats_to_posting_form($event);
 	}
 
 	/**

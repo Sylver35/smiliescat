@@ -81,6 +81,8 @@ services:
             - '@config'
             - '@user'
             - '@language'
+            - '@template'
+            - '@controller.helper'
             - '%sylver35.smiliescat.tables.smilies_category%'
 
     sylver35.smiliescat.controller:

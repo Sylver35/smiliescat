@@ -93,10 +93,10 @@ class category
 		return $data;
 	}
 
-	public function smilies_count($cat, $compact = false)
+	public function smilies_count($cat)
 	{
 		$sql = $this->db->sql_build_query('SELECT', [
-			'SELECT'	=> (!$compact) ? 'COUNT(DISTINCT smiley_id) AS smilies_count' : 'COUNT(DISTINCT smiley_url) AS smilies_count',
+			'SELECT'	=> 'COUNT(DISTINCT smiley_id) AS smilies_count',
 			'FROM'		=> [SMILIES_TABLE => ''],
 			'WHERE'		=> ($cat > -1) ? 'category = ' . (int) $cat : "code <> ''",
 		]);
@@ -114,63 +114,63 @@ class category
 
 	public function get_langs()
 	{
-		$return = [];
+		$data = [];
 		$sql = 'SELECT *
 			FROM ' . LANG_TABLE;
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$return[$row['lang_id']] = $row['lang_iso'];
+			$data[$row['lang_id']] = $row['lang_iso'];
 		}
 		$this->db->sql_freeresult($result);
 
-		return $return;
+		return $data;
 	}
 
 	public function verify_cat_langs($langs, $cat, $i, $lang_cat, $ajax)
 	{
-		$return = [];
+		$data = [];
 		foreach ($langs as $id => $iso)
 		{
 			if (!isset($lang_cat[$cat][$id]))
 			{
-				$return[] = $iso;
+				$data[] = $iso;
 			}
 		}
 
 		if ($ajax === false)
 		{
-			$this->cat_to_template($i, $return);
+			$this->cat_to_template($i, $data);
 		}
 		else
 		{
-			return $this->cat_to_ajax($i, $return);
+			return $this->cat_to_ajax($i, $data);
 		}
 	}
 
-	private function cat_to_template($i, $return)
+	private function cat_to_template($i, $data)
 	{
-		if (($i !== 0) && !empty($return))
+		if (($i !== 0) && !empty($data))
 		{
 			$this->template->assign_block_vars('categories', [
 				'ERROR'			=> true,
-				'LANG_EMPTY'	=> $this->language->lang('SC_LANGUAGE_EMPTY', (count($return) > 1) ? 2 : 1) . implode(', ', $return),
+				'LANG_EMPTY'	=> $this->language->lang('SC_LANGUAGE_EMPTY', (count($data) > 1) ? 2 : 1) . implode(', ', $data),
 			]);
 		}
 	}
 
-	private function cat_to_ajax($i, $return)
+	private function cat_to_ajax($i, $data)
 	{
 		$values = [
 			'error'			=> false,
 			'lang_empty'	=> '',
 		];
 
-		if (($i !== 0) && !empty($return))
+		if (($i !== 0) && !empty($data))
 		{
 			$values = [
 				'error'			=> true,
-				'lang_empty'	=> $this->language->lang('SC_LANGUAGE_EMPTY', (count($return) > 1) ? 2 : 1) . implode(', ', $return),
+				'lang_empty'	=> $this->language->lang('SC_LANGUAGE_EMPTY', (count($data) > 1) ? 2 : 1) . implode(', ', $data),
 			];
 		}
 
@@ -196,8 +196,8 @@ class category
 			$lang = (string) $this->user->lang_name;
 			$sql = 'SELECT cat_name
 				FROM ' . $this->smilies_category_table . "
-					WHERE cat_lang = '$lang'
-					AND cat_id = $cat";
+					WHERE cat_id = $cat
+					AND cat_lang = '$lang'";
 			$result = $this->db->sql_query_limit($sql, 1);
 			$row = $this->db->sql_fetchrow($result);
 			$this->db->sql_freeresult($result);
@@ -248,14 +248,19 @@ class category
 	public function get_first_order()
 	{
 		// Get first order id...
-		$sql = 'SELECT cat_order, cat_id
+		$sql = 'SELECT cat_id, cat_order, cat_nb
 			FROM ' . $this->smilies_category_table . '
-			ORDER BY cat_order ASC';
+				WHERE cat_nb > 0
+				ORDER BY cat_order ASC';
 		$result = $this->db->sql_query_limit($sql, 1);
-		$first = (int) $this->db->sql_fetchfield('cat_id');
+		$row = $this->db->sql_fetchrow($result);
+		$data = [
+			'first'		=> $row['cat_id'],
+			'cat_nb'	=> $row['cat_nb'],
+		];
 		$this->db->sql_freeresult($result);
 
-		return $first;
+		return $data;
 	}
 
 	public function get_cat_id($id)
@@ -264,10 +269,10 @@ class category
 			FROM ' . SMILIES_TABLE . '
 				WHERE smiley_id = ' . $id;
 		$result = $this->db->sql_query($sql);
-		$cat = (int) $this->db->sql_fetchfield('category');
+		$category = (int) $this->db->sql_fetchfield('category');
 		$this->db->sql_freeresult($result);
 
-		return $cat;
+		return $category;
 	}
 
 	public function get_cat_nb($id)
@@ -333,11 +338,13 @@ class category
 
 	public function set_order($action, $current_order)
 	{
+		// Never move up the first
 		if ($current_order === 1 && $action === 'move_up')
 		{
 			return 0;
 		}
 
+		// Never move down the last
 		$max_order = $this->get_max_order();
 		if (($current_order === $max_order) && ($action === 'move_down'))
 		{
@@ -348,19 +355,8 @@ class category
 		// on move_up, switch position with previous order_id...
 		$switch_order_id = ($action === 'move_down') ? $current_order + 1 : $current_order - 1;
 
+		// Return the new position
 		return $switch_order_id;
-	}
-
-	public function reset_first_cat($current_order, $switch_order_id)
-	{
-		$first = $this->get_first_order();
-		if ($current_order === 1 || $switch_order_id === 1)
-		{
-			if ($this->get_cat_nb($first) > 0)
-			{
-				$this->config->set('smilies_category_nb', $first);
-			}
-		}
 	}
 
 	public function move_cat($id, $action)
@@ -390,7 +386,6 @@ class category
 			$this->db->sql_query('UPDATE ' . $this->smilies_category_table . " SET cat_order = $switch_order_id WHERE cat_order = $current_order AND cat_id = $id");
 		}
 
-		$this->reset_first_cat($current_order, $switch_order_id);
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_' . strtoupper($action) . '_CAT', time(), [$title]);
 	}
 }

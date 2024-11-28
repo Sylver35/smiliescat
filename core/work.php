@@ -138,21 +138,6 @@ class work
 		$this->db->sql_freeresult($result);
 
 		$this->db->sql_multi_insert($this->smilies_category_table, $sql_ary);
-
-		if ($cat_order === 1)
-		{
-			$sql = 'SELECT cat_id, cat_nb
-				FROM ' . $this->smilies_category_table . '
-					WHERE cat_order = 1';
-			$result = $this->db->sql_query_limit($sql, 1);
-			$row = $this->db->sql_fetchrow($result);
-			if ($row['cat_nb'] > 0)
-			{
-				$this->config->set('smilies_category_nb', $row['cat_id']);
-			}
-			$this->db->sql_freeresult($result);
-		}
-
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_ADD_CAT', time(), [$title]);
 		trigger_error($this->language->lang('SC_CREATE_SUCCESS') . adm_back_link($u_action));
 	}
@@ -171,9 +156,9 @@ class work
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$iso = strtolower($row['lang_iso']);
-			$lang = (string) $this->request->variable("lang_$iso", '', true);
-			$action = (string) $this->request->variable("sort_$iso", '');
-			$name = $this->category->capitalize($this->request->variable("name_$iso", '', true));
+			$lang = (string) $this->request->variable('lang_' . $iso, '', true);
+			$action = (string) $this->request->variable('sort_' . $iso, '');
+			$name = $this->category->capitalize($this->request->variable('name_' . $iso, '', true));
 
 			if ($name === '')
 			{
@@ -198,7 +183,6 @@ class work
 		$this->db->sql_freeresult($result);
 
 		$this->db->sql_multi_insert($this->smilies_category_table, $sql_in);
-
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_EDIT_CAT', time(), [$title]);
 		trigger_error($this->language->lang('SC_EDIT_SUCCESS') . adm_back_link($u_action));
 	}
@@ -327,10 +311,10 @@ class work
 				'LEFT_JOIN'	=> [
 					[
 						'FROM'	=> [$this->smilies_category_table => 'c'],
-						'ON'	=> 'cat_lang = lang_iso',
+						'ON'	=> 'c.cat_lang = lang_iso',
 					],
 				],
-				'ORDER_BY'	=> 'cat_order ASC, cat_lang_id ASC',
+				'ORDER_BY'	=> 'c.cat_order ASC, l.lang_id ASC, c.cat_lang_id ASC',
 			]);
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
