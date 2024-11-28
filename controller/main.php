@@ -162,7 +162,7 @@ class main
 		$categories = $this->diffusion->list_cats($cat);
 		$json_response = new \phpbb\json_response;
 		$json_response->send([
-			'title'			=> $this->diffusion->get_cat_name($cat),
+			'title'			=> $this->category->cat_name($cat),
 			'nb_cats'		=> count($categories),
 			'start'			=> $start,
 			'pagination'	=> $count,
