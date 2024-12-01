@@ -40,6 +40,7 @@ class smiliescat_1_6_1 extends migration
 		$result = $this->db->sql_query_limit($sql, 1);
 		$first = (int) $this->db->sql_fetchfield('cat_id');
 		$this->db->sql_freeresult($result);
+		$first = !$first ? 9998 : $first;
 
 		return $first;
 	}

@@ -1,6 +1,10 @@
-{% if IN_CAT_ACTION or IN_LIST_CAT %}
+{% if IN_CAT_ACTION or IN_LIST_CAT or CATEGORIE_SMILIES %}
 <script>
-{% if IN_CAT_ACTION %}
+{% if CATEGORIE_SMILIES %}
+$('i.acp-icon-settings').each(function(){
+	$(this).attr('title', '{{ lang("SC_CATEGORY_EDIT")|escape("js") }}');
+});
+{% elseif IN_CAT_ACTION %}
 var errorTitle = '{{ lang("SC_CATEGORY_ERROR")|escape("js") }}';
 $(document).ready(function(){
 	$('#cat-action input[type="text"]').each(function(){
@@ -33,7 +37,7 @@ function validInputs(){
 		$('#info').hide();
 	}
 }
-{% else %}
+{% elseif IN_LIST_CAT %}
 function moveCats(action, id){
 	$.ajax({
 		type: 'POST',
@@ -46,7 +50,7 @@ function moveCats(action, id){
 			for(var i = 0; i < response.total; i++){
 				var data = response.datas[i];
 				$('#succes-div').show();
-				setTimeout(function(){$('#succes-div').hide()},2000);
+				setTimeout(function(){$('#succes-div').hide()},1500);
 				if(data.error === false){
 					continue;
 				}else if(data.error === true){
@@ -54,8 +58,8 @@ function moveCats(action, id){
 				}else if(data.error === undefined){
 					if(data.row){
 						if(data.titleCat){
-							tbodyRow += '<tr><td class="row3" style="text-align: center;" colspan="3"><strong>'+data.titleCat+'</strong></td>';
-							tbodyRow += '<td class="row3" style="text-align: center;"><strong>'+data.catNb+'</strong></td><td class="row3 actions" style="text-align: center;">';
+							tbodyRow += '<tr><td class="row3 nb-'+data.nbCss+'" colspan="3">'+data.titleCat+'</td>';
+							tbodyRow += '<td class="row3 nb-'+data.nbCss+'">'+data.catNb+'</td><td class="row3 actions">';
 							if(data.catOrder == 1){
 								tbodyRow += '<span class="up-disabled">{{ ICON_MOVE_UP_DISABLED }}</span> ';
 							}else{
@@ -69,16 +73,16 @@ function moveCats(action, id){
 						}
 						tbodyRow += '<a href="'+actionUrl+data.uEdit+'">{{ ICON_EDIT }}</a> <a href="'+actionUrl+data.uDelete+'">{{ ICON_DELETE }}</a></tr>';
 					}
-					tbodyRow += '<tr><td style="text-align: center;"><strong>'+data.catTranslate+'</strong></td>';
-					tbodyRow += '<td style="text-align: center;">'+data.catLang+'</td>';
-					tbodyRow += '<td style="text-align: center;">'+data.catIso+'</td><td style="text-align: center;background-color: #F9F9F9;"></td></tr>';
+					tbodyRow += '<tr><td><strong>'+data.catTranslate+'</strong></td>';
+					tbodyRow += '<td>'+data.catLang+'</td>';
+					tbodyRow += '<td>'+data.catIso+'</td><td class="empty"></td></tr>';
 				}
 			}
 			$('#body_cat').html(tbodyRow);
 		},
 		error: function(){
 			$('#error-div').show();
-			setTimeout(function(){$('#error-div').hide()},2500);
+			setTimeout(function(){$('#error-div').hide()},2000);
 		}
 	});
 }

@@ -83,8 +83,8 @@ class main
 	{
 		$start = (int) $this->request->variable('start', 0);
 		$pagin = (int) $this->config['smilies_per_page_cat'];
-		$first = $this->category->get_first_order();
-		$cat = (int) $this->request->variable('select', $first['first']);
+		$first = (int) $this->config['smilies_first_cat'];
+		$cat = (int) $this->request->variable('select', $first);
 		$count = $this->category->smilies_count($cat);
 		$title = $this->category->extract_list_categories($cat);
 		$data = $this->category->get_version();
@@ -135,8 +135,8 @@ class main
 		$list_smilies = [];
 		$start = (int) $this->request->variable('start', 0);
 		$pagin = (int) $this->config['smilies_per_page_cat'];
-		$first = $this->category->get_first_order();
-		$cat = (int) $this->request->variable('cat', $first['first']);
+		$first = (int) $this->config['smilies_first_cat'];
+		$cat = (int) $this->request->variable('cat', $first);
 		$count = $this->category->smilies_count($cat);
 
 		$sql = $this->db->sql_build_query('SELECT', [
@@ -162,7 +162,7 @@ class main
 		$categories = $this->diffusion->list_cats($cat);
 		$json_response = new \phpbb\json_response;
 		$json_response->send([
-			'title'			=> $this->category->cat_name($cat),
+			'title'			=> $this->category->return_name($cat, '', true),
 			'nb_cats'		=> count($categories),
 			'start'			=> $start,
 			'pagination'	=> $count,
@@ -211,7 +211,7 @@ class main
 					'langEmpty'	=> $return['lang_empty'],
 				];
 				$j++;
-				$title = $this->language->lang('SC_CATEGORY_IN', $this->category->cat_name($row['cat_id']));
+				$title = $this->language->lang('SC_CATEGORY_IN', $this->category->return_name($row['cat_id'], $row['cat_name'], true));
 			}
 			$lang_cat[$row['cat_id']][$row['lang_id']] = $row['lang_iso'];
 			$list_cat[$j] = [
@@ -222,6 +222,7 @@ class main
 				'catId'			=> (int) $row['cat_id'],
 				'catOrder'		=> (int) $row['cat_order'],
 				'catNb'			=> (int) $row['cat_nb'],
+				'nbCss'			=> $row['cat_nb'] ? 'green' : 'orange',
 				'row'			=> (int) $row['cat_id'] !== $cat,
 				'rowMax'		=> (int) $row['cat_order'] === $max,
 				'uEdit'			=> '&amp;action=edit&amp;id=' . $row['cat_id'],

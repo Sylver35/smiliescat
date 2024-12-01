@@ -39,12 +39,13 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'ACP_SC_SMILIES'			=> 'Catégories des smileys',
-	'ACP_SC_SMILIES_EXPLAIN'	=> 'Sur cette page, vous pouvez attribuer les catégories des smileys.<br>Les smileys seront affichés dans une popup classés dans la catégorie attribuée.<br>Les smileys n’ayant pas de catégorie attribuée seront dans la catégorie automatique intitulée “Non classés”',
+	'ACP_SC_SMILIES_EXPLAIN'	=> 'Sur cette page, vous pouvez attribuer les catégories des smileys.<br>Les smileys seront affichés dans une popup classés dans la catégorie attribuée.<br>Les smileys n’ayant pas de catégorie attribuée seront dans la catégorie automatique intitulée “Non classés”.<br>Les smileys non affichés seront dans la catégorie spéciale "Non affichés".',
 	'ACP_SC_CONFIG'				=> 'Configuration des catégories',
-	'ACP_SC_CONFIG_EXPLAIN'		=> 'Sur cette page, vous pouvez gérer les catégories des smileys.<br>Ajouter, éditer, supprimer des catégories. Modifier l’ordre d’affichage et définir les traductions dans les langues activées.',
+	'ACP_SC_CONFIG_EXPLAIN'		=> 'Sur cette page, vous pouvez gérer les catégories des smileys.<br>Les catégories en orange ne seront pas affichées car ne contiennent aucun smiley.<br>Ajouter, éditer, supprimer des catégories. Modifier l’ordre d’affichage et définir les traductions dans les langues activées.',
 	'SC_CATEGORY'				=> 'Catégorie',
 	'SC_CATEGORY_LANG'			=> 'Langue',
 	'SC_CATEGORY_DEFAUT'		=> 'Non classés',
+	'SC_CATEGORY_NOT'			=> 'Non affichés',
 	'SC_CATEGORY_ID'			=> 'ID',
 	'SC_CATEGORY_IN'			=> 'Catégorie : %1$s',
 	'SC_CATEGORY_NAME'			=> 'Nom de la catégorie',
@@ -53,7 +54,7 @@ $lang = array_merge($lang, array(
 	'SC_CATEGORY_ANY'			=> 'Toutes les catégories',
 	'SC_CATEGORY_ANY_CREATE'	=> 'Aucune catégorie n’a été créée',
 	'SC_CATEGORY_ADD'			=> 'Ajouter une catégorie',
-	'SC_CATEGORY_EDIT'			=> 'Éditer la catégorie',
+	'SC_CATEGORY_EDIT'			=> 'Modifier la catégorie',
 	'SC_CATEGORY_EDIT_LIST'		=> 'Modifier la sélection de smileys',
 	'SC_CATEGORY_SELECT'		=> 'Sélectionner une catégorie',
 	'SC_LANGUAGE_EMPTY'			=> [
@@ -67,6 +68,8 @@ $lang = array_merge($lang, array(
 	'SC_MOVE_ERROR'				=> 'Une erreur s’est produite',
 	'SC_NEXT'					=> '»',
 	'SC_PREVIOUS'				=> '«',
+	'SC_PREVIOUS_TITLE'			=> 'Précédente',
+	'SC_NEXT_TITLE'				=> 'Suivante',
 	'SC_SMILIES'				=> [
 		1	=> '%2$s smiley',
 		2	=> '%2$s smileys',
@@ -82,6 +85,7 @@ $lang = array_merge($lang, array(
 	'SC_CATEGORY_TITLE'			=> 'Plus de smileys en catégories',
 	'SC_SMILIES_TITLE'			=> 'Voir plus de smileys classés en catégories',
 	'SC_SMILIES_CLOSE'			=> 'Refermer le panneau',
+	'SC_SMILIES_CLOSE_WINDOW'	=> 'Fermer la fenètre',
 	'SC_CONFIG_TITLE'			=> 'Configuration',
 	'SC_CONFIG_PAGE'			=> 'Smileys par page',
 	'SC_CONFIG_EXPLAIN'			=> 'Indiquez ici le nombre de smileys par page affichés pour les catégories',
@@ -93,5 +97,6 @@ $lang = array_merge($lang, array(
 	'LOG_SC_MOVE_UP_CAT'		=> '<strong>Remontée d’une catégorie de smileys </strong> » %s',
 	'LOG_SC_MOVE_DOWN_CAT'		=> '<strong>Descente d’une catégorie de smileys </strong> » %s',
 	'LOG_SC_DELETE_CAT'			=> '<strong>Suppression d’une catégorie de smileys </strong> » %s',
-	'SC_VERSION_COPY'			=> '<a href="%1$s" onclick="window.open(this.href);return false;">Breizh Smilies Categories v%2$s</a> © 2023 - Breizhcode - The Breizh Touch',
+	'LOG_SC_DELETE_CAT_LANG'	=> '<strong>Suppression des catégories de smileys de langue </strong> » %s',
+	'SC_VERSION_COPY'			=> '<a href="%1$s" onclick="window.open(this.href);return false;">Breizh Smilies Categories v%2$s</a> © 2024 - Breizhcode - The Breizh Touch',
 ));

@@ -21,6 +21,9 @@ use phpbb\log\log;
 
 class category
 {
+	private const DEFAULT_CAT = 9998;
+	private const NOT_DISPLAY = 9999;
+
 	/** @var \phpbb\cache\driver\driver_interface */
 	protected $cache;
 
@@ -98,7 +101,7 @@ class category
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> 'COUNT(DISTINCT smiley_id) AS smilies_count',
 			'FROM'		=> [SMILIES_TABLE => ''],
-			'WHERE'		=> ($cat > -1) ? 'category = ' . (int) $cat : "code <> ''",
+			'WHERE'		=> ($cat > 0) ? 'category = ' . $cat : "code <> ''",
 		]);
 		$result = $this->db->sql_query($sql);
 		$nb = (int) $this->db->sql_fetchfield('smilies_count');
@@ -177,6 +180,24 @@ class category
 		return $values;
 	}
 
+	public function category_sort($category)
+	{
+		// Determine the type of categories
+		switch ($category)
+		{
+			case self::DEFAULT_CAT:
+				$sort = 2;// Unclassified category
+			break;
+			case self::NOT_DISPLAY:
+				$sort = 3;// Undisplayed category
+			break;
+			default:
+				$sort = 1;// user category
+		}
+
+		return $sort;
+	}
+
 	public function category_exist()
 	{
 		$sql = 'SELECT COUNT(cat_id) AS total
@@ -188,34 +209,49 @@ class category
 		return $total;
 	}
 
-	public function cat_name($cat)
+	public function return_name($cat, $name = '', $all = false)
 	{
-		$cat_name = $this->language->lang('SC_CATEGORY_DEFAUT');
-		if ($cat > 0)
+		if ($cat == self::DEFAULT_CAT)
 		{
-			$lang = (string) $this->user->lang_name;
-			$sql = 'SELECT cat_name
+			return $this->language->lang('SC_CATEGORY_DEFAUT');
+		}
+		if ($cat == self::NOT_DISPLAY)
+		{
+			return $this->language->lang('SC_CATEGORY_NOT');
+		}
+		else if ($all)
+		{
+			return $this->cat_name($cat);
+		}
+		else if ($name)
+		{
+			return $name;
+		}
+	}
+
+	private function cat_name($cat)
+	{
+		$lang = (string) $this->user->lang_name;
+		$sql = 'SELECT cat_name
+			FROM ' . $this->smilies_category_table . "
+				WHERE cat_id = $cat
+				AND cat_lang = '$lang'";
+		$result = $this->db->sql_query_limit($sql, 1);
+		$cat_name = (string) $this->db->sql_fetchfield('cat_name');
+		$this->db->sql_freeresult($result);
+		if ($cat_name)
+		{
+			return $cat_name;
+		}
+		else
+		{
+			$sql2 = 'SELECT cat_name
 				FROM ' . $this->smilies_category_table . "
 					WHERE cat_id = $cat
-					AND cat_lang = '$lang'";
-			$result = $this->db->sql_query_limit($sql, 1);
-			$row = $this->db->sql_fetchrow($result);
-			$this->db->sql_freeresult($result);
-			if (isset($row['cat_name']))
-			{
-				$cat_name = $row['cat_name'];
-			}
-			else
-			{
-				$sql = 'SELECT cat_name
-					FROM ' . $this->smilies_category_table . "
-						WHERE cat_lang = 'en'
-						AND cat_id = $cat";
-				$result = $this->db->sql_query_limit($sql, 1);
-				$row = $this->db->sql_fetchrow($result);
-				$cat_name = $row['cat_name'];
-				$this->db->sql_freeresult($result);
-			}
+					AND cat_lang = 'en'";
+			$result2 = $this->db->sql_query_limit($sql2, 1);
+			$cat_name = (string) $this->db->sql_fetchfield('cat_name');
+			$this->db->sql_freeresult($result2);
 		}
 
 		return $cat_name;
@@ -247,20 +283,17 @@ class category
 
 	public function get_first_order()
 	{
-		// Get first order id...
+		// Get first order id non empty...
 		$sql = 'SELECT cat_id, cat_order, cat_nb
 			FROM ' . $this->smilies_category_table . '
 				WHERE cat_nb > 0
 				ORDER BY cat_order ASC';
 		$result = $this->db->sql_query_limit($sql, 1);
-		$row = $this->db->sql_fetchrow($result);
-		$data = [
-			'first'		=> $row['cat_id'],
-			'cat_nb'	=> $row['cat_nb'],
-		];
+		$first = (int) $this->db->sql_fetchfield('cat_id');
 		$this->db->sql_freeresult($result);
+		$first = !$first ? self::DEFAULT_CAT : $first;
 
-		return $data;
+		return $first;
 	}
 
 	public function get_cat_id($id)
@@ -279,7 +312,7 @@ class category
 	{
 		$sql = 'SELECT cat_nb
 			FROM ' . $this->smilies_category_table . '
-				WHERE cat_id = ' . (int) $id;
+				WHERE cat_id = ' . $id;
 		$result = $this->db->sql_query($sql);
 		$cat_nb = (int) $this->db->sql_fetchfield('cat_nb');
 		$this->db->sql_freeresult($result);
@@ -320,20 +353,21 @@ class category
 		$this->db->sql_freeresult($result);
 
 		// Add the Unclassified category if not empty
-		if ($nb = $this->smilies_count(0))
+		if ($nb = $this->smilies_count(self::DEFAULT_CAT))
 		{
+			$title = ($cat == self::DEFAULT_CAT) ? $this->language->lang('SC_CATEGORY_DEFAUT') : $title;
 			$this->template->assign_block_vars('categories', [
-				'CLASS'			=> ($cat === 0) ? 'cat-active' : 'cat-inactive',
+				'CLASS'			=> ($cat === self::DEFAULT_CAT) ? 'cat-active' : 'cat-inactive',
 				'SEPARATE'		=> ($i > 0) ? ' - ' : '',
 				'CAT_NAME'		=> $this->language->lang('SC_CATEGORY_DEFAUT'),
 				'CAT_ORDER'		=> $cat_order + 1,
-				'CAT_ID'		=> 0,
+				'CAT_ID'		=> self::DEFAULT_CAT,
 				'CAT_NB'		=> $nb,
-				'U_CAT'			=> $this->helper->route('sylver35_smiliescat_smilies_pop', ['select' => 0]),
+				'U_CAT'			=> $this->helper->route('sylver35_smiliescat_smilies_pop', ['select' => self::DEFAULT_CAT]),
 			]);
 		}
 
-		return (!$cat) ? $this->language->lang('SC_CATEGORY_DEFAUT') : $title;
+		return $title;
 	}
 
 	public function set_order($action, $current_order)
@@ -371,7 +405,7 @@ class category
 		$title = $row['cat_title'];
 		$this->db->sql_freeresult($result);
 
-		$switch_order_id = $this->set_order($action, $current_order);
+		$switch_order_id = (int) $this->set_order($action, $current_order);
 		if ($switch_order_id === 0)
 		{
 			return;
@@ -385,6 +419,8 @@ class category
 		{
 			$this->db->sql_query('UPDATE ' . $this->smilies_category_table . " SET cat_order = $switch_order_id WHERE cat_order = $current_order AND cat_id = $id");
 		}
+		
+		$this->config->set('smilies_first_cat', $this->get_first_order());
 
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_SC_' . strtoupper($action) . '_CAT', time(), [$title]);
 	}

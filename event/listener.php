@@ -55,6 +55,7 @@ class listener implements EventSubscriberInterface
 			'core.user_setup'					=> 'load_language_on_setup',
 			'core.page_header'					=> 'add_page_header',
 			'core.posting_modify_template_vars'	=> 'add_categories',
+			'core.acp_language_after_delete'	=> 'language_after_delete',
 			'breizhshoutbox.smilies'			=> 'smilies',
 			'breizhshoutbox.smilies_popup'		=> 'smilies_popup',
 		];
@@ -143,5 +144,16 @@ class listener implements EventSubscriberInterface
 				'pagination'	=> $list['pagination'],
 			]);
 		}
+	}
+
+	/**
+	 * @param array $event
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function language_after_delete($event)
+	{
+		$this->diffusion->delete_categories_lang($event['lang_iso']);
 	}
 }

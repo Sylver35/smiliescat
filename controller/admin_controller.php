@@ -23,6 +23,9 @@ use phpbb\log\log;
 
 class admin_controller
 {
+	private const DEFAULT_CAT = 9998;
+	private const NOT_DISPLAY = 9999;
+
 	/* @var \sylver35\smiliescat\core\category */
 	protected $category;
 
@@ -92,7 +95,7 @@ class admin_controller
 	{
 		$this->language->add_lang('acp/posting');
 		$start = (int) $this->request->variable('start', 0);
-		$select = (int) $this->request->variable('select', -1);
+		$select = (int) $this->request->variable('select', 0);
 		$cat_id = (int) $this->request->variable('cat_id', 0);
 		$ex_cat = (int) $this->request->variable('ex_cat', 0);
 		$list = $this->request->variable('list', [0]);
@@ -104,7 +107,7 @@ class admin_controller
 			switch ($action)
 			{
 				case 'edit':
-					$this->smiley->edit_smiley($id, $start, $this->u_action);
+					$this->smiley->edit_smiley($id, $start, $ex_cat, $this->u_action);
 				break;
 
 				case 'edit_multi':

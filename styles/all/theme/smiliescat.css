@@ -1,3 +1,7 @@
+#cat-title, #smileys-list, #smilies-pagin-div, #cats-list, #u-close {
+	display: none;
+}
+
 a.category_red {
 	color: red;
 	font-size: 1.1em;

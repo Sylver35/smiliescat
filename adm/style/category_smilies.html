@@ -12,126 +12,131 @@
 <p>{{ TITLE_EXPLAIN }}</p>
 
 {% if IN_ACTION %}
-	<form id="acp_smilies_category" method="post" action="{{ U_MODIFY }}">
+<h3>{{ lang('SC_CATEGORY_EDIT') }}</h3>
+<form id="acp_smilies_category" method="post" action="{{ U_MODIFY }}">
 	<fieldset class="tabulated">
-	<table class="table1 zebra-table" id="smilies">
-	<thead>
-	<tr>
-		<th colspan="5">{{ lang('SMILIES_CONFIG') }}</th>
-	</tr>
-	<tr class="row3">
-		<td><strong>{{ lang('SMILIES_IMAGE') }}</strong></td>
-		<td><strong>{{ lang('SMILIES_CODE') }}</strong></td>
-		<td><strong>{{ lang('EMOTION') }}</strong></td>
-		<td><strong>{{ lang('SC_CATEGORY') }}</strong></td>
-		{% if not S_IN_LIST %}
-		<td><strong>{{ lang('SC_CATEGORY_SELECT') }}</strong></td>
-		{% endif %}
-	</tr>
-	</thead>
-	<tbody>
-		{% if S_IN_LIST %}
-		{% for item in items %}
-		<tr>
-			<td><img src="{{ item.IMG_SRC }}" alt="{{ item.CODE }}" title="{{ item.EMOTION }}"/></td>
-			<td>{{ item.CODE }}</td>
-			<td>{{ item.EMOTION }}</td>
-			<td>{{ item.CATEGORY }}<label><input type="hidden" name="list[]" value="{{ item.ID }}"></label></td>
-		</tr>
-		{% endfor %}
-		{% else %}
-		<tr>
-			<td><img src="{{ IMG_SRC }}" alt="{{ CODE }}" title="{{ EMOTION }}"/></td>
-			<td>{{ CODE }}</td>
-			<td>{{ EMOTION }}</td>
-			<td>{{ CATEGORY }}</td>
-			<td>
-				<label for="cat_id"><select id="cat_id" name="cat_id">{{ SELECT_CATEGORY }}</select></label>
-				<label for="ex_cat"><input type="hidden" id="ex_cat" name="ex_cat" value="{{ EX_CAT }}"></label>
-			</td>
-		</tr>
-		{% endif %}
-	</tbody>
-	</table>
-	{% if S_IN_LIST %}
-	<p class="centered cat-select">
-		<strong>{{ lang('SC_CATEGORY_SELECT') }} : </strong><label for="cat_id"><select id="cat_id" name="cat_id">{{ SELECT_CATEGORY }}</select></label>
-	</p>
-	{% endif %}
-	<p class="submit-buttons">
-		<label for="submit"><input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}"></label>
-	</p>
-	{{ S_FORM_TOKEN }}
-	</fieldset>
-	</form>
-{% else %}
-	<form id="select_category" method="post" action="{{ U_SELECT_CAT }}">
-		<fieldset class="tabulated">
-			<div class="pagination" style="float: left;">
-				<strong>{{ lang('SC_CATEGORY_SELECT') }} : </strong>
-				<label for="select"><select id="select" name="select" onchange="if(this.options[this.selectedIndex].value != '')this.form.submit();">{{ LIST_CATEGORY }}</select></label>&nbsp;
-				<label><input class="button2" type="submit" value="{{ lang('GO') }}"></label>
-			</div>
-			<div class="pagination" style="float: right;">
-				<strong>{{ NB_SMILIES }} &bull;</strong> 
-				{% if pagination|length %}
-					{% INCLUDE 'pagination.html' %}
+		<table class="table1 zebra-table" id="smilies">
+			<thead>
+				<tr>
+					<th colspan="5">{{ lang('SMILIES_CONFIG') }}</th>
+				</tr>
+				<tr class="row3">
+					<td>{{ lang('SMILIES_IMAGE') }}</td>
+					<td>{{ lang('SC_CATEGORY') }}</td>
+					<td>{{ lang('EMOTION') }}</td>
+					<td>{{ lang('SMILIES_CODE') }}</td>
+					{% if not S_IN_LIST %}
+					<td>{{ lang('SC_CATEGORY_SELECT') }}</td>
+					{% endif %}
+				</tr>
+			</thead>
+			<tbody>
+				{% if S_IN_LIST %}
+				{% for item in items %}
+				<tr>
+					<td><img src="{{ item.IMG_SRC }}" alt="{{ item.CODE }}" title="{{ item.EMOTION }}"/></td>
+					<td>{{ item.CATEGORY }}<label><input type="hidden" name="list[]" value="{{ item.ID }}"></label></td>
+					<td>{{ item.EMOTION }}</td>
+					<td>{{ item.CODE }}</td>
+				</tr>
+				{% endfor %}
+				{% else %}
+				<tr>
+					<td><img src="{{ IMG_SRC }}" alt="{{ CODE }}" title="{{ EMOTION }}"/></td>
+					<td>{{ CATEGORY }}</td>
+					<td>{{ EMOTION }}</td>
+					<td>{{ CODE }}</td>
+					<td>
+						<label for="cat_id"><select id="cat_id" name="cat_id">{{ SELECT_CATEGORY }}</select></label>
+						<label for="ex_cat"><input type="hidden" id="ex_cat" name="ex_cat" value="{{ EX_CAT }}"></label>
+					</td>
+				</tr>
 				{% endif %}
-			</div>
-		</fieldset>
-	</form>
-	<form id="acp_smilies_category" method="post" action="{{ U_MODIFY_LIST }}">
-	<fieldset class="tabulated">
-	<table class="table1 zebra-table">
-	<thead>
-	<tr>
-		<th>{{ lang('ACP_SMILIES') }}</th>
-		<th>{{ lang('CODE') }}</th>
-		<th>{{ lang('EMOTION') }}</th>
-		<th>{{ lang('SC_CATEGORY') }}</th>
-		<th>{{ lang('OPTIONS') }}</th>
-		<th style="width: 50px;">{{ lang('MARK') }}</th>
-	</tr>
-	</thead>
-	<tbody>
-	{% if items|length %}
-	{% for item in items %}
-	{% if item.SPACER_CAT %}
-		<tr>
-			<td class="row3" colspan="6"><b>{{ item.SPACER_CAT }}</b></td>
-		</tr>
-	{% endif %}
-		<tr>
-			<td style="width: 60%;"><img src="{{ U_SMILIES }}{{ item.IMG_SRC }}" width="{{ item.WIDTH }}" height="{{ item.HEIGHT }}" alt="{{ item.CODE }}" title="{{ item.EMOTION }}"></td>
-			<td>{{ item.CODE }}</td>
-			<td>{{ item.EMOTION }}</td>
-			<td>{{ item.CATEGORY }}</td>
-			<td class="actions"><a href="{{ item.U_EDIT }}">{{ ICON_EDIT }}</a></td>
-			<td style="text-align: center;"><label><input type="checkbox" class="radio" name="mark[]" value="{{ item.ID }}" /></label></td>
-		</tr>
-	{% endfor %}
-	{% else %}
-		<tr>
-			<td class="row3" colspan="5"><b>{{ lang('SC_SMILIES_EMPTY_CATEGORY') }}</b></td>
-		</tr>
-	{% endif %}
-	</tbody>
-	</table>
-	<fieldset class="quick">
-		{{ S_FORM_TOKEN }}
-		<p class="small"><a href="#" onclick="marklist('acp_smilies_category', 'mark', true); return false;">{{ lang('MARK_ALL') }}</a> &bull; <a href="#" onclick="marklist('acp_smilies_category', 'mark', false); return false;">{{ lang('UNMARK_ALL') }}</a></p>
-		<label><input class="button2" type="submit" name="editmarked" value="{{ lang('SC_CATEGORY_EDIT_LIST') }}" /><label>
-	</fieldset>
-	<br/>
-	<div class="pagination">
-	{% if pagination|length %}
-		{% INCLUDE 'pagination.html' %}
-	{% endif %}
-	</div>
+			</tbody>
+		</table>
+	{% if S_IN_LIST %}
+		<p class="centered cat-select">
+			<strong>{{ lang('SC_CATEGORY_SELECT') }} : </strong><label for="cat_id"><select id="cat_id" name="cat_id">{{ SELECT_CATEGORY }}</select></label>
+		</p>
+		{% endif %}
+		<p class="submit-buttons">
+			<label for="submit"><input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}"></label>
+		</p>
 	{{ S_FORM_TOKEN }}
 	</fieldset>
+</form>
+{% else %}
+<form id="select_category" method="post" action="{{ U_SELECT_CAT }}">
+	<fieldset class="tabulated">
+		<div class="pagination on-left">
+			<strong>{{ lang('SC_CATEGORY_SELECT') }} : </strong>
+			<label for="select"><select id="select" name="select" onchange="if(this.options[this.selectedIndex].value != '')this.form.submit();">{{ LIST_CATEGORY }}</select></label>&nbsp;
+			<label><input class="button2" type="submit" value="{{ lang('GO') }}"></label>
+		</div>
+		<div class="pagination" style="float: right;">
+			<strong>{{ NB_SMILIES }} &bull;</strong> 
+			{% if pagination|length %}
+				{% INCLUDE 'pagination.html' %}
+			{% endif %}
+		</div>
+	</fieldset>
+</form>
+<form id="acp_smilies_category" method="post" action="{{ U_MODIFY_LIST }}">
+	<fieldset class="tabulated">
+		<table class="table1 zebra-table">
+			<thead>
+				<tr>
+					<th>{{ lang('ACP_SMILIES') }}</th>
+					<th>{{ lang('SC_CATEGORY') }}</th>
+					<th>{{ lang('EMOTION') }}</th>
+					<th>{{ lang('CODE') }}</th>
+					<th>{{ lang('OPTIONS') }}</th>
+					<th style="width: 50px;">{{ lang('MARK') }}</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% if items|length %}
+			{% for item in items %}
+			{% if item.SPACER_CAT %}
+				<tr>
+					<td class="row3" colspan="6"><b>{{ item.SPACER_CAT }}</b></td>
+				</tr>
+			{% endif %}
+				<tr>
+					<td style="width: 60%;"><img src="{{ U_SMILIES }}{{ item.IMG_SRC }}" width="{{ item.WIDTH }}" height="{{ item.HEIGHT }}" alt="{{ item.CODE }}" title="{{ item.EMOTION }}"></td>
+					<td>{{ item.CATEGORY }}</td>
+					<td>{{ item.EMOTION }}</td>
+					<td>{{ item.CODE }}</td>
+					<td class="actions">
+						<a href="{{ item.U_EDIT }}">{{ ICON_EDIT }}</a>&nbsp;&nbsp;&nbsp;
+					</td>
+					<td>
+						<label><input type="checkbox" class="radio" name="mark[]" value="{{ item.ID }}" /></label>
+					</td>
+				</tr>
+			{% endfor %}
+			{% else %}
+				<tr>
+					<td class="row3" colspan="5">{{ lang('SC_SMILIES_EMPTY_CATEGORY') }}</td>
+				</tr>
+			{% endif %}
+			</tbody>
+		</table>
+		<div class="pagination">
+		{% if pagination|length %}
+			{% INCLUDE 'pagination.html' %}
+		{% endif %}
+		</div>
+		<fieldset class="quick">
+			{{ S_FORM_TOKEN }}
+			<a href="#" onclick="marklist('acp_smilies_category', 'mark', true); return false;">{{ lang('MARK_ALL') }}</a> &bull; 
+			<a href="#" onclick="marklist('acp_smilies_category', 'mark', false); return false;">{{ lang('UNMARK_ALL') }}</a>
+			<input class="button2" type="submit" name="editmarked" value="{{ lang('SC_CATEGORY_EDIT_LIST') }}" />
+		</fieldset>
+		{{ S_FORM_TOKEN }}
+	</fieldset>
+</form>
 {% endif %}
-	</form>
 
 <p class="centered"><em>{{ CATEGORY_VERSION }}</em></p>
 

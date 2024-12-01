@@ -12,4 +12,3 @@ sylver35_smiliescat_ajax_list_cat:
 sylver35_smiliescat_ajax_smilies:
     path: /smiliescat/ajax_smilies
     defaults: { _controller: sylver35.smiliescat.controller:ajax_smilies }
-

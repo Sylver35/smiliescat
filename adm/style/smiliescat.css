@@ -52,8 +52,22 @@
 	color: red;
 }
 
-th, td, .centered {
+th, tr > td, .centered {
 	text-align: center;
+}
+
+td.row3, tr.row3 > td  {
+	font-weight: bold;
+	text-align: center;
+	font-size : 0.95em;
+}
+
+td.strong {
+	font-weight: bold;
+}
+
+div.on-left {
+	float : left;
 }
 
 .empty {
@@ -69,7 +83,7 @@ th, td, .centered {
 }
 
 select {
-	font-size: 1em;
+	font-size: 1.1em;
 	width: auto;
 	max-width: 100%;
 }
@@ -78,3 +92,14 @@ p.cat-select {
 	margin: 10px;
 }
 
+td.nb-green {
+	color: green;
+}
+
+td.nb-orange {
+	color: orange;
+}
+
+option > selected {
+	color: red;
+}

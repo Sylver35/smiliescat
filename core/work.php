@@ -21,6 +21,9 @@ use phpbb\controller\helper;
 
 class work
 {
+	private const DEFAULT_CAT = 9998;
+	private const NOT_DISPLAY = 9999;
+
 	/* @var \sylver35\smiliescat\core\category */
 	protected $category;
 
@@ -311,10 +314,11 @@ class work
 				'LEFT_JOIN'	=> [
 					[
 						'FROM'	=> [$this->smilies_category_table => 'c'],
-						'ON'	=> 'c.cat_lang = lang_iso',
+						'ON'	=> 'c.cat_lang = l.lang_iso',
 					],
 				],
-				'ORDER_BY'	=> 'c.cat_order ASC, l.lang_id ASC, c.cat_lang_id ASC',
+				'WHERE'		=> 'c.cat_id NOT IN (0, 9999)',
+				'ORDER_BY'	=> 'c.cat_order ASC, l.lang_id ASC',
 			]);
 			$result = $this->db->sql_query($sql);
 			while ($row = $this->db->sql_fetchrow($result))
@@ -322,21 +326,22 @@ class work
 				$title = '';
 				if ((int) $row['cat_id'] !== $cat)
 				{
-					$title = $this->language->lang('SC_CATEGORY_IN', $this->category->cat_name($row['cat_id']));
+					$title = $this->language->lang('SC_CATEGORY_IN', $this->category->return_name($row['cat_id'], $row['cat_name'], true));
 					$this->category->verify_cat_langs($langs, $cat, $i, $lang_cat, false);
 				}
 				$lang_cat[$row['cat_id']][$row['lang_id']] = $row['lang_iso'];
 				$this->template->assign_block_vars('categories', [
-					'CAT_ORDER'			=> (int) $row['cat_order'],
-					'CAT_ID'			=> $row['cat_id'],
-					'CAT_LANG'			=> $row['lang_local_name'],
-					'CAT_ISO'			=> $row['lang_iso'],
-					'CAT_TRANSLATE'		=> $row['cat_name'],
-					'CAT_NB'			=> $row['cat_nb'],
-					'ROW_MAX'			=> (int) $row['cat_order'] === $max,
-					'TITLE_CAT'			=> $title,
-					'U_EDIT'			=> $u_action . '&amp;action=edit&amp;id=' . $row['cat_id'],
-					'U_DELETE'			=> $u_action . '&amp;action=delete&amp;id=' . $row['cat_id'],
+					'CAT_ORDER'		=> (int) $row['cat_order'],
+					'CAT_ID'		=> $row['cat_id'],
+					'CAT_LANG'		=> $row['lang_local_name'],
+					'CAT_ISO'		=> $row['lang_iso'],
+					'CAT_TRANSLATE'	=> $row['cat_name'],
+					'CAT_NB'		=> $row['cat_nb'],
+					'NB_CSS'		=> $row['cat_nb'] ? 'green' : 'orange',
+					'ROW_MAX'		=> (int) $row['cat_order'] === $max,
+					'TITLE_CAT'		=> $title,
+					'U_EDIT'		=> $u_action . '&amp;action=edit&amp;id=' . $row['cat_id'],
+					'U_DELETE'		=> $u_action . '&amp;action=delete&amp;id=' . $row['cat_id'],
 				]);
 				$i++;
 				// Keep this value in memory
@@ -346,7 +351,6 @@ class work
 				{
 					$this->category->verify_cat_langs($langs, $cat, $i, $lang_cat, false);
 				}
-				
 			}
 			$this->db->sql_freeresult($result);
 		}

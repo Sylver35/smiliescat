@@ -1,14 +1,14 @@
 {% if S_SMILIES_ALLOWED and IN_CATEGORIES %}
 <div id="smileys-cat">
-	<div id="cat-title" style="display: none;"></div>
-	<div id="smileys-list" style="display: none;"></div>
-	<div id="smilies-pagin-div" class="action-bar bar-top litle-pagin" style="display: none;">
+	<div id="cat-title"></div>
+	<div id="smileys-list"></div>
+	<div id="smilies-pagin-div" class="action-bar bar-top litle-pagin">
 		<div id="smilies-pagin" class="pagination"></div>
 	</div>
-	<div id="cats-list" style="display: none;"></div>
+	<div id="cats-list"></div>
 	<div id="cats-href">
-		<a id="u-open" class="strong tooltip" onclick="cats.displayCats({{ ID_FIRST_CAT }},0);" title="{{ lang('SC_SMILIES_TITLE') }}">{{ lang('SC_SMILIES_TITLE') }}</a>
-		<a id="u-close" class="strong tooltip" style="display: none;" onclick="cats.closeAction();" title="{{ lang('SC_SMILIES_CLOSE') }}">{{ lang('SC_SMILIES_CLOSE') }}</a>
+		<a id="u-open" class="strong tooltip" onclick="cats.displayCats({{ ID_FIRST_CAT }},{{ NB_FIRST_CAT }});" title="{{ lang('SC_SMILIES_TITLE') }}">{{ lang('SC_SMILIES_TITLE') }}</a>
+		<a id="u-close" class="strong tooltip" onclick="cats.closeAction();" title="{{ lang('SC_SMILIES_CLOSE') }}">{{ lang('SC_SMILIES_CLOSE') }}</a>
 	</div>
 </div>
 {% endif %}

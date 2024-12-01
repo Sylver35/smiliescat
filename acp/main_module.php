@@ -47,7 +47,7 @@ class main_module
 		// Make the $u_action url available in the admin controller
 		$admin_controller->set_page_url($this->u_action);
 		$action = (string) $request->variable('action', '');
-		$on_id = (int) $request->variable('id', -1);
+		$on_id = (int) $request->variable('id', 0);
 
 		$language->add_lang('smilies_category', 'sylver35/smiliescat');
 		$this->tpl_name = 'category_' . strtolower($mode);

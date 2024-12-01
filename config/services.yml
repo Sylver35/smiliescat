@@ -56,6 +56,7 @@ services:
             - '@language'
             - '@template'
             - '@pagination'
+            - '@controller.helper'
             - '%sylver35.smiliescat.tables.smilies_category%'
             - '%core.root_path%'
 
@@ -83,6 +84,7 @@ services:
             - '@language'
             - '@template'
             - '@controller.helper'
+            - '@log'
             - '%sylver35.smiliescat.tables.smilies_category%'
 
     sylver35.smiliescat.controller:
