@@ -85,7 +85,7 @@ class smiley
 		$sort_ex_cat = $this->category->category_sort($ex_cat);
 
 		// Increment or Decrement in user categories
-		$this->update_cat_smiley($smiley, $new_cat, $ex_cat, $sort_new_cat, $sort_ex_cat);
+		$this->update_cat_smiley($new_cat, $ex_cat, $sort_new_cat, $sort_ex_cat);
 
 		// Change the display if wanted
 		if ($sort_ex_cat == 3 || $sort_new_cat == 3)
@@ -94,7 +94,7 @@ class smiley
 		}
 	}
 
-	private function update_cat_smiley($smiley, $new_cat, $ex_cat, $sort_new, $sort_ex)
+	private function update_cat_smiley($new_cat, $ex_cat, $sort_new, $sort_ex)
 	{
 		// Decrement nb value if wanted
 		if ($sort_ex == 1)

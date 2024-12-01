@@ -186,13 +186,13 @@ class category
 		switch ($category)
 		{
 			case self::DEFAULT_CAT:
-				$sort = 2;// Unclassified category
+				$sort = 2; // Unclassified category
 			break;
 			case self::NOT_DISPLAY:
-				$sort = 3;// Undisplayed category
+				$sort = 3; // Undisplayed category
 			break;
 			default:
-				$sort = 1;// user category
+				$sort = 1; // user category
 		}
 
 		return $sort;

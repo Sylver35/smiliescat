@@ -71,7 +71,6 @@ class diffusion
 
 	public function url_to_page()
 	{
-		$first = $this->category->get_first_order();
 		$this->template->assign_var('U_CATEGORY_POPUP', $this->helper->route('sylver35_smiliescat_smilies_pop', ['select' => $this->config['smilies_first_cat']]));
 	}
 
