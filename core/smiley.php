@@ -131,34 +131,27 @@ class smiley
 		$lang = $this->user->lang_name;
 		$smilies_count = (int) $this->category->smilies_count($select);
 
-		if ($select == self::DEFAULT_CAT)
+		switch ($select)
 		{
-			$sql = 'SELECT *
-				FROM ' . SMILIES_TABLE . '
-					WHERE category = ' . self::DEFAULT_CAT . '
-				ORDER BY smiley_order ASC';
-		}
-		else if ($select == self::NOT_DISPLAY)
-		{
-			$sql = 'SELECT *
-				FROM ' . SMILIES_TABLE . '
-					WHERE display_on_cat = 0
-				ORDER BY smiley_order ASC';
-		}
-		else
-		{
-			$sql = $this->db->sql_build_query('SELECT', [
-				'SELECT'	=> 's.*, c.*',
-				'FROM'		=> [SMILIES_TABLE => 's'],
-				'LEFT_JOIN'	=> [
-					[
-						'FROM'	=> [$this->smilies_category_table => 'c'],
-						'ON'	=> "s.category = c.cat_id AND c.cat_lang = '$lang'",
+			case self::DEFAULT_CAT:
+				$sql = 'SELECT * FROM ' . SMILIES_TABLE . ' WHERE category = ' . self::DEFAULT_CAT . ' ORDER BY smiley_order ASC';
+			break;
+			case self::NOT_DISPLAY:
+				$sql = 'SELECT * FROM ' . SMILIES_TABLE . ' WHERE display_on_cat = 0 ORDER BY smiley_order ASC';
+			break;
+			default :
+				$sql = $this->db->sql_build_query('SELECT', [
+					'SELECT'	=> 's.*, c.*',
+					'FROM'		=> [SMILIES_TABLE => 's'],
+					'LEFT_JOIN'	=> [
+						[
+							'FROM'	=> [$this->smilies_category_table => 'c'],
+							'ON'	=> "s.category = c.cat_id AND c.cat_lang = '$lang'",
+						],
 					],
-				],
-				'WHERE'		=> ($select == 0) ? "s.code <> ''" : "c.cat_id = $select",
-				'ORDER_BY'	=> 's.display_on_cat DESC, s.category ASC, c.cat_order ASC, s.smiley_order ASC',
-			]);
+					'WHERE'		=> ($select == 0) ? "s.code <> ''" : "c.cat_id = $select",
+					'ORDER_BY'	=> 's.display_on_cat DESC, s.category ASC, c.cat_order ASC, s.smiley_order ASC',
+				]);
 		}
 		$result = $this->db->sql_query_limit($sql, (int) $this->config['smilies_per_page_acp'], $start);
 		while ($row = $this->db->sql_fetchrow($result))

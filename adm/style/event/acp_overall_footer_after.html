@@ -1,6 +1,21 @@
-{% if IN_CAT_ACTION or IN_LIST_CAT or CATEGORIE_SMILIES %}
+{% if IN_CAT_ACTION or IN_LIST_CAT or CATEGORIE_SMILIES or IN_CATEGORIES %}
 <script>
-{% if CATEGORIE_SMILIES %}
+{% if IN_CATEGORIES %}
+var cats = {
+	first: {{ ID_FIRST_CAT }},
+	perPage: {{ PER_PAGE }},
+	smiliesPath: '{{ U_SMILIES_PATH }}',
+	displayAjax: '{{ U_CATEGORY_AJAX }}',
+	previous: '{{ lang("SC_PREVIOUS")|escape("js") }}',
+	next: '{{ lang("SC_NEXT")|escape("js") }}',
+	previousTitle: '{{ lang("SC_PREVIOUS_TITLE")|escape("js") }}',
+	nextTitle: '{{ lang("SC_NEXT_TITLE")|escape("js") }}',
+	page: '{{ lang("SC_SMILIES_PAGE")|escape("js") }}',
+	pageTitle: '{{ lang("SC_SMILIES_PAGE_TITLE")|escape("js") }}',
+	categorie: '{{ lang("SC_CATEGORY_IN")|escape("js") }}',
+};
+{% INCLUDEJS '@sylver35_smiliescat/smiliescat.js' %}
+{% elseif CATEGORIE_SMILIES %}
 $('i.acp-icon-settings').each(function(){
 	$(this).attr('title', '{{ lang("SC_CATEGORY_EDIT")|escape("js") }}');
 });

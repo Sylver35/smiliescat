@@ -97,6 +97,6 @@ $lang = array_merge($lang, array(
 	'LOG_SC_MOVE_UP_CAT'		=> '<strong>Remontée d’une catégorie de smileys </strong> » %s',
 	'LOG_SC_MOVE_DOWN_CAT'		=> '<strong>Descente d’une catégorie de smileys </strong> » %s',
 	'LOG_SC_DELETE_CAT'			=> '<strong>Suppression d’une catégorie de smileys </strong> » %s',
-	'LOG_SC_DELETE_CAT_LANG'	=> '<strong>Suppression des catégories de smileys de langue </strong> » %s',
+	'LOG_SC_DELETE_CAT_LANG'	=> '<strong>Suppression des catégories de smileys de langue </strong><br>» %s » “%s”',
 	'SC_VERSION_COPY'			=> '<a href="%1$s" onclick="window.open(this.href);return false;">Breizh Smilies Categories v%2$s</a> © 2024 - Breizhcode - The Breizh Touch',
 ));

@@ -1,0 +1,23 @@
+{% INCLUDECSS '@sylver35_smiliescat/smiliescat.css' %}
+<fieldset>
+	<legend>{{ lang('ACP_SC_SMILIES') }}</legend>
+	<div id="smilies-cat">
+		<h2 id="cat-title">{{ CATEGORY }}</h2>
+		<div id="smileys-list">
+		{% if items|length %}
+		{% for smiley in items %}
+			<img src="{{ U_SMILIES_PATH }}{{ smiley.SMILEY_SRC }}" alt="{{ smiley.SMILEY_CODE }}" title="{{ smiley.SMILEY_EMOTION }}" width="{{ smiley.SMILEY_WIDTH }}" height="{{ smiley.SMILEY_HEIGHT }}">
+		{% endfor %}
+		{% endif %}
+		</div>
+		<div id="smilies-pagin-div" style="display: none;">
+			<div id="smilies-pagin" class="pagination"></div>
+		</div>
+	</div>
+	<br>
+	<div id="cats-list">
+	{% for category in categories %}
+		{{ category.SEPARATE }}<a onclick="cats.displayCats('{{ category.CAT_ID }}',0);" class="{{ category.CLASS }}" id="pointer-{{ category.CAT_ID }}" title="{{ category.CAT_NAME }}">{{ category.CAT_NAME }}</a> ({{ category.CAT_NB }})
+	{% endfor %}
+	</div>
+</fieldset>

@@ -52,12 +52,14 @@ class listener implements EventSubscriberInterface
 	static public function getSubscribedEvents()
 	{
 		return [
-			'core.user_setup'					=> 'load_language_on_setup',
-			'core.page_header'					=> 'add_page_header',
-			'core.posting_modify_template_vars'	=> 'add_categories',
-			'core.acp_language_after_delete'	=> 'language_after_delete',
-			'breizhshoutbox.smilies'			=> 'smilies',
-			'breizhshoutbox.smilies_popup'		=> 'smilies_popup',
+			'core.user_setup'						=> 'load_language_on_setup',
+			'core.page_header'						=> 'add_page_header',
+			'core.posting_modify_template_vars'		=> 'add_categories',
+			'core.acp_language_after_delete'		=> 'language_after_delete',
+			'breizhshoutbox.smilies'				=> 'smilies',
+			'breizhshoutbox.smilies_popup'			=> 'smilies_popup',
+			'breizhshoutbox.shoutbox_smilies_after'	=> 'category_smilies',
+			'breizhshoutbox.shoutbox_rules_after'	=> 'add_page_header',
 		];
 	}
 
@@ -109,9 +111,10 @@ class listener implements EventSubscriberInterface
 	 */
 	public function smilies($event)
 	{
+		$list_cats = $this->diffusion->list_cats(false);
 		$event['content'] = array_merge($event['content'], [
 			'title_cat'		=> $this->language->lang('ACP_SC_SMILIES'),
-			'categories'	=> $this->diffusion->list_cats(false),
+			'categories'	=> $list_cats['list_cat'],
 		]);
 	}
 
@@ -123,14 +126,13 @@ class listener implements EventSubscriberInterface
 	 */
 	public function smilies_popup($event)
 	{
-		$cat = (int) $event['cat'];
-		$start = (int) $event['start'];
+		$list_cats = $this->diffusion->list_cats($event['cat']);
 		$event['content'] = array_merge($event['content'], [
 			'title_cat'		=> $this->language->lang('ACP_SC_SMILIES'),
-			'categories'	=> $this->diffusion->list_cats($cat),
+			'categories'	=> $list_cats['list_cat'],
 		]);
 
-		$list = $this->diffusion->smilies_popup($cat, $start);
+		$list = $this->diffusion->smilies_popup($event['cat'], $event['start']);
 		if ($list['in_cat'] !== false)
 		{
 			$event['content'] = array_merge($event['content'], [
@@ -155,5 +157,16 @@ class listener implements EventSubscriberInterface
 	public function language_after_delete($event)
 	{
 		$this->diffusion->delete_categories_lang($event['lang_iso']);
+	}
+
+	/**
+	 * @param array $event
+	 *
+	 * @return void
+	 * @access public
+	 */
+	public function category_smilies($event)
+	{
+		$this->diffusion->category_smilies($event);
 	}
 }

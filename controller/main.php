@@ -86,7 +86,7 @@ class main
 		$first = (int) $this->config['smilies_first_cat'];
 		$cat = (int) $this->request->variable('select', $first);
 		$count = $this->category->smilies_count($cat);
-		$title = $this->category->extract_list_categories($cat);
+		$title = $this->diffusion->extract_list_categories($cat);
 		$data = $this->category->get_version();
 
 		$sql = $this->db->sql_build_query('SELECT', [
@@ -162,14 +162,14 @@ class main
 		$categories = $this->diffusion->list_cats($cat);
 		$json_response = new \phpbb\json_response;
 		$json_response->send([
+			'total'			=> $i,
 			'title'			=> $this->category->return_name($cat, '', true),
-			'nb_cats'		=> count($categories),
+			'nb_cats'		=> $categories['nb_cats'],
 			'start'			=> $start,
 			'pagination'	=> $count,
 			'smilies_path'	=> generate_board_url() . '/' . $this->config['smilies_path'] . '/',
-			'total'			=> $i,
 			'list_smilies'	=> $list_smilies,
-			'categories'	=> $categories,
+			'categories'	=> $categories['list_cat'],
 		]);
 	}
 

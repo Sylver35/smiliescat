@@ -34,13 +34,13 @@
 					{% endfor %}
 				</tbody>
 			</table>
-			<p class="submit-buttons">
-				<span id="info"></span><br>
-				<input type="hidden" name="order" value="{{ CAT_ORDER }}">
-				<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" title="{{ lang('SUBMIT') }}">
-			</p>
-			{{ S_FORM_TOKEN }}
 		</fieldset>
+		<p class="submit-buttons">
+			<span id="info"></span><br>
+			<input type="hidden" name="order" value="{{ CAT_ORDER }}">
+			<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" title="{{ lang('SUBMIT') }}">
+		</p>
+		{{ S_FORM_TOKEN }}
 	</form>
 {% elseif IN_LIST_CAT %}
 	<form  method="post" action="{{ U_ADD }}">
@@ -98,12 +98,12 @@
 				{% endif %}
 				</tbody>
 			</table>
-			<p class="quick">
-				<input type="hidden" id="action_url" value="{{ U_ACTION }}">
-				<input class="button2" name="add" type="submit" value="{{ lang('SC_CATEGORY_ADD') }}" title="{{ lang('SC_CATEGORY_ADD') }}">
-			</p>
-			{{ S_FORM_TOKEN }}
 		</fieldset>
+		<p class="quick">
+			<input type="hidden" id="action_url" value="{{ U_ACTION }}">
+			<input class="button2" name="add" type="submit" value="{{ lang('SC_CATEGORY_ADD') }}" title="{{ lang('SC_CATEGORY_ADD') }}">
+		</p>
+		{{ S_FORM_TOKEN }}
 	</form>
 
 	<form id="smiliescat_config" method="post" action="{{ U_ACTION_CONFIG }}">

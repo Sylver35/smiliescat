@@ -320,56 +320,6 @@ class category
 		return $cat_nb;
 	}
 
-	public function extract_list_categories($cat)
-	{
-		$title = '';
-		$cat_order = $i = 0;
-		$lang = (string) $this->user->lang_name;
-		$sql = $this->db->sql_build_query('SELECT', [
-			'SELECT'	=> '*',
-			'FROM'		=> [$this->smilies_category_table => ''],
-			'WHERE'		=> "cat_nb <> 0 AND cat_lang = '$lang'",
-			'ORDER_BY'	=> 'cat_order ASC',
-		]);
-		$result = $this->db->sql_query($sql);
-		while ($row = $this->db->sql_fetchrow($result))
-		{
-			$actual_cat = (int) $row['cat_id'] === $cat;
-			$this->template->assign_block_vars('categories', [
-				'CLASS'			=> $actual_cat ? 'cat-active' : 'cat-inactive',
-				'SEPARATE'		=> ($i > 0) ? ' - ' : '',
-				'CAT_NAME'		=> $row['cat_name'] ?: $row['cat_title'],
-				'CAT_ORDER'		=> $row['cat_order'],
-				'CAT_ID'		=> $row['cat_id'],
-				'CAT_NB'		=> $row['cat_nb'],
-				'U_CAT'			=> $this->helper->route('sylver35_smiliescat_smilies_pop', ['select' => $row['cat_id']]),
-			]);
-			$i++;
-
-			// Keep these values in memory
-			$title = $actual_cat ? $row['cat_name'] : $title;
-			$cat_order = $row['cat_order'];
-		}
-		$this->db->sql_freeresult($result);
-
-		// Add the Unclassified category if not empty
-		if ($nb = $this->smilies_count(self::DEFAULT_CAT))
-		{
-			$title = ($cat == self::DEFAULT_CAT) ? $this->language->lang('SC_CATEGORY_DEFAUT') : $title;
-			$this->template->assign_block_vars('categories', [
-				'CLASS'			=> ($cat === self::DEFAULT_CAT) ? 'cat-active' : 'cat-inactive',
-				'SEPARATE'		=> ($i > 0) ? ' - ' : '',
-				'CAT_NAME'		=> $this->language->lang('SC_CATEGORY_DEFAUT'),
-				'CAT_ORDER'		=> $cat_order + 1,
-				'CAT_ID'		=> self::DEFAULT_CAT,
-				'CAT_NB'		=> $nb,
-				'U_CAT'			=> $this->helper->route('sylver35_smiliescat_smilies_pop', ['select' => self::DEFAULT_CAT]),
-			]);
-		}
-
-		return $title;
-	}
-
 	public function set_order($action, $current_order)
 	{
 		// Never move up the first

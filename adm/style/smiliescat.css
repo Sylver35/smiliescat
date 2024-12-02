@@ -100,6 +100,67 @@ td.nb-orange {
 	color: orange;
 }
 
+p.quick > input {
+	font-size: 0.95em;
+}
+
 option > selected {
 	color: red;
+}
+
+#cat-title > span {
+	font-weight: bold;
+}
+
+#smileys-cat, #smilies-cat {
+	width: 80%;
+	text-align: center;
+	margin: auto;
+}
+
+#smileys-list, #cats-list {
+	text-align: center;
+	padding: 6px 0 6px 0;
+}
+
+span.pagin_red, a.pagin_red {
+	color: red;
+	font-size: 1.1em;
+	cursor: help;
+	font-weight: bold;
+}
+
+a.category_red {
+	color: red;
+	font-size: 1.1em;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+a.pointer {
+	cursor: pointer;
+}
+
+a.strong {
+	font-weight: bold;
+	cursor: pointer;
+}
+
+a.cat-active {
+	color: red;
+	font-size: 1.1em;
+	font-weight: bold;
+	cursor: pointer;
+	border: none;
+}
+
+a.cat-inactive {
+	font-size: 1em;
+	cursor: pointer;
+	font-weight: normal;
+	border: none;
+}
+
+#smilies-pagin {
+	font-size: 1em;
 }
