@@ -240,19 +240,19 @@ class diffusion
 
 	public function category_smilies()
 	{
-		$this->extract_list_categories($this->config['smilies_first_cat']);
+		$title = $this->extract_list_categories($this->config['smilies_first_cat']);
 		$this->template->assign_vars([
 			'U_CATEGORY_AJAX'	=> $this->helper->route('sylver35_smiliescat_ajax_smilies'),
 			'ID_FIRST_CAT'		=> $this->config['smilies_first_cat'],
 			'NB_FIRST_CAT'		=> $this->category->smilies_count($this->config['smilies_first_cat']),
 			'PER_PAGE'			=> $this->config['smilies_per_page_cat'],
 			'U_SMILIES_PATH'	=> generate_board_url() . '/' . $this->config['smilies_path'] . '/',
-			'CATEGORY'			=> $this->extract_first_cat(),
+			'CATEGORY'			=> $this->extract_first_cat($title),
 			'IN_CATEGORIES'		=> true,
 		]);
 	}
 
-	private function extract_first_cat()
+	private function extract_first_cat($title)
 	{
 		$lang = $this->user->lang_name;
 		$sql = $this->db->sql_build_query('SELECT', [
@@ -280,10 +280,9 @@ class diffusion
 				'SMILEY_EMOTION'	=> $row['emotion'],
 				'CATEGORY'			=> $row['cat_name'],
 			]);
-			$category = $row['cat_name'];
 		}
 		$this->db->sql_freeresult($result);
 		
-		return $this->language->lang('SC_CATEGORY_IN', $category);
+		return $this->language->lang('SC_CATEGORY_IN',$title);
 	}
 }

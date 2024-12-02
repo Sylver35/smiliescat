@@ -167,6 +167,6 @@ class listener implements EventSubscriberInterface
 	 */
 	public function category_smilies($event)
 	{
-		$this->diffusion->category_smilies($event);
+		$this->diffusion->category_smilies();
 	}
 }
