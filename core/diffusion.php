@@ -238,7 +238,7 @@ class diffusion
 		return $title;
 	}
 
-	public function category_smilies($event)
+	public function category_smilies()
 	{
 		$this->extract_list_categories($this->config['smilies_first_cat']);
 		$this->template->assign_vars([
