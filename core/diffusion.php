@@ -283,6 +283,6 @@ class diffusion
 		}
 		$this->db->sql_freeresult($result);
 		
-		return $this->language->lang('SC_CATEGORY_IN',$title);
+		return $this->language->lang('SC_CATEGORY_IN', $title);
 	}
 }
